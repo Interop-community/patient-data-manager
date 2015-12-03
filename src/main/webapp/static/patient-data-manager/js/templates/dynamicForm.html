@@ -1,0 +1,109 @@
+<div class="form-group">
+    <div ng-repeat="attribute in selectedResourceTypeConfig.displayValues">
+        <form name="form-fix-later" class="css-form" novalidate>
+            <!-- TEXT FIELDS -->
+            <div ng-if="attribute.type=='text'" class="form-group">
+                <label class="dynamic-form-label">{{attribute.label}}</label>
+                <div class="dynamic-form-label-input">
+                    <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="getModelParent(selectedResourceInstance, attribute.path)[ getModelLeaf(attribute.path) ]" id="{{attribute.name}}" class="form-control" required/>
+                    <span ng-show="{{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>
+                </div>
+            </div>
+
+            <!-- DATE FIELDS -->
+            <div ng-if="attribute.type=='date'" class="form-group">
+                <label class="dynamic-form-label">{{attribute.label}}</label>
+                <div class="dynamic-form-label-input">
+                    <input type="text" dynamic-name="attribute.name" ng-model="getModelParent(selectedResourceInstance, attribute.path)[ getModelLeaf(attribute.path) ]" id="{{attribute.name}}" class="form-control" required/>
+                    <span ng-show="{{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>
+                </div>
+            </div>
+
+            <!-- SELECT FIELDS -->
+            <div ng-if="attribute.type=='select'" class="form-group" >
+                <label class="dynamic-form-label">{{attribute.label}}</label>
+                <div class="dynamic-form-label-input">
+                    <select ng-model="getModelParent(selectedResourceInstance, attribute.path)[ getModelLeaf(attribute.path) ]" ng-options="option for option in attribute.options" class="form-control" required/>
+                </div>
+            </div>
+
+            <!-- TYPEAHEAD FIELDS -->
+            <div ng-if="attribute.type=='coded-code-typeahead'" class="form-group">
+                <label class="dynamic-form-label">{{attribute.label}}</label>
+                <div class='typeahead-modal'>
+                    <div class="dynamic-form-label-input">
+                        <input type="text" class="form-control" ng-model="getModelParent(selectedResourceInstance, attribute.path)[ getModelLeaf(attribute.path) ]" placeholder="Enter the Code Value"
+                               uib-typeahead="coding.code for coding in getValueSetExpansion($viewValue)" typeahead-loading="loadingValueSetDisplay"
+                               typeahead-no-results="noResultsDisplay" typeahead-editable="false" typeahead-on-select="selectedResourceInstance.code.coding[0] = $item">
+                        <i ng-show="loadingValueSetDisplay" class="glyphicon glyphicon-refresh"></i>
+                        <div ng-show="noResultsDisplay">
+                            <i class="glyphicon glyphicon-remove"></i> No results  <!--{{resultsStatus}}-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TYPEAHEAD FIELDS -->
+            <div ng-if="attribute.type=='coded-display-typeahead'" class="form-group">
+                <label class="dynamic-form-label">{{attribute.label}}</label>
+                <div class='typeahead-modal'>
+                    <div class="dynamic-form-label-input">
+                        <input type="text" class="form-control" ng-model="getModelParent(selectedResourceInstance, attribute.path)[ getModelLeaf(attribute.path) ]" placeholder="Enter the Display Value"
+                               uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue)" typeahead-loading="loadingValueSetDisplay"
+                               typeahead-no-results="noResultsDisplay" typeahead-editable="false" typeahead-on-select="selectedResourceInstance.code.coding[0] = $item">
+                        <i ng-show="loadingValueSetDisplay" class="glyphicon glyphicon-refresh"></i>
+                        <div ng-show="noResultsDisplay">
+                            <i class="glyphicon glyphicon-remove"></i> No results  <!--{{resultsStatus}}-->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EMAIL FIELDS -->
+            <div ng-if="attribute.type=='email'" class="form-group">
+                <label class="dynamic-form-label">{{attribute.label}}</label>
+                <div class="dynamic-form-label-input">
+                    <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="getModelParent(selectedResourceInstance, attribute.path)[ getModelLeaf(attribute.path) ]" class="form-control" required/>
+                    <span ng-show=" {{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>
+                    <span ng-show=" {{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.email'}}">Not email!</span>
+                </div>
+            </div>
+
+            <!-- PASSWORD FIELDS -->
+            <div ng-if="attribute.type=='password'" class="form-group" >
+                <label class="dynamic-form-label">{{attribute.label}}</label>
+                <div class="dynamic-form-label-input">
+                    <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="getModelParent(selectedResourceInstance, attribute.path)[ getModelLeaf(attribute.path) ]" ng-minlength={{attribute.min}} ng-maxlength={{attribute.max}} class="form-control" required/>
+                    <span ng-show=" {{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>
+                    <span ng-show=" {{'!form.'+attribute.name+'.required && (form.'+attribute.name+'.$error.minlength || form.'+attribute.name+'.$error.maxlength)' }}">Passwords must be between 8 and 20 characters.</span>
+                </div>
+            </div>
+
+            <!-- RADIO FIELDS -->
+            <div ng-if="attribute.type=='radio'" class="form-group">
+                <label class="dynamic-form-label">{{attribute.label}}</label>
+                <div class="dynamic-form-label-input">
+
+                    <div class="checkbox" ng-repeat="option in attribute.options" >
+                        <label>
+                            <input type="radio" ng-model="getModelParent(selectedResourceInstance, attribute.path)[ getModelLeaf(attribute.path) ]"  name="taskGroup"  id="{{option.name}}" value="{{option.id}}">{{option.name}}
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CHECKBOX FIELDS -->
+            <div ng-if="attribute.type=='checkbox'" class="form-group" >
+                <label class="dynamic-form-label">{{attribute.label}}</label>
+                <div class="dynamic-form-label-input">
+                    <div class="checkbox" ng-repeat="option in attribute.options" >
+                        <label>
+                            <input type="checkbox" ng-model="option.data"  name="taskGroup"  id="{{option.name}}" value="{{option.id}}" >{{option.name}}
+                        </label>
+                    </div>
+
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

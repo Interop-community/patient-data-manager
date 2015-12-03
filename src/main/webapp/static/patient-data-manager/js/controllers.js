@@ -4,533 +4,500 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
     ['$scope','$filter', "$uibModal", "$http", "$terminologyService", "$resourceJson",
     function ($scope, $filter, $uibModal, $http, $terminologyService, $resourceJson ) {
 
-    $scope.patient = {
-        name: ''
-    };
+        $scope.resourceTypeConfigList = [];
+        $scope.selectedResourceTypeConfig = {};
 
-    $scope.resourceConfig = $resourceJson;
-    $scope.resourceList = [];
-    $scope.observationList = [];
-    $scope.observationFullList = [];
-    $scope.observationFilteredList = [];
-    $scope.selectedObservation = '';
-    $scope.enteredFilter = '';
-    $scope.pages = [];
-    $scope.selectedPage = {};
+        $scope.resourceTypeList = [];
+        $scope.selectedResourceType = {};
 
-    $scope.getValueSetExpansion = $terminologyService.getValueSetExpansion;
+        $scope.resourceInstanceList = [];
+        $scope.selectedResourceInstance = {};
 
-    $scope.pageSelected = function(page){
-        while ($scope.observationList.length > 0) {
-            $scope.observationList.pop();
-        }
+        $scope.enteredSearch = '';
 
-        $$("obsList").clearAll();
-        angular.forEach(page.data, function (value) {
-            $$("obsList").add(value);
-            $scope.observationList.push(value);
-        });
-        $$("obsList").refresh();
+        $scope.getValueSetExpansion = $terminologyService.getValueSetExpansion;
 
-    };
-
-    $scope.$watchGroup(['enteredFilter'], function() {
-
-//        $scope.observationFilteredList = $scope.observationFullList.filter(function( obj ) {
-//
-//            if ((typeof obj.code.coding[0].display != undefined && obj.code.coding[0].display.indexOf($scope.enteredFilter) > -1) ||
-//                (typeof obj.prettyDate != undefined && obj.prettyDate.indexOf($scope.enteredFilter) > -1) ||
-//                (typeof obj.code.coding[0].code != undefined && obj.code.coding[0].code.indexOf($scope.enteredFilter) > -1) ||
-//                (typeof obj.code.coding[0].system != undefined && obj.code.coding[0].system.indexOf($scope.enteredFilter) > -1) ||
-//                (typeof obj.valueQuantity.value != undefined && obj.valueQuantity.value.toString().indexOf($scope.enteredFilter) > -1) ||
-//                (typeof obj.valueQuantity.unit != undefined && obj.valueQuantity.unit.indexOf($scope.enteredFilter) > -1) ||
-//                (typeof obj.status && obj.status.indexOf($scope.enteredFilter) > -1)) {
-//                return true;
-//            }
-//        });
-//        $$("obsList").refresh();
-//        $$("resList").refresh();
-//        $$("resList").select($$("resList").getFirstId());
-//        $$("obsList").select($$("obsList").getFirstId());
-
-    });
-
-    $scope.selectedObservationList = function() {
-        if ($$("obsList").count() == 0 )
-            return;
-        if (typeof $$("obsList").getItem($$("obsList").getSelectedId()) === 'undefined') {
-            if ($$("obsList").getFirstId() !== 'undefined') {
-                $$("obsList").select($$("obsList").getFirstId());
+        /**
+         *
+         *      UI HELPERS
+         *
+         **/
+        $scope.showSearchBar = function(){
+            if ($scope.selectedResourceTypeConfig.searchParams) {
+                $$("searchBar").show();
+            } else {
+                $$("searchBar").hide();
             }
-        }
-        $scope.selectedObservation = angular.copy($$("obsList").getItem($$("obsList").getSelectedId()));
-        $scope.selectedObservation.prettyDate = $filter('date')(new Date($scope.selectedObservation.effectiveDateTime), 'MM/dd/yyyy HH:mm');
-        $$('detailView').show();
-        $scope.$apply();
-    };
+        };
 
-    $scope.selectedResourceList = function() {
-        var selectedId = $$("resList").getSelectedId();
-        var result = $.grep($scope.resourceList, function(e){ return e.id == selectedId; });
-    };
+        $scope.showPageButtons = function(){
+            if ($scope.hasLink($scope.selectedResourceType.searchObj, 'previous') ||
+                $scope.hasLink($scope.selectedResourceType.searchObj, 'next')) {
+                $$("pageButtons").show();
+            } else {
+                $$("pageButtons").hide();
+            }
+        };
+        
+        $scope.hasLink = function (searchResult, linkRelation) {
+            var hasLink = false;
+            if (searchResult === undefined) {
+                return false;
+            } else {
+                searchResult.data.link.forEach(function(link) {
+                    if (link.relation == linkRelation) {
+                        hasLink = true;
+                    }
+                });
+            }
+            return hasLink;
+        };
 
-    $scope.setCoding = function(item, model, label) {
-        $scope.selectedObservation.code.coding[0] = item;
-    };
+        /**
+         * 
+         *      DYNAMIC UI BUILDER HELPERS 
+         * 
+         **/
+        $scope.getDynamicModel = function(resource, path) {
+            var root = $scope.getModelParent(resource, path);
+            var leaf = $scope.getModelLeaf(path);
 
-    $scope.requestDeleteResource = function() {
+            if (typeof root !== 'undefined' && typeof leaf !== 'undefined' ) {
+                return root[ leaf ];
+            }
+            return "";
+        };
 
-        webix.confirm({
-            title:"Delete Observation",
-            ok:"Yes",
-            cancel:"No",
-            type:"confirm-error",
-            text:"Are you sure you want to delete?",
-            callback:function(result){ //setting callback
-                if (result == true) {
-                    $scope.deleteResource();
+        $scope.getModelParent = function(obj,path) {
+            var segs = path.split('.');
+            var root = obj;
+            if (root === undefined)
+                return {};
+
+            while (segs.length > 1) {
+                var pathStep = segs.shift();
+                if (typeof root === 'undefined' || root === "")
+                    return {};
+                if (typeof root[pathStep] === 'undefined') {
+                    root[pathStep] = {};
                 }
+                root = root[pathStep];
             }
-        });
-    };
+            return root;
+        };
 
-    $scope.openCreateDialog = function (operation) {
+        $scope.getModelLeaf = function(path) {
+            var segs = path.split('.');
+            return segs[segs.length-1];
+        } ;
 
-        if (operation === 'create') {
-            $scope.newObservation = {
-                "resourceType" : "Observation",
-                "code" :
-                {
-                    "coding" :
-                        [
-                            {
-                                "system" : "http://loinc.org",
-                                "code" : "",
-                                "display" : ""
-                            }
-                        ]
-                },
-                "valueQuantity" :
-                {
-                    "value" : "",
-                    "unit" : "",
-                    "code" : "mg/dL"
-                },
-                "prettyDate" : $filter('date')(new Date(), 'MM/dd/yyyy HH:mm'),
-                "status" : "final"
-            };
-        } else {
-            $scope.newObservation = $scope.selectedObservation;
-        }
+        /**
+         *
+         *      SELECTION AND NAVIGATION
+         *
+         **/
+        $scope.selectResourceInstance = function(resource) {
+            $scope.resourceInstanceList = $scope.resourceInstanceList.filter(function( obj ) {
+                obj.isSelected = (obj === resource);
+                return true;
+            });
 
-        var modalInstance = $uibModal.open({
-            animation: true,
-            templateUrl: 'js/templates/createObservation.html',
-            controller: 'ModalInstanceCtrl',
-            size:'lg',
-            resolve: {
-                newObservation: function () {
-                    return $scope.newObservation;
+            $scope.selectedResourceInstance = angular.copy(resource);
+            $$('detailView').show();
+        };
+
+        $scope.selectResourceType = function() {
+            var selectedId = $$("resGroupListId").getSelectedId();
+            var result = $.grep($scope.resourceTypeList, function(e){ return e.id == selectedId; });
+            $scope.selectedResourceType = $scope.resourceTypeList[result[0].id];
+            $scope.selectedResourceTypeConfig = $scope.resourceTypeConfigList[result[0].id];
+            rebuildResourceTable($scope.selectedResourceType.pageData);
+            $scope.showPageButtons();
+            $scope.showSearchBar();
+            $scope.$apply();
+        };
+
+        $scope.requestUpdateResource = function() {
+            // TODO: validate 
+            updateResource();
+        };
+
+        $scope.requestDeleteResource = function() {
+
+            webix.confirm({
+                title:"Delete " + $scope.selectedResourceInstance.resourceType,
+                ok:"Yes",
+                cancel:"No",
+                type:"confirm-error",
+                text:"Are you sure you want to delete?",
+                callback:function(result){ //setting callback
+                    if (result == true) {
+                        deleteResource();
+                    }
                 }
+            });
+        };
+
+        $scope.openCreateDialog = function (operation) {
+
+            if (operation === 'create') {
+                $scope.newResource = populateResourceTemplateDefaults();
+            } else {
+                $scope.newResource = $scope.selectedResourceInstance;
             }
-        });
 
-        modalInstance.result.then(function (newObservation) {
-            $scope.createNewResource(newObservation);
-        }, function () {
-        });
-    };
-
-    $scope.openWebixCreateDialog = function(operation) {
-        var createObsWin = webix.ui({
-            view: 'window',
-            head: 'Create Observation',
-            width:700,
-            modal: true,
-            position: 'center',
-            body: {
-                view: 'form',
-                width:700,
-                elements: [
-                    {
-                        margin: 10,
-                        cols: [
-                            {
-                                rows: [
-                                    { view: 'text', label: 'Observation', name: 'obsDisplay', id: 'obsDisplay',labelWidth: "110", invalidMessage: "Observation display can not be empty" },
-                                    { view: 'text', label: 'Code', name: 'obsCode', id: 'obsCode',labelWidth: "110", invalidMessage: "Code can not be empty" },
-                                    { view: 'text', label: 'Value', name: 'obsValue', id: 'obsValue', labelWidth: "110", invalidMessage: "Value must be a number" },
-                                    { view: 'combo', label: 'Status', id: 'obsStatus',labelWidth: "110" , value:"final",
-                                        options: ["final", "registered", "preliminary", "amended","cancelled", "entered-in-error", "unknown"]
-                                    }
-                                ]
-                            },
-                            {
-                                rows: [
-                                    { view: 'datepicker', label: 'Effective Date', id: 'obsDate',labelWidth: "110", timepicker:true },
-                                    { view: 'text', label: 'System', name: 'obsSystem', id: 'obsSystem',labelWidth: "110", invalidMessage: "System can not be empty" },
-                                    { view: 'text', label: 'Units', name: 'obsUnits', id: 'obsUnits',labelWidth: "110", invalidMessage: "Units can not be empty" }
-                                ]
-                            }
-                        ]
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'js/templates/createModal.html',
+                controller: 'ModalInstanceCtrl',
+                size:'lg',
+                resolve: {
+                    newResource: function () {
+                        return angular.copy($scope.newResource);
                     },
-                    {
-                        margin: 10,
-                        cols: [
-                            {},
-                            {
-                                view: 'button', value: 'Create', height:40, width:100, align:"right",
-                                click:function(){
-                                    var form = this.getParentView().getParentView();
-                                    if (form.validate()){
-                                        this.getTopParentView().hide();
-                                        $scope.createResource();
-                                    }
-
-                                }
-                            },
-                            {
-                                view: 'button', value: 'Cancel', height:40, width:100, align:"right",
-                                click: function (elementId, event) {
-                                    this.getTopParentView().hide();
-                                }
-                            }
-                        ]
+                    selectedResourceTypeConfig: function () {
+                        return $scope.selectedResourceTypeConfig;
                     }
-
-                ],
-                rules:{
-//                    "obsValue":function(value){
-//                        return !value || webix.rules.isNumber(value)
-//                    },
-                    "obsValue": webix.rules.isNumber,
-                    "obsDisplay": webix.rules.isNotEmpty,
-                    "obsCode": webix.rules.isNotEmpty,
-                    "obsUnits": webix.rules.isNotEmpty,
-                    "obsSystem": webix.rules.isNotEmpty
                 }
-            },
-            move: true
-
-        });
-        if (operation === 'create') {
-            $$('obsDate').setValue(new Date());
-        } else {
-
-            $$('obsDisplay').setValue($scope.selectedObservation.code.coding[0].display);
-            $$('obsDate').setValue(new Date($scope.selectedObservation.prettyDate));
-            $$('obsCode').setValue($scope.selectedObservation.code.coding[0].code);
-            $$('obsSystem').setValue($scope.selectedObservation.code.coding[0].system);
-            $$('obsValue').setValue($scope.selectedObservation.valueQuantity.value);
-            $$('obsUnits').setValue($scope.selectedObservation.valueQuantity.unit);
-            $$('obsStatus').setValue($scope.selectedObservation.status);
-
-        }
-        createObsWin.show();
-    };
-
-    $scope.createNewResource = function(newObservation) {
-
-        var newObs = formatJSONTemplate('{ \
-            "resourceType" : "Observation",\
-            "code" :\
-            {\
-                "coding" :\
-                    [\
-                        {\
-                            "system" : "{3}",\
-                            "code" : "{2}",\
-                            "display" : "{0}"\
-                        }\
-                    ]\
-            },\
-            "valueQuantity" :\
-            {\
-                "value" : {4},\
-                "unit" : "{5}",\
-                "code" : "mg/dL"\
-            },\
-            "effectiveDateTime" : "{1}",\
-            "status" : "{6}",\
-            "subject" :\
-            {\
-                "reference" : "Patient/{7}"\
-            }\
-        }',
-            newObservation.code.coding[0].display,
-            new Date(newObservation.prettyDate).toISOString(),
-            newObservation.code.coding[0].code,
-            newObservation.code.coding[0].system,
-            newObservation.valueQuantity.value,
-            newObservation.valueQuantity.unit,
-            newObservation.status,
-            $scope.patient.id);
-
-        $scope.smart.api.create({type: "Observation", data: newObs})
-            .done(function(){
-                queryObservationData($scope.smart);
-                webix.message("Observation Saved");
-            }).fail(function(){
-                webix.message({ type:"error", text:"Observation failed to Save" });
-                console.log("failed to create observation", arguments);
             });
-    };
 
-    $scope.createResource = function() {
-
-        var newObs = formatJSONTemplate('{ \
-            "resourceType" : "Observation",\
-            "code" :\
-            {\
-                "coding" :\
-                    [\
-                        {\
-                            "system" : "{3}",\
-                            "code" : "{2}",\
-                            "display" : "{0}"\
-                        }\
-                    ]\
-            },\
-            "valueQuantity" :\
-            {\
-                "value" : {4},\
-                "unit" : "{5}",\
-                "code" : "mg/dL"\
-            },\
-            "effectiveDateTime" : "{1}",\
-            "status" : "{6}",\
-            "subject" :\
-            {\
-                "reference" : "Patient/{7}"\
-            }\
-        }',
-            $$('obsDisplay').getValue(),
-            new Date($$('obsDate').getValue()).toISOString(),
-            $$('obsCode').getValue(),
-            $$('obsSystem').getValue(),
-            $$('obsValue').getValue(),
-            $$('obsUnits').getValue(),
-            $$('obsStatus').getValue(),
-            $scope.patient.id);
-
-        $scope.smart.api.create({type: "Observation", data: newObs})
-            .done(function(){
-                queryObservationData($scope.smart);
-                webix.message("Observation Saved");
-            }).fail(function(){
-                webix.message({ type:"error", text:"Observation failed to Save" });
-                console.log("failed to create observation", arguments);
+            modalInstance.result.then(function (newResource) {
+                createResource(newResource);
+            }, function () {
             });
-    };
+        };
 
-    $scope.updateResource = function() {
-        var modifiedResource = angular.copy($scope.selectedObservation);
-        delete modifiedResource.meta;
-        modifiedResource.effectiveDateTime = new Date(modifiedResource.prettyDate).toISOString();
-        delete modifiedResource.prettyDate;
+        $scope.requestResourceSearch = function() {
+            // TODO: build search string
+            searchResourceInstances();
+        };
 
-        $scope.smart.api.update({type: "Observation", data: JSON.stringify(modifiedResource), id: modifiedResource.id})
-            .done(function(){
-                queryObservationData($scope.smart);
-                webix.message("Observation Saved");
-            }).fail(function(){
-                webix.message({ type:"error", text:"Observation failed to Save" });
-                console.log("failed to create observation", arguments);
-            });
-    };
-
-    $scope.deleteResource = function() {
-        var selected = $$("obsList").getSelectedId();
-        $scope.smart.api.delete({type: "Observation", id: selected})
-            .done(function(){
-                queryObservationData($scope.smart);
-                webix.message("Observation Deleted");
-            }).fail(function(){
-                webix.message({ type:"error", text:"Observation failed to Delete" });
-                console.log("failed to create observation", arguments);
-            });
-    };
-
-    function formatJSONTemplate(format) {
-        var args = Array.prototype.slice.call(arguments, 1);
-        return format.replace(/{(\d+)}/g, function(match, number) {
-            return typeof args[number] != 'undefined'
-                ? args[number]
-                : match
-                ;
-        });
-    }
-
-    $scope.getNextObsPage = function(pageNum, obsLastResult) {
-        var deferred = $.Deferred();
-        $.when($scope.smart.patient.api.nextPage({bundle: obsLastResult.data}))
-        .done(function(obsNextResult){
-                var observations = [];
-                var obsListFinal = [];
-                obsNextResult.data.entry.forEach(function(obs){
-                    observations.push(obs.resource);
+        $scope.pageResourceInstanceList = function(lastResult, direction) {
+            getNextOrPrevPage(lastResult, direction)
+                .done(function(resourceList, pageResult){
+                    $scope.selectedResourceType.pageData = resourceList;
+                    $scope.selectedResourceType.searchObj = pageResult;
+                    rebuildResourceTable(resourceList);
                 });
-                if(observations){
-                    observations = $filter('orderBy')(observations,"effectiveDateTime");
-                }
-                angular.forEach(observations, function (value) {
-                    if (value.valueQuantity === undefined) {
-                        value.valueQuantity = {};
-                        value.valueQuantity.unit ="";
-                        value.valueQuantity.value="";
-                    }
-                    value.prettyDate = $filter('date')(new Date(value.effectiveDateTime), 'MM/dd/yyyy HH:mm');
-                    obsListFinal.push(value);
-                });
-                $scope.$apply();
-                deferred.resolve(obsListFinal, pageNum, obsNextResult);
-            });
-        return deferred;
-    };
 
-    function hasNext(obsSearchResult) {
-        var hasNextLink = false;
-        obsSearchResult.data.link.forEach(function(link) {
-            if (link.relation == "next") {
-                hasNextLink = true;
+        };
+
+        function rebuildResourceTable(resourceList) {
+            while ($scope.resourceInstanceList.length > 0) {
+                $scope.resourceInstanceList.pop();
             }
-        });
-        return hasNextLink;
-    }
-
-    function calculatePages() {
-        var pageCnt = Math.floor($scope.obsSearchResult.data.total / 50);
-        if (($scope.obsSearchResult.data.total % 50) != 0) {
-            pageCnt++;
+            angular.forEach(resourceList, function (value) {
+                $scope.resourceInstanceList.push(value);
+            });
+            $scope.selectResourceInstance($scope.resourceInstanceList[0]);
+            $scope.$apply();
         }
-        $scope.pages.push({pageNum: 1, data: angular.copy($scope.observationList)});
-        for (var i = 2; i <= pageCnt; i++) {
-            $scope.pages.push({pageNum: i, data: []});
+
+        function calculatePages(searchResult) {
+            var pageCnt = Math.floor(searchResult.data.total / 50);
+            if ((searchResult.data.total % 50) != 0) {
+                pageCnt++;
+            }
+            return pageCnt;
         }
-        $scope.selection.selectedPage = $scope.pages[0];
-    }
 
-    function getAllPages(pageNum, nextLastResult) {
-        $scope.getNextObsPage(pageNum, nextLastResult)
-            .done(function(obsList, pageNum, nextPageResult){
-                $scope.pages[pageNum].data = obsList;
-                if(hasNext(nextPageResult)) {
-                   getAllPages(++pageNum, nextPageResult)
+        /**
+         *
+         *      RESOURCE BUILDER HELPERS
+         *
+         **/
+        function populateResourceTemplate(resource) {
+            var args = [];
+
+            angular.forEach($scope.selectedResourceTypeConfig.displayValues, function (value) {
+
+                var newValue = $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ];
+                if (value.type === "date") {
+                    newValue = new Date(newValue).toISOString();
                 }
+                args.push(newValue);
             });
-    }
+            return args;
+        }
 
-    function queryPatient(){
-        $.when($scope.smart.patient.read())
-            .done(function(patient){
-                angular.forEach(patient.name[0].given, function (value) {
-                    $scope.patient.name = $scope.patient.name + ' ' + String(value);
-                });
-                angular.forEach(patient.name[0].family, function (value) {
-                    $scope.patient.name = $scope.patient.name + ' ' + value;
-                });
-                $scope.patient.sex = patient.gender;
-                $scope.patient.dob = patient.birthDate;
-                $scope.patient.id  = patient.id;
+        function populateResourceTemplateDefaults() {
+            var newResource = angular.copy($scope.selectedResourceTypeConfig.resourceTemplate);
+
+            angular.forEach($scope.selectedResourceTypeConfig.displayValues, function (value) {
+                var newValue = value.default;
+                if (value.type === "date") {
+                    newValue = $filter('date')(new Date(), 'MM/dd/yyyy HH:mm');
+                }
+                $scope.getModelParent(newResource, value.path)[ $scope.getModelLeaf(value.path) ] = newValue;
             });
-    }
+            return newResource;
+        }
 
-    function getAllResources(index, resources) {
-        $scope.queryObservationData(index, resources)
-            .done(function(obsList, index, nextResult){
-                $scope.resourceList[index].data = obsList;
-                if(index < $scope.resourceConfig.length) {
-                    getAllPages(++index, nextResult)
-                }
+        function formatJSONTemplateWithArgs(format, args) {
+            return format.replace(/{(\d+)}/g, function(match, number) {
+                return typeof args[number] != 'undefined'
+                    ? args[number]
+                    : match
+                    ;
             });
-    }
+        }
 
-    function queryObservationData() {
-        var deferred = $.Deferred();
+        function formatJSONTemplate(format) {
+            var args = Array.prototype.slice.call(arguments, 1);
+            return format.replace(/{(\d+)}/g, function(match, number) {
+                return typeof args[number] != 'undefined'
+                    ? args[number]
+                    : match
+                    ;
+            });
+        }
 
-        $.when($scope.smart.patient.api.search({type: "Observation", count: 50}))
-            .done(function(obsSearchResult){
-                $scope.obsSearchResult = obsSearchResult;
-                var observations = [];
-                obsSearchResult.data.entry.forEach(function(obs){
-                    observations.push(obs.resource);
+        function buildQueryString(resourceIndex, searchParams) {
+            var queryString = "";
+            angular.forEach(searchParams, function (value) {
+
+            });
+
+            return queryString;
+        }
+
+        /**
+         *
+         *      FHIR SERVICE API CALLS
+         *
+         **/
+        function searchResourceInstances(){
+            var searchParams = $scope.selectedResourceTypeConfig.searchParams;
+            if ($scope.enteredSearch !== undefined && $scope.enteredSearch !== "") {
+                var queryTerm = {};
+                var strName = searchParams[0].name + ":" + searchParams[0].modifier;
+                queryTerm[strName] =  $scope.enteredSearch;
+                queryResourceInstances($scope.selectedResourceType.index, queryTerm)
+            } else {
+                queryResourceInstances($scope.selectedResourceType.index)
+            }
+        }
+
+        function createResource(newResource) {
+
+            var args = populateResourceTemplate(newResource);
+            args.push($scope.patient.id);
+            var populatedResource = formatJSONTemplateWithArgs(JSON.stringify($scope.selectedResourceTypeConfig.resourceTemplate), args)
+
+            $scope.smart.api.create({type: newResource.resourceType, data: populatedResource})
+                .done(function(){
+                    queryResourceInstances($scope.selectedResourceType.index);
+                    webix.message(newResource.resourceType + " Saved");
+                }).fail(function(){
+                    webix.message({ type:"error", text: newResource.resourceType + " failed to Save" });
+                    console.log("failed to create " + newResource.resourceType, arguments);
                 });
-                if(observations){
-                    $scope.values = $filter('orderBy')(observations,"effectiveDateTime");
-                }
+        }
 
-                while ($scope.observationList.length > 0) {
-                    $scope.observationList.pop();
-                }
+        function updateResource () {
+            var modifiedResource = angular.copy($scope.selectedResourceInstance);
+            delete modifiedResource.meta;
 
-                $$("obsList").clearAll();
-                //Hack because I can't figure out how to get webix to ignore
-                //missing data
-                angular.forEach($scope.values, function (value) {
-                    if (value.valueQuantity === undefined) {
-                        value.valueQuantity = {};
-                        value.valueQuantity.unit ="";
-                        value.valueQuantity.value="";
+            $scope.smart.api.update({type: modifiedResource.resourceType, data: JSON.stringify(modifiedResource), id: modifiedResource.id})
+                .done(function(){
+                    queryResourceInstances($scope.selectedResourceType.index);
+                    webix.message(modifiedResource.resourceType + " Saved");
+                }).fail(function(){
+                    webix.message({ type:"error", text:modifiedResource.resourceType + " failed to Save" });
+                    console.log("failed to create " + modifiedResource.resourceType, arguments);
+                });
+        }
+
+        function deleteResource() {
+            $scope.smart.api.delete({type: $scope.selectedResourceInstance.resourceType, id: $scope.selectedResourceInstance.id})
+                .done(function(){
+                    queryResourceInstances($scope.selectedResourceType.index);
+                    webix.message($scope.selectedResourceInstance.resourceType + " Deleted");
+                }).fail(function(){
+                    webix.message({ type:"error", text:$scope.selectedResourceInstance.resourceType + " failed to Delete" });
+                    console.log("failed to create " + $scope.selectedResourceInstance.resourceType, arguments);
+                });
+        }
+
+        function getNextOrPrevPage(lastResult, direction) {
+            var deferred = $.Deferred();
+            $.when($scope.smart.patient.api[direction]({bundle: lastResult.data}))
+            .done(function(pageResult){
+                    var resources = [];
+                    var resListFinal = [];
+                    pageResult.data.entry.forEach(function(resource){
+                        resources.push(resource.resource);
+                    });
+                    if(resources){
+                        resources = $filter('orderBy')(resources,"effectiveDateTime");
                     }
-                    value.prettyDate = $filter('date')(new Date(value.effectiveDateTime), 'MM/dd/yyyy HH:mm');
-                    $$("obsList").add(value);
-                    $scope.observationList.push(value);
-                });
-
-                $$("resList").clearAll();
-                $scope.resourceList.pop();
-                $scope.resourceList.push(JSON.parse('{ "id":"1", "resource": "Observation", ' +
-                    '"count": "' + obsSearchResult.data.total + '"}'));
-                $$("resList").add($scope.resourceList[0]);
-                $$("resList").select($$("resList").getFirstId());
-                $$("obsList").select($$("obsList").getFirstId());
-
-                $$("resList").refresh();
-                $$("obsList").refresh();
-                $scope.pages = [];
-                calculatePages();
-                getAllPages(1, $scope.obsSearchResult);
-
-                deferred.resolve();
-            });
-        return deferred;
-    }
-
-    FHIR.oauth2.ready(function(smart){
-        $scope.smart = smart;
-        queryPatient(smart);
-        queryObservationData(smart)
-            .done(function(){
-                webix.ready(function() {
-//                    $$("detailView").hide();
-                    $$("resList").attachEvent("onAfterLoad", function(){
-                        $$("resList").select($$("resList").getFirstId());
+                    angular.forEach(resources, function (value) {
+                        if (value.valueQuantity === undefined) {
+                            value.valueQuantity = {};
+                            value.valueQuantity.unit ="";
+                            value.valueQuantity.value="";
+                        }
+                        resListFinal.push(value);
                     });
-                    $$("obsList").attachEvent("onAfterLoad", function(){
-                        $$("obsList").select($$("obsList").getFirstId());
-                    });
+                    deferred.resolve(resListFinal, pageResult);
                 });
-                $scope.$digest();
+            return deferred;
+        }
+
+        function queryPatient(){
+            $.when($scope.smart.patient.read())
+                .done(function(patient){
+                    $scope.patient = {name:""};
+                    angular.forEach(patient.name[0].given, function (value) {
+                        $scope.patient.name = $scope.patient.name + ' ' + String(value);
+                    });
+                    angular.forEach(patient.name[0].family, function (value) {
+                        $scope.patient.name = $scope.patient.name + ' ' + value;
+                    });
+                    $scope.patient.sex = patient.gender;
+                    $scope.patient.dob = patient.birthDate;
+                    $scope.patient.id  = patient.id;
+                });
+        }
+
+        function queryResourceInstances(resourceIndex, searchValue) {
+            var deferred = $.Deferred();
+
+            var searchParams = {type: $scope.resourceTypeConfigList[resourceIndex].resource, count: 50};
+            if (searchValue !== undefined) {
+                searchParams.query = searchValue;
+            }
+
+            $.when($scope.smart.patient.api.search(searchParams))
+                .done(function(resourceSearchResult){
+                    var resourceResultsFinal = [];
+                    var resourceResults = [];
+                    if (resourceSearchResult.data.entry) {
+                        resourceSearchResult.data.entry.forEach(function(entry){
+                            resourceResults.push(entry.resource);
+                        });
+                    }
+
+                    //TODO Move Resource Specific Initialization out
+                    if(resourceResults){
+                        resourceResults = $filter('orderBy')(resourceResults,"effectiveDateTime");
+                    }
+
+                    //Hack because I can't figure out how to get webix to ignore
+                    //missing data
+                    angular.forEach(resourceResults, function (value) {
+                        if (value.valueQuantity === undefined) {
+                            value.valueQuantity = {
+                                "unit" : "",
+                                "value" : ""
+                            };
+                        }
+                        resourceResultsFinal.push(value);
+                    });
+
+                    var resourceType = JSON.parse('{ "id":"' + resourceIndex + '", "resourceType": "' + $scope.resourceTypeConfigList[resourceIndex].resource + '", ' +
+                        '"count": "' + resourceSearchResult.data.total + '"}');
+
+                    if ($scope.resourceTypeList.length === resourceIndex) {
+                        $scope.resourceTypeList.push(resourceType);
+                    } else {
+                        $scope.resourceTypeList[resourceIndex] = resourceType;
+                    }
+
+                    var resGroup = $$("resGroupListId").getItem(resourceIndex);
+                    if (typeof resGroup === "undefined") {
+                        $$("resGroupListId").add(resourceType);
+                    }else{
+                        $$("resGroupListId").updateItem(resourceIndex, resourceType);
+                    }
+
+                    $scope.resourceTypeList[resourceIndex].index = resourceIndex;
+                    $scope.resourceTypeList[resourceIndex].pageData = resourceResultsFinal;
+                    $scope.resourceTypeList[resourceIndex].pageCount = calculatePages(resourceSearchResult);
+                    $scope.resourceTypeList[resourceIndex].searchObj = resourceSearchResult;
+                    if (resourceIndex === $scope.selectedResourceType.index) {
+                        $$("resGroupListId").refresh();
+                        rebuildResourceTable(resourceResultsFinal);
+                        $scope.showPageButtons();
+                        $scope.showSearchBar();
+                    }
+                    deferred.resolve(resourceResultsFinal, resourceIndex);
+                });
+            return deferred;
+        }
+
+        function getAllResources(index) {
+            queryResourceInstances(index)
+                .done(function(resourceList, index){
+                    $scope.resourceTypeList[index].pageData = angular.copy(resourceList);
+                    if(++index < $scope.resourceTypeConfigList.length) {
+                        getAllResources(index);
+                    }
+                });
+        }
+
+        /**
+         *
+         *      FHIR SERVICE OAUTH2 AUTHENTICATION & APP INITIALIZATION
+         *
+         **/
+        FHIR.oauth2.ready(function(smart){
+            $scope.smart = smart;
+            $terminologyService.getObservationCodesValueSetId();
+            queryPatient();
+            $resourceJson.success(function(resources){
+                $scope.resourceTypeConfigList = resources;
+                queryResourceInstances(0)
+                    .done(function(){
+                        webix.ready(function() {
+                            $$("detailView").hide();
+                            $$("searchBar").hide();
+                            $$("pageButtons").hide();
+                            $$("resGroupListId").attachEvent("onAfterLoad", function(){
+                                $$("resGroupListId").select($$("resGroupListId").getFirstId());
+                            });
+                        });
+                        $scope.$digest();
+                    });
+                getAllResources(1);
             });
-        $terminologyService.getObservationCodesValueSetId();
-    });
+        });
 
-}]).controller('ModalInstanceCtrl',['$scope', '$uibModalInstance', "$http", "$terminologyService", "newObservation",
-    function ($scope, $uibModalInstance, $http, $terminologyService, newObservation) {
+}]).controller('ModalInstanceCtrl',['$scope', '$uibModalInstance', "$http", "$terminologyService", "newResource", "selectedResourceTypeConfig",
+    function ($scope, $uibModalInstance, $http, $terminologyService, newResource, selectedResourceTypeConfig) {
 
-    $scope.newObservation = newObservation;
+        $scope.selectedResourceInstance = newResource;
+        $scope.selectedResourceTypeConfig = selectedResourceTypeConfig;
 
-    $scope.getValueSetExpansion = $terminologyService.getValueSetExpansion;
+        $scope.getValueSetExpansion = function(val) {
+            return $terminologyService.getValueSetExpansion(val);
+        };
 
-    $scope.create = function (newObsResult) {
-        $uibModalInstance.close(newObsResult);
-    };
+        $scope.create = function (newResource) {
+            $uibModalInstance.close(newResource);
+        };
 
-    $scope.cancel = function () {
-        $uibModalInstance.dismiss('cancel');
-    };
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
 
-    $scope.setCoding = function(item, model, label) {
-        $scope.newObservation.code.coding[0] = item;
-    };
-}]);
+        $scope.getModelParent = function(obj,path) {
+            var segs = path.split('.');
+            var root = obj;
+
+            while (segs.length > 1) {
+                var pathStep = segs.shift();
+                if (typeof root[pathStep] === 'undefined') {
+                    root[pathStep] = {};
+                }
+                root = root[pathStep];
+            }
+            return root;
+        };
+
+        $scope.getModelLeaf = function(path) {
+            var segs = path.split('.');
+            return segs[segs.length-1];
+        };
+
+    }]);

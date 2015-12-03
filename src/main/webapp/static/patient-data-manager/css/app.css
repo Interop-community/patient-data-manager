@@ -97,6 +97,16 @@ td {
     color: #a9a9a9;
 }
 
+.float-right-dark-btn {
+    cursor:pointer;
+    float:right;
+    border: none;
+}
+.float-right-dark-btn:hover{
+    /*font-weight:bold;*/
+    color: #a9a9a9;
+}
+
 .form-btn {
     height: 35px;
     width: 100px;
@@ -152,8 +162,26 @@ td {
     background-clip: padding-box;
     z-index: 1051;
 }
+.pager_item, .pager_item_selected {
+    padding: 0 6px;
+    text-align: center;
+    height: 100%;
+    width: auto;
+    border: 1px solid #ddd;
+    margin: 0 2px;
+    cursor: pointer;
+    background-color: #fff;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    font-family: 'PT Sans',Tahoma;
+    font-size: 15px;
+    -webkit-border-radius: 6px;
+    -moz-border-radius: 6px;
+    border-radius: 6px;
 
-.webix_pager_item_selected {
+}
+.pager_item_selected {
     font-size: 15px;
     padding: auto 6px;
     font-family: 'PT Sans',Tahoma;
@@ -166,10 +194,11 @@ td {
     box-shadow: none;
     float:left;
 }
-.webix_pager_item {
+.pager_item {
     padding: auto 6px;
     font-family: 'PT Sans',Tahoma;
     border: 1px solid #3498db;
+    width:auto;
     outline: 0;
     color: #fff;
     background: #3498db;
@@ -177,6 +206,203 @@ td {
     font-size: 15px;
     float:left;
 }
+
+.editor-label {
+    float: left;
+    width: 200px;
+}
+
+.editor-field {
+    margin-left:200px;
+    margin-right:50px;
+}
+
+.editor-field input {
+    float: left;
+    width: 100%;
+}
+
+.dynamic-form-label {
+    width: 15%;
+    float: left;
+    position: relative;
+    /*text-align: right;*/
+    min-height: 1px;
+    padding: 5px 5px 5px;
+    display: inline-block;
+    margin-bottom: 5px;
+    font-weight: 700;
+}
+.dynamic-form-label-input {
+    width: 35%;
+    float: left;
+    position: relative;
+    display: inline-block;
+    min-height: 1px;
+    padding: 5px 5px 5px;
+}
+.invalid-inp_bottom_label {
+    font-size: 13px;
+    color: #fd595f;
+}
+.webix_list .webix_list_item.webix_selected {
+    border-bottom: 1px solid #ebebeb;
+    padding: 2px 10px;
+}
+.webix_list_item.webix_selected {
+    color: #fff;
+    background: #27ae60;
+}
+.webix_selected {
+    background: #27ae60;
+    color: #fff;
+}
+.webix_list_item {
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    padding: 2px 10px;
+    line-height: 29px;
+    cursor: pointer;
+    border-bottom: 1px solid #ebebeb;
+    text-align: left;
+    border-color: #ebebeb;
+}
+.form-footer {
+    /*margin-top: 6px;*/
+    padding: 6px 6px 20px;
+    text-align: right;
+/*border-top: 1px solid #e5e5e5;*/
+}
+
+.table-striped tbody tr.st-selected td,
+.st-selected{
+    background-color: #27ae60;
+    color: #fff;
+}
+
+.scrollableContainer {
+    height: 400px;
+    position: relative;
+    padding-top: 37px;
+    margin-bottom: 30px;
+}
+.scrollableContainer .headerSpacer {
+    border: 1px solid #d5d5d5;
+    border-bottom-color: #bbb;
+    position: absolute;
+    height: 36px;
+    top: 0;
+    right: 0;
+    left: 0;
+}
+.scrollableContainer th .th-inner .title > span {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.scrollableContainer th .orderWrapper {
+    position: absolute;
+    top: 0;
+    right: 2px;
+    cursor: pointer;
+}
+.scrollArea {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 1px solid #d5d5d5;
+}
+.scrollArea table {
+    overflow-x: hidden;
+    overflow-y: auto;
+    margin-bottom: 0;
+    border: none;
+    border-collapse: separate;
+}
+.scrollArea table th {
+    padding: 0;
+    border: none;
+}
+.scrollArea table .th-inner {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    position: absolute;
+    top: 0;
+    height: 36px;
+    line-height: 36px;
+    padding: 0 8px;
+    border-left: 1px solid #ddd;
+}
+.scrollArea table tr th:first-child .th-inner {
+    border-left: none;
+}
+.scrollArea table .th-inner.condensed {
+    padding: 0 3px;
+}
+.scrollArea table tbody tr td:first-child {
+    border-left: none;
+}
+.scrollArea table tbody tr td:last-child {
+    border-right: none;
+}
+.scrollArea table tbody tr:first-child td {
+    border-top: none;
+}
+.scrollArea table tbody tr:last-child td {
+    border-bottom: 1px solid #ddd;
+}
+
+table .cr {
+    min-width: 30px;
+}
+
+
+.table1
+{ margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+    width:calc(100% - 17px);
+    height:5%;
+    text-align:left;
+}
+.table1 td
+{ border-collapse: collapse;
+    background-color: #EAEAEA;
+    border: 1px solid lightgrey;
+    padding-left: 3px;
+}
+#container
+{ overflow-y:auto;
+    height:20%;
+    width:100%;left:0;
+    right:0;
+    border-bottom:solid 1px red;
+}
+
+.table2
+{ margin: 0;
+    padding: 0;
+    border-collapse: collapse;
+    left:0;
+    right:0;
+    width:100%;
+    box-sizing: border-box;
+    table-layout: fixed;
+
+}
+.table2 tr
+{ height:30px;
+}
+.table2 td
+{
+
+    border: 1px solid lightgrey;
+    border-top:none;
+    border-right: 1px solid lightgrey;
+}
+
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {
 	display: none !important;

@@ -1,3 +1,3 @@
 'use strict';
 
-angular.module('pdmApp', ['ngAnimate', 'ui.bootstrap', 'webix', 'pdmApp.filters', 'pdmApp.services', 'pdmApp.controllers']);
+angular.module('pdmApp', ['ngAnimate', 'ui.bootstrap', 'webix', 'smart-table', 'scrollable-table', 'pdmApp.filters', 'pdmApp.services', 'pdmApp.controllers', 'pdmApp.directives']);

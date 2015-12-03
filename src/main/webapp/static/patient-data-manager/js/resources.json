@@ -1,5 +1,76 @@
 [
     {
-        "resource" : "Observation"
+        "resource" : "Observation",
+        "searchParams" : [
+            {
+                "name" :"code",
+                "modifier": "text"
+            }
+        ],
+        "displayValues" : [
+            {"type": "coded-display-typeahead", "name": "displayName", "label": "Display Name" , "required": true, "path": "code.coding.0.display", "default": "" },
+            {"type": "date", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "orderBy": true},
+            {"type": "coded-code-typeahead", "name": "code", "label": "Code" , "required": true, "path": "code.coding.0.code", "default": ""},
+            {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "code.coding.0.system", "default": "http://loinc.org"},
+            {"type": "text", "name": "value", "label": "Value" , "required": true, "path": "valueQuantity.value", "default": ""},
+            {"type": "text", "name": "units", "label": "Units" , "required": true, "path": "valueQuantity.unit", "default": ""},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["final", "registered", "preliminary", "amended","cancelled", "entered-in-error", "unknown"],
+                "path": "status", "default": "final"}
+        ],
+        "resourceTemplate" : {
+            "resourceType" : "Observation",
+            "code" :
+            {
+                "coding" :
+                        [
+                            {
+                                "system" : "{3}",
+                                "code" : "{2}",
+                                "display" : "{0}"
+                            }
+                        ]
+            },
+            "valueQuantity" :
+            {
+                "value" : "{4}",
+                "unit" : "{5}"
+            },
+            "effectiveDateTime" : "{1}",
+            "status" : "{6}",
+            "subject" :
+            {
+                "reference" : "Patient/{7}"
+            }
+        }
+    },
+    {
+        "resource" : "Appointment",
+        "displayValues" : [
+            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true},
+            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": ""},
+            {"type": "text", "name": "description", "label": "Description" , "required": true, "path": "description", "default": ""},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["proposed", "pending", "booked", "arrived","fulfilled", "cancelled", "noshow"],
+                "path": "status", "default": "proposed"}
+        ],
+        "resourceTemplate" : {
+            "resourceType" : "Appointment",
+            "start" : "{0}",
+            "type" : {
+                "text" : "{1}"
+            },
+            "description" : "{2}",
+            "status" : "{3}",
+            "participant" :
+                    [
+                        {
+                            "actor" :
+                            {
+                                "reference" : "Patient/{4}"
+                            }
+                        }
+                    ]
+        }
     }
 ]

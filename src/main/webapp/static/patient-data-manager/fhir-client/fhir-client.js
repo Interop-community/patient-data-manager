@@ -166,7 +166,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	            search: GET.and(resourceTypePath).and(pt.$WithPatient).and(query.$SearchParams).and($Paging).end(http),
 	            update: PUT.and(resourcePath).and(ReturnHeader).end(http),
 	            nextPage: GET.and(bundle.$$BundleLinkUrl("next")).end(http),
-	            prevPage: GET.and(bundle.$$BundleLinkUrl("prev")).end(http),
+	            prevPage: GET.and(bundle.$$BundleLinkUrl("previous")).end(http),
 	            resolve: GET.and(refs.resolve).end(http)
 	        }, adapter);
 

@@ -27,9 +27,11 @@
 
             .editor-field {
                 margin-left:200px;
+                margin-right:50px;
             }
 
             .editor-field input {
+                float: left;
                 width: 100%;
             }
         </style>
@@ -51,90 +53,39 @@
                 <p class="navbar-text">age <span class="title">{{patient.dob | age}}</span></p>
             </div>
 
-    <div id="mainCols" view="cols" resizeColumn=true type="wide" margin="10"> <!--Webix layout cols are initialized-->
-
-        <div view="list" id="resList" webix-data="resourceList" webix-event="onSelectChange = selectedResourceList()"
-             template="#resource# (#count#) <a href='#' class='float-right-btn'
+        <div id="mainCols" view="cols" resizeColumn=true type="wide" margin="10"> <!--Webix layout cols are initialized-->
+            <div view="list" id="resGroupListId" webix-data="resourceTypeList" webix-event="onSelectChange = selectResourceType()"
+             template="#resourceType# (#count#) <a href='#' class='float-right-btn'
                      onclick='openCreateDialog(this)'><i class='fa fa-plus-square-o fa-lg'></i></a>" autowidth=true select=1 width="200"></div>
-
-                <div view="resizer"></div>
-                <div view="rows" type="wide">
-                    <div height=45>
-                        <div class="editor-label"><label>Observations Filter: </label></div>
-                        <div class="editor-field"><input type="text" class="input-box form-control" ng-model="enteredFilter"/></div>
-                    </div>
-                    <div view="datatable" id="obsList" webix-data="observationList" select="row"
-                         resizeColumn=true webix-event="onSelectChange = selectedObservationList()" navigation=true>
-                        <div view="column" header="Observation" map="#code.coding[0].display#" width=300 sort="string"></div>
-                        <div view="column" header="Effective Date" map="#prettyDate#" width=200 sort="date"></div>
-                        <div view="column" header="Code" map="#code.coding[0].code#" width=100 sort="string"></div>
-                        <div view="column" header="System" map="#code.coding[0].system#" width=200></div>
-                        <div view="column" header="Value" map="#valueQuantity.value#" width=100 sort="int"></div>
-                        <div view="column" header="Units" map="#valueQuantity.unit#" width=100></div>
-                        <div view="column" header="Status" map="#status#" width=100 sort="string"></div>
-                    </div>
-                    <div id="paging_here" ng-init="selection = { selectedPage:  null }" height=32>
-                        <div class="webix_pager_item" ng-class="{webix_pager_item_selected: selection.selectedPage == page}"
-                             ng-click="selection.selectedPage = page; pageSelected(page)" ng-repeat="page in pages">{{page.pageNum}}</div>
-                    </div>
-                </div>
-            </div>
             <div view="resizer"></div>
-        <div view="tabview" id="detailView" height="270" tabMinWidth=200>
-            <div header="Details" tabwidth=100>
-                <div class="form-group" >
-                    <!--<div class="editor-label"><label>Observation:</label></div>-->
-                    <!--<div class="editor-field"><input type="text" class="input-box form-control" ng-model="selectedObservation.code.coding[0].display"/></div>-->
-
-                    <table>
-                        <tr><td>Observation:</td><td>
-                            <div class='typeahead'>
-                                <input type="text" class="form-control" ng-model="selectedObservation.code.coding[0].display" placeholder="Enter the Display Value"
-                                    uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue)" typeahead-loading="loadingValueSetDisplay"
-                                    typeahead-no-results="noResultsDisplay" typeahead-editable="false" typeahead-on-select="setCoding($item, $model, $label)">
-                                <i ng-show="loadingValueSetDisplay" class="glyphicon glyphicon-refresh"></i>
-                                <div ng-show="noResultsDisplay">
-                                    <i class="glyphicon glyphicon-remove"></i> No results  <!--{{resultsStatus}}-->
-                                </div>
-                            </div>
-                            </td>
-                            <td>Effective Date:</td><td><input type="text" class="form-control" ng-model="selectedObservation.prettyDate"></td></tr>
-
-                        <tr><td>Code:</td><td>
-                            <div class='typeahead'>
-                                <input type="text" class="form-control" ng-model="selectedObservation.code.coding[0].code" placeholder="Enter the Code Value"
-                                       uib-typeahead="coding.code for coding in getValueSetExpansion($viewValue)" typeahead-loading="loadingValueSet"
-                                       typeahead-no-results="noResults" typeahead-editable="false" typeahead-on-select="setCoding($item, $model, $label)">
-                                <i ng-show="loadingValueSet" class="glyphicon glyphicon-refresh"></i>
-                                <div ng-show="noResults">
-                                    <i class="glyphicon glyphicon-remove"></i> No results  <!--{{resultsStatus}}-->
-                                </div>
-                            </div>
-                        </td>
-                            <td>System:</td><td><input type="text" class="form-control" ng-model="selectedObservation.code.coding[0].system"></td></tr>
-
-                        <tr><td>Value:</td><td><input type="text" class="form-control" ng-model="selectedObservation.valueQuantity.value"></td>
-                            <td>Units:</td><td><input type="text" class="form-control" ng-model="selectedObservation.valueQuantity.unit"></td></tr>
-
-                        <tr><td>Status:</td><td><input type="text" class="form-control" ng-model="selectedObservation.status"></td></tr>
-                        <tr><td colspan="2"><table>
-                            <tr>
-                                <td><button class="webixbutton form-btn" ng-click="updateResource()">Update</button></td>
-                                <td><button class="webixbutton form-btn" ng-click="openCreateDialog('clone')">Clone</button></td>
-                                <td><button class="webixbutton form-btn" ng-click="requestDeleteResource()">Delete</button></td>
-                        </table></td></tr>
-                    </table>
+            <div view="rows" type="wide">
+                    <div id="searchBar" height=45 ng-show="selectedResourceTypeConfig.searchParams">
+                        <div class="editor-label"><label>Search {{selectedResourceTypeConfig.resource}} {{selectedResourceTypeConfig.searchParams[0].name}}</label></div>
+                        <div class="editor-field"><input type="text" class="input-box form-control" ng-model="enteredSearch"/></div>
+                        <a href='#' class='float-right-dark-btn' ng-click="requestResourceSearch()"><i class='fa fa-search fa-lg'></i></a>
+                    </div>
+                <div>
+                <div ng-include src="'js/templates/dynamicTable.html'"></div>
+                </div>
+                    <div id="pageButtons" ng-show="showPageButtons" height=32>
+                        <div class="pager_item" ng-show="hasLink(selectedResourceType.searchObj, 'previous')"
+                             ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'prevPage')">&lt; Prev</div>
+                        <div class="pager_item" ng-show="hasLink(selectedResourceType.searchObj, 'next')"
+                             ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'nextPage')">Next &gt;</div>
+                    </div>
+                <div view="resizer"></div>
+                <div id="detailView" height="270">
+                    <div ng-include src="'js/templates/dynamicForm.html'"></div>
+                    <div class="form-footer">
+                        <button class="webixbutton form-btn" ng-click="requestUpdateResource()">Update</button>
+                        <button class="webixbutton form-btn" ng-click="openCreateDialog('clone')">Clone</button>
+                        <button class="webixbutton form-btn" ng-click="requestDeleteResource()">Delete</button>
+                    </div>
                 </div>
             </div>
-            <div header="Revision History">
-                Revision History
-            </div>
-            <div header="Profiles">
-                Profiles Here
-            </div>
         </div>
 
-        </div>
+    </div>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
     <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
@@ -146,5 +97,8 @@
     <script src="js/services.js"></script>
     <script src="js/controllers.js"></script>
     <script src="js/filters.js"></script>
+    <script src="js/directives.js"></script>
+    <script src="third-party-libs/smart-table.js"></script>
+    <script src="third-party-libs/angular-scrollable-table.min.js"></script>
     </body>
 </html>
