@@ -1,6 +1,7 @@
 <div class="form-group">
     <div ng-repeat="attribute in selectedResourceTypeConfig.displayValues">
         <form name="form-fix-later" class="css-form" novalidate>
+
             <!-- TEXT FIELDS -->
             <div ng-if="attribute.type=='text'" class="form-group">
                 <label class="dynamic-form-label">{{attribute.label}}</label>
@@ -10,12 +11,14 @@
                 </div>
             </div>
 
-            <!-- DATE FIELDS -->
             <div ng-if="attribute.type=='date'" class="form-group">
                 <label class="dynamic-form-label">{{attribute.label}}</label>
                 <div class="dynamic-form-label-input">
-                    <input type="text" dynamic-name="attribute.name" ng-model="getModelParent(selectedResourceInstance, attribute.path)[ getModelLeaf(attribute.path) ]" id="{{attribute.name}}" class="form-control" required/>
-                    <span ng-show="{{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>
+                    <input type="datetime-local" class="form-control" id="{{attribute.name}}"
+                           required ng-model="getModelParent(selectedResourceInstance, attribute.path)[ getModelLeaf(attribute.path) ]"
+                           aria-describedby="dateErrorStatus" >
+                    <!--<span id="dateIcon" class="glyphicon form-control-feedback" aria-hidden="true"></span>-->
+                    <!--<span id="dateErrorStatus" class="sr-only">(success)</span>-->
                 </div>
             </div>
 
@@ -30,15 +33,15 @@
             <!-- TYPEAHEAD FIELDS -->
             <div ng-if="attribute.type=='coded-code-typeahead'" class="form-group">
                 <label class="dynamic-form-label">{{attribute.label}}</label>
-                <div class='typeahead-modal'>
+                <div class='typeahead'>
                     <div class="dynamic-form-label-input">
                         <input type="text" class="form-control" ng-model="getModelParent(selectedResourceInstance, attribute.path)[ getModelLeaf(attribute.path) ]" placeholder="Enter the Code Value"
-                               uib-typeahead="coding.code for coding in getValueSetExpansion($viewValue)" typeahead-loading="loadingValueSetDisplay"
-                               typeahead-no-results="noResultsDisplay" typeahead-editable="false" typeahead-on-select="selectedResourceInstance.code.coding[0] = $item">
-                        <i ng-show="loadingValueSetDisplay" class="glyphicon glyphicon-refresh"></i>
-                        <div ng-show="noResultsDisplay">
-                            <i class="glyphicon glyphicon-remove"></i> No results  <!--{{resultsStatus}}-->
-                        </div>
+                               uib-typeahead="coding.code for coding in getValueSetExpansion($viewValue, 1)" typeahead-loading="loadingValueSetDisplay"
+                               typeahead-no-results="noResultsDisplay" typeahead-on-select="selectedResourceInstance.code.coding[0] = $item"> <!--typeahead-editable="false"-->
+                        <!--<i ng-show="loadingValueSetDisplay" class="glyphicon glyphicon-refresh"></i>-->
+                        <!--<div ng-show="noResultsDisplay">-->
+                            <!--<i class="glyphicon glyphicon-remove"></i> No results  &lt;!&ndash;{{resultsStatus}}&ndash;&gt;-->
+                        <!--</div>-->
                     </div>
                 </div>
             </div>
@@ -46,15 +49,15 @@
             <!-- TYPEAHEAD FIELDS -->
             <div ng-if="attribute.type=='coded-display-typeahead'" class="form-group">
                 <label class="dynamic-form-label">{{attribute.label}}</label>
-                <div class='typeahead-modal'>
+                <div class='typeahead'>
                     <div class="dynamic-form-label-input">
                         <input type="text" class="form-control" ng-model="getModelParent(selectedResourceInstance, attribute.path)[ getModelLeaf(attribute.path) ]" placeholder="Enter the Display Value"
-                               uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue)" typeahead-loading="loadingValueSetDisplay"
-                               typeahead-no-results="noResultsDisplay" typeahead-editable="false" typeahead-on-select="selectedResourceInstance.code.coding[0] = $item">
-                        <i ng-show="loadingValueSetDisplay" class="glyphicon glyphicon-refresh"></i>
-                        <div ng-show="noResultsDisplay">
-                            <i class="glyphicon glyphicon-remove"></i> No results  <!--{{resultsStatus}}-->
-                        </div>
+                               uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue, 3)" typeahead-loading="loadingValueSetDisplay"
+                               typeahead-no-results="noResultsDisplay" typeahead-on-select="selectedResourceInstance.code.coding[0] = $item"> <!--typeahead-editable="false"-->
+                        <!--<i ng-show="loadingValueSetDisplay" class="glyphicon glyphicon-refresh"></i>-->
+                        <!--<div ng-show="noResultsDisplay">-->
+                            <!--<i class="glyphicon glyphicon-remove"></i> No results  &lt;!&ndash;{{resultsStatus}}&ndash;&gt;-->
+                        <!--</div>-->
                     </div>
                 </div>
             </div>
@@ -107,3 +110,4 @@
         </form>
     </div>
 </div>
+

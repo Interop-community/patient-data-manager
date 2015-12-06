@@ -1,0 +1,90 @@
+[
+    {
+        "resource" : "Observation",
+        "search" : {
+                "searchParams": [{
+                    "name" :"code",
+                    "modifier": "text",
+                    "codedURL" : "http://hl7.org/fhir/ValueSet/observation-codes"
+                }],
+                "sortParams": [{
+                    "name": "date",
+                    "modifier": "asc"
+                }]
+            },
+        "displayValues" : [
+            {"type": "coded-display-typeahead", "name": "displayName", "label": "Display Name" , "required": true, "path": "code.coding.0.display", "default": "" },
+            {"type": "date", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": ""},
+            {"type": "coded-code-typeahead", "name": "code", "label": "Code" , "required": true, "path": "code.coding.0.code", "default": ""},
+            {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "code.coding.0.system", "default": "http://loinc.org"},
+            {"type": "text", "name": "value", "label": "Value" , "required": true, "path": "valueQuantity.value", "default": ""},
+            {"type": "text", "name": "units", "label": "Units" , "required": true, "path": "valueQuantity.unit", "default": ""},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["final", "registered", "preliminary", "amended","cancelled", "entered-in-error", "unknown"],
+                "path": "status", "default": "final"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"}
+        ]
+    },
+    {
+        "resource" : "Appointment",
+        "search" : {
+            "searchParams": [{
+                "name" :"date"
+            }],
+            "sortParams": [{
+                "name": "date",
+                "modifier": "asc"
+            }]
+        },
+        "displayValues" : [
+            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": ""},
+            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": ""},
+            {"type": "text", "name": "description", "label": "Description" , "required": true, "path": "description", "default": ""},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["proposed", "pending", "booked", "arrived","fulfilled", "cancelled", "noshow"],
+                "path": "status", "default": "proposed"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "participant.actor.reference"}
+        ]
+    },
+    {
+        "resource" : "Schedule",
+        "displayValues" : [
+            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.0.text", "default": ""}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "actor.reference"}
+        ]
+    },
+    {
+        "resource" : "Slot",
+        "displayValues" : [
+            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true},
+            {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": ""},
+            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": ""},
+            {"type": "text", "name": "freeBusy", "label": "Free/Busy" , "required": true, "path": "freeBusyType", "default": ""},
+            {"type": "text", "name": "schedule", "label": "Schedule" , "required": true, "path": "schedule.reference", "default": ""}
+        ],
+        "references" : [
+            {"resource": "Schedule", "label": "Schedule", "path": "schedule.reference"}
+        ]
+    },
+    {
+        "resource" : "AppointmentResponse",
+        "displayValues" : [
+            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true},
+            {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": ""},
+            {"type": "text", "name": "participantType", "label": "Participant Type" , "required": true, "path": "participantType.0.text", "default": ""},
+            {"type": "text", "name": "appointment", "label": "Appointment" , "required": true, "path": "appointment.reference", "default": ""},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["proposed", "pending", "booked", "arrived","fulfilled", "cancelled", "noshow"],
+                "path": "participantStatus", "default": "proposed"}
+        ],
+        "references" : [
+            {"resource": "Appointment", "label": "Appointment", "path": "appointment.reference"}
+        ]
+    }
+]

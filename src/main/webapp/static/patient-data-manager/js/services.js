@@ -13,14 +13,18 @@ angular.module('pdmApp.services', []).factory('$terminologyService', function ($
     });
 
     // Any function returning a promise object can be used to load values asynchronously
-    terminologyService.getValueSetExpansion = function(val) {
-        return $http.get(terminologyServer + '/ValueSet/' + observationCodesId + '/$expand?filter=' + val, {
-            params: {}
-        }).then(function(response){
-                return response.data.expansion.contains.map(function(item){
-                    return item;
+    terminologyService.getValueSetExpansion = function(val, min) {
+        if (val.length >= min) {
+            return $http.get(terminologyServer + '/ValueSet/' + observationCodesId + '/$expand?filter=' + val, {
+                params: {}
+            }).then(function(response){
+                    if (response.data.expansion.contains !== undefined) {
+                        return response.data.expansion.contains.map(function(item){
+                            return item;
+                        });
+                    }
                 });
-            });
+        }
     };
 
     terminologyService.getObservationCodesValueSetId = function() {
@@ -37,5 +41,5 @@ angular.module('pdmApp.services', []).factory('$terminologyService', function ($
 
     return terminologyService;
 }).factory('$resourceJson', ['$http',function($http) {
-    return $http.get('js/resources.json');
+    return $http.get('config/resources.json');
 }]);

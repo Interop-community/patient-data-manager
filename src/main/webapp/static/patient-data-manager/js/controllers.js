@@ -15,6 +15,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         $scope.enteredSearch = '';
 
+        $scope.tableOffset = 410;
         $scope.getValueSetExpansion = $terminologyService.getValueSetExpansion;
 
         /**
@@ -22,23 +23,27 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          *      UI HELPERS
          *
          **/
+        $scope.setTableOffset = function(){
+            $scope.tableOffset = 410 +
+                ($$("searchBar").isVisible() ? 0 : -55) +
+                ($$("detailView").isVisible() ? 0 : -210) +
+                ($scope.showPageButtons() ? 0 : -32);
+        };
+
         $scope.showSearchBar = function(){
-            if ($scope.selectedResourceTypeConfig.searchParams) {
+            if (typeof $scope.selectedResourceTypeConfig.search !== 'undefined' && $scope.selectedResourceTypeConfig.search.searchParams) {
                 $$("searchBar").show();
             } else {
                 $$("searchBar").hide();
             }
+            $scope.setTableOffset();
         };
 
         $scope.showPageButtons = function(){
-            if ($scope.hasLink($scope.selectedResourceType.searchObj, 'previous') ||
-                $scope.hasLink($scope.selectedResourceType.searchObj, 'next')) {
-                $$("pageButtons").show();
-            } else {
-                $$("pageButtons").hide();
-            }
+            return ($scope.hasLink($scope.selectedResourceType.searchObj, 'previous') ||
+                $scope.hasLink($scope.selectedResourceType.searchObj, 'next'));
         };
-        
+
         $scope.hasLink = function (searchResult, linkRelation) {
             var hasLink = false;
             if (searchResult === undefined) {
@@ -54,9 +59,9 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         /**
-         * 
-         *      DYNAMIC UI BUILDER HELPERS 
-         * 
+         *
+         *      DYNAMIC UI BUILDER HELPERS
+         *
          **/
         $scope.getDynamicModel = function(resource, path) {
             var root = $scope.getModelParent(resource, path);
@@ -70,17 +75,22 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         $scope.getModelParent = function(obj,path) {
             var segs = path.split('.');
+            var rootParent = obj;
+            var parentStep = "";
             var root = obj;
-            if (root === undefined)
-                return {};
 
             while (segs.length > 1) {
                 var pathStep = segs.shift();
-                if (typeof root === 'undefined' || root === "")
-                    return {};
                 if (typeof root[pathStep] === 'undefined') {
-                    root[pathStep] = {};
+                    if (isNaN(pathStep)) {
+                        root[pathStep] = {};
+                    } else {
+                        rootParent[parentStep] = [{}];
+                        root = rootParent[parentStep];
+                    }
                 }
+                parentStep = pathStep;
+                rootParent = root;
                 root = root[pathStep];
             }
             return root;
@@ -98,19 +108,27 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          **/
         $scope.selectResourceInstance = function(resource) {
             $scope.resourceInstanceList = $scope.resourceInstanceList.filter(function( obj ) {
-                obj.isSelected = (obj === resource);
+                if (resource.isSelected) {
+                    obj.isSelected = (obj === resource);
+                }
                 return true;
             });
 
-            $scope.selectedResourceInstance = angular.copy(resource);
-            $$('detailView').show();
+            if (resource !== undefined && resource.isSelected) {
+                $scope.selectedResourceInstance = angular.copy(resource);
+                $$('detailView').show();
+            } else {
+                $scope.selectedResourceInstance = {};
+                $$('detailView').hide();
+            }
+            $scope.setTableOffset();
         };
 
         $scope.selectResourceType = function() {
             var selectedId = $$("resGroupListId").getSelectedId();
             var result = $.grep($scope.resourceTypeList, function(e){ return e.id == selectedId; });
-            $scope.selectedResourceType = $scope.resourceTypeList[result[0].id];
-            $scope.selectedResourceTypeConfig = $scope.resourceTypeConfigList[result[0].id];
+            $scope.selectedResourceType = $scope.resourceTypeList[result[0].index];
+            $scope.selectedResourceTypeConfig = $scope.resourceTypeConfigList[result[0].index];
             rebuildResourceTable($scope.selectedResourceType.pageData);
             $scope.showPageButtons();
             $scope.showSearchBar();
@@ -118,7 +136,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         $scope.requestUpdateResource = function() {
-            // TODO: validate 
+            // TODO: validate
             updateResource();
         };
 
@@ -139,11 +157,14 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         $scope.openCreateDialog = function (operation) {
-
+           var newResource;
             if (operation === 'create') {
-                $scope.newResource = populateResourceTemplateDefaults();
+                newResource = populateResourceTemplateDefaults($scope.selectedResourceTypeConfig);
             } else {
-                $scope.newResource = $scope.selectedResourceInstance;
+                newResource = angular.copy($scope.selectedResourceInstance);
+                delete newResource.meta;
+                delete newResource.isSelected;
+                delete newResource.id;
             }
 
             var modalInstance = $uibModal.open({
@@ -153,7 +174,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 size:'lg',
                 resolve: {
                     newResource: function () {
-                        return angular.copy($scope.newResource);
+                        return newResource;
                     },
                     selectedResourceTypeConfig: function () {
                         return $scope.selectedResourceTypeConfig;
@@ -167,9 +188,10 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
         };
 
-        $scope.requestResourceSearch = function() {
-            // TODO: build search string
-            searchResourceInstances();
+        $scope.requestResourceSearch = function(clearSearch) {
+            if (clearSearch)
+                $scope.enteredSearch = "";
+            searchResourceInstances(clearSearch);
         };
 
         $scope.pageResourceInstanceList = function(lastResult, direction) {
@@ -206,59 +228,101 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          *      RESOURCE BUILDER HELPERS
          *
          **/
-        function populateResourceTemplate(resource) {
-            var args = [];
-
+        function formatAttributesFromUIForFhir(resource) {
             angular.forEach($scope.selectedResourceTypeConfig.displayValues, function (value) {
-
                 var newValue = $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ];
                 if (value.type === "date") {
-                    newValue = new Date(newValue).toISOString();
+                    $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ] = new Date(newValue).toISOString();
                 }
-                args.push(newValue);
+                if (newValue === "" || newValue === undefined) {
+                    delete $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ];
+                }
             });
-            return args;
+            return resource;
         }
 
-        function populateResourceTemplateDefaults() {
-            var newResource = angular.copy($scope.selectedResourceTypeConfig.resourceTemplate);
+        function formatAttributesFromFhirForUI(resource, resourceTypeConfigIndex) {
+            var resourceConfig = $scope.selectedResourceTypeConfig;
+            if (resourceTypeConfigIndex !== undefined){
+                resourceConfig = $scope.resourceTypeConfigList[resourceTypeConfigIndex];
+            }
+            angular.forEach(resourceConfig.displayValues, function (value) {
+                var newValue = $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ];
+                if (typeof value === 'undefined') {
+
+                }
+                if (value.type === "date" && typeof newValue !== 'undefined') {
+                    var newDate = new Date(newValue);
+                    if (newValue.lastIndexOf("T00:00:00.000Z") != -1) {
+                        newDate.setHours(0,0,0,0);
+                    }
+                    $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ] = newDate;
+                }
+            });
+            return resource;
+        }
+
+        function buildResourceObjectFromConfig(selectedResourceTypeConfig) {
+            var template = {
+                resourceType: selectedResourceTypeConfig.resource
+            };
+            angular.forEach(selectedResourceTypeConfig.displayValues, function (value) {
+                $scope.getModelParent(template, value.path)[ $scope.getModelLeaf(value.path) ] = "";
+            });
+            angular.forEach(selectedResourceTypeConfig.references, function (value) {
+                $scope.getModelParent(template, value.path)[ $scope.getModelLeaf(value.path) ] = "";
+            });
+            return template;
+        }
+
+        function populateResourceTemplateDefaults(selectedResourceTypeConfig) {
+            var newResource = buildResourceObjectFromConfig(selectedResourceTypeConfig);
 
             angular.forEach($scope.selectedResourceTypeConfig.displayValues, function (value) {
                 var newValue = value.default;
                 if (value.type === "date") {
-                    newValue = $filter('date')(new Date(), 'MM/dd/yyyy HH:mm');
+                    newValue = new Date();
+                    newValue.setSeconds(0,0)
                 }
                 $scope.getModelParent(newResource, value.path)[ $scope.getModelLeaf(value.path) ] = newValue;
             });
+            newResource = addReferenceValues(newResource, "Patient", $scope.patient.id);
             return newResource;
         }
 
-        function formatJSONTemplateWithArgs(format, args) {
-            return format.replace(/{(\d+)}/g, function(match, number) {
-                return typeof args[number] != 'undefined'
-                    ? args[number]
-                    : match
-                    ;
+        function addReferenceValues(resource, type, refValue) {
+            angular.forEach($scope.selectedResourceTypeConfig.references, function (value) {
+                if (value.resource === type) {
+                    $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ] = type + "/" + refValue;
+                }
             });
+            return resource;
         }
 
-        function formatJSONTemplate(format) {
-            var args = Array.prototype.slice.call(arguments, 1);
-            return format.replace(/{(\d+)}/g, function(match, number) {
-                return typeof args[number] != 'undefined'
-                    ? args[number]
-                    : match
-                    ;
-            });
-        }
+        function buildQueryString(search, enteredSearch) {
+            var queryTerm = {};
+            if (typeof search.searchParams !== 'undefined' && enteredSearch !== undefined && enteredSearch !== "") {
 
-        function buildQueryString(resourceIndex, searchParams) {
-            var queryString = "";
-            angular.forEach(searchParams, function (value) {
-
-            });
-
-            return queryString;
+                // Only supporting one query string right now
+                var queryItem = search.searchParams[0].name;
+                if (search.searchParams[0].modifier) {
+                    queryItem += ":" + search.searchParams[0].modifier;
+                }
+                queryTerm[queryItem] =  enteredSearch;
+            }
+            if (typeof search.sortParams !== 'undefined') {
+                queryTerm["$sort"] = [];
+                angular.forEach(search.sortParams, function (sort) {
+                    var sortItem;
+                    if (sort.name !== undefined && sort.modifier !== undefined) {
+                        sortItem = [sort.name, sort.modifier];
+                    } else if (sort.name !== undefined && sort.modifier !== undefined) {
+                        sortItem = sort.name;
+                    }
+                    queryTerm["$sort"].push(sortItem);
+                });
+            }
+            return queryTerm;
         }
 
         /**
@@ -266,25 +330,16 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          *      FHIR SERVICE API CALLS
          *
          **/
-        function searchResourceInstances(){
-            var searchParams = $scope.selectedResourceTypeConfig.searchParams;
-            if ($scope.enteredSearch !== undefined && $scope.enteredSearch !== "") {
-                var queryTerm = {};
-                var strName = searchParams[0].name + ":" + searchParams[0].modifier;
-                queryTerm[strName] =  $scope.enteredSearch;
-                queryResourceInstances($scope.selectedResourceType.index, queryTerm)
+        function searchResourceInstances(clearSearch){
+            if (typeof $scope.selectedResourceTypeConfig.search !== 'undefined' && clearSearch === undefined) {
+                queryResourceInstances($scope.selectedResourceType.index, buildQueryString($scope.selectedResourceTypeConfig.search, $scope.enteredSearch));
             } else {
-                queryResourceInstances($scope.selectedResourceType.index)
+                queryResourceInstances($scope.selectedResourceType.index);
             }
         }
 
         function createResource(newResource) {
-
-            var args = populateResourceTemplate(newResource);
-            args.push($scope.patient.id);
-            var populatedResource = formatJSONTemplateWithArgs(JSON.stringify($scope.selectedResourceTypeConfig.resourceTemplate), args)
-
-            $scope.smart.api.create({type: newResource.resourceType, data: populatedResource})
+            $scope.smart.api.create({type: newResource.resourceType, data: JSON.stringify(formatAttributesFromUIForFhir(angular.copy(newResource)))})
                 .done(function(){
                     queryResourceInstances($scope.selectedResourceType.index);
                     webix.message(newResource.resourceType + " Saved");
@@ -324,22 +379,12 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             $.when($scope.smart.patient.api[direction]({bundle: lastResult.data}))
             .done(function(pageResult){
                     var resources = [];
-                    var resListFinal = [];
-                    pageResult.data.entry.forEach(function(resource){
-                        resources.push(resource.resource);
-                    });
-                    if(resources){
-                        resources = $filter('orderBy')(resources,"effectiveDateTime");
+                    if (pageResult.data.entry) {
+                        pageResult.data.entry.forEach(function(entry){
+                            resources.push(formatAttributesFromFhirForUI(entry.resource));
+                        });
                     }
-                    angular.forEach(resources, function (value) {
-                        if (value.valueQuantity === undefined) {
-                            value.valueQuantity = {};
-                            value.valueQuantity.unit ="";
-                            value.valueQuantity.value="";
-                        }
-                        resListFinal.push(value);
-                    });
-                    deferred.resolve(resListFinal, pageResult);
+                    deferred.resolve(resources, pageResult);
                 });
             return deferred;
         }
@@ -360,68 +405,59 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 });
         }
 
-        function queryResourceInstances(resourceIndex, searchValue) {
+        function queryResourceInstances(resourceTypeConfigIndex, searchValue) {
             var deferred = $.Deferred();
 
-            var searchParams = {type: $scope.resourceTypeConfigList[resourceIndex].resource, count: 50};
+            var searchParams = {type: $scope.resourceTypeConfigList[resourceTypeConfigIndex].resource, count: 50};
             if (searchValue !== undefined) {
                 searchParams.query = searchValue;
+            } else if (typeof $scope.resourceTypeConfigList[resourceTypeConfigIndex].search !== 'undefined' ) {
+                var sortOnly = buildQueryString($scope.resourceTypeConfigList[resourceTypeConfigIndex].search);
+                if ('$sort' in sortOnly){
+                    searchParams.query = sortOnly;
+                }
             }
 
             $.when($scope.smart.patient.api.search(searchParams))
                 .done(function(resourceSearchResult){
-                    var resourceResultsFinal = [];
                     var resourceResults = [];
                     if (resourceSearchResult.data.entry) {
                         resourceSearchResult.data.entry.forEach(function(entry){
-                            resourceResults.push(entry.resource);
+                            resourceResults.push(formatAttributesFromFhirForUI(entry.resource, resourceTypeConfigIndex));
                         });
+                    } else {
+                        webix.message({ type:"error", text:"No Results found for the Search"});
                     }
+                    var resourceType = { index: resourceTypeConfigIndex,
+                                         resourceType: $scope.resourceTypeConfigList[resourceTypeConfigIndex].resource,
+                                         count: resourceSearchResult.data.total };
 
-                    //TODO Move Resource Specific Initialization out
-                    if(resourceResults){
-                        resourceResults = $filter('orderBy')(resourceResults,"effectiveDateTime");
-                    }
-
-                    //Hack because I can't figure out how to get webix to ignore
-                    //missing data
-                    angular.forEach(resourceResults, function (value) {
-                        if (value.valueQuantity === undefined) {
-                            value.valueQuantity = {
-                                "unit" : "",
-                                "value" : ""
-                            };
-                        }
-                        resourceResultsFinal.push(value);
-                    });
-
-                    var resourceType = JSON.parse('{ "id":"' + resourceIndex + '", "resourceType": "' + $scope.resourceTypeConfigList[resourceIndex].resource + '", ' +
-                        '"count": "' + resourceSearchResult.data.total + '"}');
-
-                    if ($scope.resourceTypeList.length === resourceIndex) {
+                    if ($scope.resourceTypeList.length === resourceTypeConfigIndex) {
                         $scope.resourceTypeList.push(resourceType);
                     } else {
-                        $scope.resourceTypeList[resourceIndex] = resourceType;
+                        $scope.resourceTypeList[resourceTypeConfigIndex].count = resourceSearchResult.data.total;
                     }
 
-                    var resGroup = $$("resGroupListId").getItem(resourceIndex);
+                    var resourceListId = $$("resGroupListId").getIdByIndex(resourceTypeConfigIndex);
+                    var resGroup = $$("resGroupListId").getItem(resourceListId);
                     if (typeof resGroup === "undefined") {
                         $$("resGroupListId").add(resourceType);
                     }else{
-                        $$("resGroupListId").updateItem(resourceIndex, resourceType);
+                        resGroup.count = resourceSearchResult.data.total;
+                        $$("resGroupListId").updateItem(resourceListId, resourceType);
                     }
 
-                    $scope.resourceTypeList[resourceIndex].index = resourceIndex;
-                    $scope.resourceTypeList[resourceIndex].pageData = resourceResultsFinal;
-                    $scope.resourceTypeList[resourceIndex].pageCount = calculatePages(resourceSearchResult);
-                    $scope.resourceTypeList[resourceIndex].searchObj = resourceSearchResult;
-                    if (resourceIndex === $scope.selectedResourceType.index) {
-                        $$("resGroupListId").refresh();
-                        rebuildResourceTable(resourceResultsFinal);
+                    $scope.resourceTypeList[resourceTypeConfigIndex].pageData = resourceResults;
+                    $scope.resourceTypeList[resourceTypeConfigIndex].pageCount = calculatePages(resourceSearchResult);
+                    $scope.resourceTypeList[resourceTypeConfigIndex].searchObj = resourceSearchResult;
+                    if (typeof $scope.selectedResourceType.index === 'undefined' ||
+                        resourceTypeConfigIndex === $scope.selectedResourceType.index) {
+                        $scope.selectedResourceType = $scope.resourceTypeList[resourceTypeConfigIndex];
+                        rebuildResourceTable(resourceResults);
                         $scope.showPageButtons();
                         $scope.showSearchBar();
                     }
-                    deferred.resolve(resourceResultsFinal, resourceIndex);
+                    deferred.resolve(resourceResults, resourceTypeConfigIndex);
                 });
             return deferred;
         }
@@ -450,16 +486,16 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 queryResourceInstances(0)
                     .done(function(){
                         webix.ready(function() {
+                            $$("resGroupListId").select($$("resGroupListId").getFirstId());
+                            $$("searchBar").define("css", "searchBar");
                             $$("detailView").hide();
                             $$("searchBar").hide();
-                            $$("pageButtons").hide();
-                            $$("resGroupListId").attachEvent("onAfterLoad", function(){
-                                $$("resGroupListId").select($$("resGroupListId").getFirstId());
-                            });
+                            $$("placeholder").hide();
+                            $scope.showSearchBar();
                         });
                         $scope.$digest();
+                        getAllResources(1);
                     });
-                getAllResources(1);
             });
         });
 
@@ -469,8 +505,8 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.selectedResourceInstance = newResource;
         $scope.selectedResourceTypeConfig = selectedResourceTypeConfig;
 
-        $scope.getValueSetExpansion = function(val) {
-            return $terminologyService.getValueSetExpansion(val);
+        $scope.getValueSetExpansion = function(val, min) {
+            return $terminologyService.getValueSetExpansion(val, min);
         };
 
         $scope.create = function (newResource) {

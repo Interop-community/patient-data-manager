@@ -1,21 +1,26 @@
-<!--<scrollable-table>-->
-    <table st-table="resourceInstanceList" class="table table-striped">
-        <thead>
-        <tr>
-            <th ng-repeat="attribute in selectedResourceTypeConfig.displayValues">{{attribute.label}}</th>
-        </tr>
-        </thead>
-        <tbody style="overflow: auto">
-        <tr st-select-row="resource" ng-click="selectResourceInstance(resource)" ng-repeat="resource in resourceInstanceList">
-            <td ng-repeat="attribute in selectedResourceTypeConfig.displayValues">{{getDynamicModel(resource, attribute.path)}}</td>
-        </tr>
-        </tbody>
-    </table>
-<!--</scrollable-table>-->
-<div id="pageButtons" ng-show="showPageButtons" height=32>
-    <div class="pager_item" ng-show="hasLink(selectedResourceType.searchObj, 'previous')"
-         ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'prevPage')">&lt; Prev</div>
-    <div class="pager_item" ng-show="hasLink(selectedResourceType.searchObj, 'next')"
-         ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'nextPage')">Next &gt;</div>
+<div class="scrollableContainer" ng-style="resizeWithOffset(tableOffset)" resize notifier="notifyServiceOnChange(params)">
+    <div class="headerSpacer"></div>
+    <div class="scrollArea">
+        <table st-table="resourceInstanceList" class="table table-striped">
+            <thead class="fixedHeader">
+            <tr>
+                <th ng-repeat="attribute in selectedResourceTypeConfig.displayValues">
+                    <div class="th-inner" table-header-inner>{{attribute.label}}</div>
+                </th>
+            </tr>
+            </thead>
+            <tbody class="scrollContent">
+            <tr st-select-row="resource" ng-click="selectResourceInstance(resource)" ng-repeat="resource in resourceInstanceList">
+                <td ng-repeat="attribute in selectedResourceTypeConfig.displayValues">{{getDynamicModel(resource, attribute.path) | formatAttribute}}</td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <div id="pageButtons" ng-show="showPageButtons" height=32>
+        <div class="pager_item" ng-show="hasLink(selectedResourceType.searchObj, 'previous')"
+             ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'prevPage')">&lt; Prev</div>
+        <div class="pager_item" ng-show="hasLink(selectedResourceType.searchObj, 'next')"
+             ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'nextPage')">Next &gt;</div>
+    </div>
 </div>
 

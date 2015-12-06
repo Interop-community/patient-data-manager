@@ -7,7 +7,7 @@
 		<title>Patient Data Manager</title>
         <link href="images/favicon.ico" rel="icon" type="image/x-icon" />
 
-		<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
 		<link rel="stylesheet" href="css/app.css">
         <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" type="text/css">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
@@ -20,20 +20,7 @@
 
 		<![endif]-->
         <style type="text/css">
-            .editor-label {
-                float: left;
-                width: 200px;
-            }
 
-            .editor-field {
-                margin-left:200px;
-                margin-right:50px;
-            }
-
-            .editor-field input {
-                float: left;
-                width: 100%;
-            }
         </style>
 
         <script>
@@ -54,27 +41,26 @@
             </div>
 
         <div id="mainCols" view="cols" resizeColumn=true type="wide" margin="10"> <!--Webix layout cols are initialized-->
-            <div view="list" id="resGroupListId" webix-data="resourceTypeList" webix-event="onSelectChange = selectResourceType()"
+            <div view="list" id="resGroupListId" webix-event="onSelectChange = selectResourceType()"
              template="#resourceType# (#count#) <a href='#' class='float-right-btn'
-                     onclick='openCreateDialog(this)'><i class='fa fa-plus-square-o fa-lg'></i></a>" autowidth=true select=1 width="200"></div>
-            <div view="resizer"></div>
+                     onclick='openCreateDialog(this)'><i class='fa fa-plus-square-o fa-lg'></i></a>" autowidth=true select=1 width="220"></div>
+            <!--<div view="resizer"></div>-->
             <div view="rows" type="wide">
-                    <div id="searchBar" height=45 ng-show="selectedResourceTypeConfig.searchParams">
-                        <div class="editor-label"><label>Search {{selectedResourceTypeConfig.resource}} {{selectedResourceTypeConfig.searchParams[0].name}}</label></div>
-                        <div class="editor-field"><input type="text" class="input-box form-control" ng-model="enteredSearch"/></div>
-                        <a href='#' class='float-right-dark-btn' ng-click="requestResourceSearch()"><i class='fa fa-search fa-lg'></i></a>
-                    </div>
-                <div>
-                <div ng-include src="'js/templates/dynamicTable.html'"></div>
+                <div class="search-bar" id="searchBar" height=45 ng-show="selectedResourceTypeConfig.search.searchParams">
+                        <div class="search-label"><label>Search</label></div>
+                        <div class="search-field typeahead"><input enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch"
+                                                                   uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue, 3)"
+                                                                   typeahead-on-select="enteredSearch = $item.display">
+                            <a href='#' class='undo-icon' ng-show="enteredSearch != ''" ng-click="requestResourceSearch('clear')"><i class='fa fa-undo fa-lg'></i></a>
+                            <a href='#' class='search-icon' ng-click="requestResourceSearch()"><i class='fa fa-search fa-lg'></i></a>
+                        </div>
                 </div>
-                    <div id="pageButtons" ng-show="showPageButtons" height=32>
-                        <div class="pager_item" ng-show="hasLink(selectedResourceType.searchObj, 'previous')"
-                             ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'prevPage')">&lt; Prev</div>
-                        <div class="pager_item" ng-show="hasLink(selectedResourceType.searchObj, 'next')"
-                             ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'nextPage')">Next &gt;</div>
-                    </div>
-                <div view="resizer"></div>
-                <div id="detailView" height="270">
+                <div>
+                    <div ng-include src="'js/templates/dynamicTable.html'"></div>
+                </div>
+                    <div id="placeholder" ng-show="false" height=32 hidden=true></div>
+                <!--<div view="resizer"></div>-->
+                <div id="detailView" height="200">
                     <div ng-include src="'js/templates/dynamicForm.html'"></div>
                     <div class="form-footer">
                         <button class="webixbutton form-btn" ng-click="requestUpdateResource()">Update</button>
@@ -98,7 +84,6 @@
     <script src="js/controllers.js"></script>
     <script src="js/filters.js"></script>
     <script src="js/directives.js"></script>
-    <script src="third-party-libs/smart-table.js"></script>
-    <script src="third-party-libs/angular-scrollable-table.min.js"></script>
+    <script src="third-party-libs/smart-table.min.js"></script>
     </body>
 </html>

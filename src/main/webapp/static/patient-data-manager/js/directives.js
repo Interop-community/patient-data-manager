@@ -1,17 +1,6 @@
 /* Filters */
 
-angular.module('pdmApp.directives', []).directive('resourceForm', [ function() {
-    return {
-        templateUrl : 'js/templates/dynamicForm.html',
-        replace : true,
-        restrict: 'E',
-        scope : {
-            selectedResourceConfig : '=resourceConfig',
-            newObservation : '=resource',
-            getValueSetExpansion: '&'
-        }
-    };
-}]).directive("dynamicName",function($compile){
+angular.module('pdmApp.directives', []).directive("dynamicName",function($compile){
         return {
             restrict:"A",
             terminal:true,
@@ -22,29 +11,62 @@ angular.module('pdmApp.directives', []).directive('resourceForm', [ function() {
                 $compile(element)(scope);
             }
         }
-});
-//    .directive('stSelectRow', ['stConfig', function (stConfig) {
-//    return {
-//        restrict: 'A',
-//        require: '^stTable',
-//        scope: {
-//            row: '=stSelectRow'
-//        },
-//        link: function (scope, element, attr, ctrl) {
-//            var mode = attr.stSelectMode || stConfig.select.mode;
-//            element.bind('click', function () {
-//                scope.$apply(function () {
-//                    ctrl.select(scope.row, mode);
-//                });
-//            });
-//
-//            scope.$watch('row.isSelected', function (newValue) {
-//                if (newValue === true) {
-//                    element.addClass(stConfig.select.selectedClass);
-//                } else {
-//                    element.removeClass(stConfig.select.selectedClass);
-//                }
-//            });
-//        }
-//    };
-//}]);
+}).directive('resize', function ($window) {
+        return function (scope, element, attr) {
+
+            var w = angular.element($window);
+            scope.$parent.$watch(function () {
+                return {
+                    'h': w.height(),
+                    'w': w.width()
+                };
+            }, function (newValue, oldValue) {
+                scope.$parent.windowHeight = newValue.h;
+                scope.$parent.windowWidth = newValue.w;
+
+                scope.$parent.resizeWithOffset = function (offsetH) {
+
+                    scope.$parent.$eval(attr.notifier);
+
+                    return {
+                        'height': (newValue.h - offsetH) + 'px'
+                        //,'width': (newValue.w - 100) + 'px'
+                    };
+                };
+            }, true);
+
+            w.bind('resize', function () {
+                scope.$parent.$apply();
+            });
+        }
+}).directive('enterKey', function () {
+        return function (scope, element, attrs) {
+            element.bind("keydown keypress", function (event) {
+                var key = typeof event.which === "undefined" ? event.keyCode : event.which;
+                if(key === 13) {
+                    scope.$apply(function (){
+                        scope.$eval(attrs.enterKey);
+                    });
+
+                    event.preventDefault();
+                }
+            });
+        };
+    }).directive( 'tableHeaderInner', function() {
+        return {
+            link: function( scope, elem, attrs ) {
+                scope.$watch(function () {
+                        return {
+                            width: elem.parent().width()
+                        }
+                    },
+                    function( width ) {
+                        elem.css({
+                            width: elem.parent()[0].clientWidth + 'px'
+                        });
+                    }, //listener
+                    true  //deep watch
+                );
+            }
+        }
+    } );
