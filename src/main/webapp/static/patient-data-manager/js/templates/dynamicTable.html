@@ -1,7 +1,7 @@
 <div class="scrollableContainer" ng-style="resizeWithOffset(tableOffset)" resize notifier="notifyServiceOnChange(params)">
     <div class="headerSpacer"></div>
     <div class="scrollArea">
-        <table st-table="resourceInstanceList" class="table table-striped">
+        <table st-table="resourceInstanceList" class="table table-striped" arrow-selector>
             <thead class="fixedHeader">
             <tr>
                 <th ng-repeat="attribute in selectedResourceTypeConfig.displayValues">
@@ -11,7 +11,14 @@
             </thead>
             <tbody class="scrollContent">
             <tr st-select-row="resource" ng-click="selectResourceInstance(resource)" ng-repeat="resource in resourceInstanceList">
-                <td ng-repeat="attribute in selectedResourceTypeConfig.displayValues">{{getDynamicModel(resource, attribute.path) | formatAttribute}}</td>
+                <td ng-repeat="attribute in selectedResourceTypeConfig.displayValues">
+                    <div ng-if="attribute.filter === undefined">
+                        {{dmh.getDynamicModel(resource, attribute.path) | formatAttribute}}
+                    </div>
+                    <div ng-if="attribute.filter !== undefined">
+                        {{dmh.getDynamicModelByName(resource, attribute)}}
+                    </div>
+                </td>
             </tr>
             </tbody>
         </table>
@@ -19,6 +26,7 @@
     <div id="pageButtons" ng-show="showPageButtons" height=32>
         <div class="pager_item" ng-show="hasLink(selectedResourceType.searchObj, 'previous')"
              ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'prevPage')">&lt; Prev</div>
+        <div class="pager_text" ng-model=resourcePages> Page {{resourcePages.currentPage}} of {{resourcePages.pageCount}} </div>
         <div class="pager_item" ng-show="hasLink(selectedResourceType.searchObj, 'next')"
              ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'nextPage')">Next &gt;</div>
     </div>

@@ -2,7 +2,7 @@
 
 /* Filters */
 
-angular.module('pdmApp.filters', []).filter('age', [ function() {
+angular.module('pdmApp.filters', []).filter('age', function() {
 	return function(date) {
 		var yearNow = new Date().getYear();
 		var monthNow = new Date().getMonth();
@@ -51,12 +51,40 @@ angular.module('pdmApp.filters', []).filter('age', [ function() {
 			return dateAge + "d";
 		else return "Could not calculate age";
 	};
-}]).filter('formatAttribute', function ($filter) {
-        return function (input, fractionSize) {
+}).filter('formatAttribute', function ($filter) {
+        return function (input) {
             if (Object.prototype.toString.call(input) === '[object Date]') {
-                return $filter('date')(input, 'MM/dd/yyyy HH:mm');;
+                return $filter('date')(input, 'MM/dd/yyyy HH:mm');
             } else {
                 return input;
             }
         };
-    });
+}).filter('valueX', function () {
+        return function (name, value) {
+            if (name === "valueQuantity") {
+                var result = value.value + " " + value.unit;
+                if (typeof value.comparator !== 'undefined' && value.comparator !== "")
+                    result = value.comparator + "" + result;
+                return result;
+            } else if (name === "valueCodeableConcept") {
+                    if (typeof value.coding === 'undefined' ) {
+                        return value.coding.display + ":" + value.coding.code;
+                    }
+                    return value.text;
+            } else if (name === "valueString") {
+                return value;
+            } else if (name === "valueRange") {
+                return value.low + " to " + value.high;
+            } else if (name === "valueRatio") {
+                return value.numerator + "/" + value.denominator;
+            } else if (name === "valueTime") {
+                return value;
+            } else if (name === "valueDateTime") {
+                return value;
+            } else if (name === "valuePeriod") {
+                return value.start + " to " + value.end;
+            } else {
+                return value;
+            }
+        };
+});

@@ -1,0 +1,65 @@
+[
+    {
+        "variableTypeArray" : "valueX",
+        "dataTypes" : [
+            {
+                "dataType" : "valueQuantity",
+                "displayValues" : [
+                    {"type": "text", "name": "value", "label": "Value" , "required": true, "path": "valueQuantity.value", "default": ""},
+                    {"type": "text", "name": "unit", "label": "Units" , "required": true, "path":"valueQuantity.unit", "default": ""},
+                    {"type": "text", "name": "system", "label": "System" , "required": true, "path":"valueQuantity.system", "default": ""},
+                    {"type": "select", "name": "comparator", "label": "Comparator" ,
+                        "options":["", "<", "<=", ">=", ">"],
+                        "path": "valueQuantity.comparator", "default": ""}
+                ]
+            },
+            {
+                "dataType" : "valueCodeableConcept",
+                "displayValues" : [
+                    {"type": "text", "name": "display", "label": "Display" , "required": true, "path": "valueCodeableConcept.coding.display", "default": ""},
+                    {"type": "text", "name": "code", "label": "Code" , "required": true, "path":"valueCodeableConcept.coding.code", "default": ""},
+                    {"type": "text", "name": "text", "label": "Value" , "required": true, "path":"valueCodeableConcept.text", "default": ""}
+                ]
+            },
+            {
+                "dataType" : "valueString",
+                "displayValues" : [
+                    {"type": "text", "name": "value", "label": "Value" , "required": true, "path":"valueString", "default": ""}
+                ]
+            },
+            {
+                "dataType" : "valueRange",
+                "displayValues" : [
+                    {"type": "text", "name": "low", "label": "Low" , "required": true, "path":"valueRange.low", "default": ""},
+                    {"type": "text", "name": "high", "label": "High" , "required": true, "path":"valueRange.high", "default": ""}
+                ]
+            },
+            {
+                "dataType" : "valueRatio",
+                "displayValues" : [
+                    {"type": "text", "name": "numerator", "label": "Numerator" , "required": true, "path":"valueRatio.numerator", "default": ""},
+                    {"type": "text", "name": "denominator", "label": "Denominator" , "required": true, "path":"valueRatio.denominator", "default": ""}
+                ]
+            },
+            {
+                "dataType" : "valueTime",
+                "displayValues" : [
+                    {"type": "date", "name": "date", "label": "Time" , "required": true, "path":"valueTime", "default": ""}
+                ]
+            },
+            {
+                "dataType" : "valueDateTime",
+                "displayValues" : [
+                    {"type": "date", "name": "dateTime", "label": "Date/Time" , "required": true, "path":"valueDateTime", "default": ""}
+                ]
+            },
+            {
+                "dataType" : "valuePeriod",
+                "displayValues" : [
+                    {"type": "text", "name": "start", "label": "Start" , "required": true, "path":"valuePeriod.start", "default": ""},
+                    {"type": "text", "name": "end", "label": "End" , "required": true, "path":"valuePeriod.end", "default": ""}
+                ]
+            }
+        ]
+    }
+]

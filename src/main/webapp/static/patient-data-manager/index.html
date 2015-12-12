@@ -47,11 +47,14 @@
             <!--<div view="resizer"></div>-->
             <div view="rows" type="wide">
                 <div class="search-bar" id="searchBar" height=45 ng-show="selectedResourceTypeConfig.search.searchParams">
-                        <div class="search-label"><label>Search</label></div>
-                        <div class="search-field typeahead"><input enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch"
-                                                                   uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue, 3)"
-                                                                   typeahead-on-select="enteredSearch = $item.display">
-                            <a href='#' class='undo-icon' ng-show="enteredSearch != ''" ng-click="requestResourceSearch('clear')"><i class='fa fa-undo fa-lg'></i></a>
+                            <div class="search-label"><label>Search</label></div>
+                            <div class="search-field typeahead">
+                                <input ng-show="selectedResourceTypeConfig.search.searchParams[0].codedURL" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch"
+                                                                       uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue, 3)"
+                                                                       typeahead-on-select="enteredSearch = $item.display">
+
+                                <input ng-hide="selectedResourceTypeConfig.search.searchParams[0].codedURL" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch">
+                            <a href='#' class='undo-icon' ng-show="enteredSearch != ''" ng-click="requestResourceSearch('clear')"><i class='fa fa-remove fa-lg'></i></a>
                             <a href='#' class='search-icon' ng-click="requestResourceSearch()"><i class='fa fa-search fa-lg'></i></a>
                         </div>
                 </div>
@@ -60,7 +63,7 @@
                 </div>
                     <div id="placeholder" ng-show="false" height=32 hidden=true></div>
                 <!--<div view="resizer"></div>-->
-                <div id="detailView" height="200">
+                <div id="detailView" height="300">
                     <div ng-include src="'js/templates/dynamicForm.html'"></div>
                     <div class="form-footer">
                         <button class="webixbutton form-btn" ng-click="requestUpdateResource()">Update</button>

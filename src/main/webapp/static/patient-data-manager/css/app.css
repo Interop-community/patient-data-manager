@@ -86,6 +86,12 @@ td {
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
 
+.dynamic-form-header {
+    height: 16px;
+    width: 100%;
+    padding-right: 6px;
+}
+
 .float-right-dark-btn {
     cursor:pointer;
     float:right;
@@ -101,6 +107,13 @@ td {
     width: 100px;
 
 }
+
+.variable-group-box {
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    padding: 6px;
+}
+
 .webix_view.searchBar {
     overflow: visible;
 }
@@ -184,6 +197,13 @@ td {
     background: #3498db;
     border-bottom: 1px solid #2386c8;
     font-size: 15px;
+    float:left;
+    margin: 6px;
+}
+
+.pager_text {
+    padding: auto 6px;
+    font-family: 'PT Sans',Tahoma;
     float:left;
     margin: 6px;
 }

@@ -7,18 +7,17 @@
                     "modifier": "text",
                     "codedURL" : "http://hl7.org/fhir/ValueSet/observation-codes"
                 }],
-                "sortParams": [{
-                    "name": "date",
-                    "modifier": "asc"
-                }]
+                    "sortParams": [{
+                        "name": "date",
+                        "modifier": "asc"
+                    }]
             },
         "displayValues" : [
             {"type": "coded-display-typeahead", "name": "displayName", "label": "Display Name" , "required": true, "path": "code.coding.0.display", "default": "" },
             {"type": "date", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": ""},
             {"type": "coded-code-typeahead", "name": "code", "label": "Code" , "required": true, "path": "code.coding.0.code", "default": ""},
             {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "code.coding.0.system", "default": "http://loinc.org"},
-            {"type": "text", "name": "value", "label": "Value" , "required": true, "path": "valueQuantity.value", "default": ""},
-            {"type": "text", "name": "units", "label": "Units" , "required": true, "path": "valueQuantity.unit", "default": ""},
+            {"type": "variable", "name": "value", "label": "Value" , "required": true, "filter": "valueX", "path":"", "default": ""},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["final", "registered", "preliminary", "amended","cancelled", "entered-in-error", "unknown"],
                 "path": "status", "default": "final"}
@@ -80,8 +79,8 @@
             {"type": "text", "name": "participantType", "label": "Participant Type" , "required": true, "path": "participantType.0.text", "default": ""},
             {"type": "text", "name": "appointment", "label": "Appointment" , "required": true, "path": "appointment.reference", "default": ""},
             {"type": "select", "name": "status", "label": "Status" ,
-                "options":["proposed", "pending", "booked", "arrived","fulfilled", "cancelled", "noshow"],
-                "path": "participantStatus", "default": "proposed"}
+                "options":["accepted", "declined", "tentative", "in-process","completed", "needs-action"],
+                "path": "participantStatus", "default": "needs-action"}
         ],
         "references" : [
             {"resource": "Appointment", "label": "Appointment", "path": "appointment.reference"}

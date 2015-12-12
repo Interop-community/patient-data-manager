@@ -1,8 +1,13 @@
 'use strict';
 
 angular.module('pdmApp.controllers', []).controller('pdmCtrl',
-    ['$scope','$filter', "$uibModal", "$http", "$terminologyService", "$resourceJson",
-    function ($scope, $filter, $uibModal, $http, $terminologyService, $resourceJson ) {
+    ['$scope','$filter', "$uibModal", "$terminology", "$dynamicModelHelpers", "$resourceBuilderHelpers", "$resourceJson", "$fhirDatatypesJson",
+    function ($scope, $filter, $uibModal, $terminology, $dynamicModelHelpers, $resourceBuilderHelpers, $resourceJson, $fhirDatatypesJson ) {
+
+        $scope.dmh = $dynamicModelHelpers;
+        var rbh = $resourceBuilderHelpers;
+
+        $scope.fhirDataTypeList = [];
 
         $scope.resourceTypeConfigList = [];
         $scope.selectedResourceTypeConfig = {};
@@ -14,9 +19,9 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.selectedResourceInstance = {};
 
         $scope.enteredSearch = '';
-
-        $scope.tableOffset = 410;
-        $scope.getValueSetExpansion = $terminologyService.getValueSetExpansion;
+        $scope.resourcePages = {};
+        $scope.tableOffset = 510;
+        $scope.getValueSetExpansion = $terminology.getValueSetExpansion;
 
         /**
          *
@@ -24,9 +29,9 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          *
          **/
         $scope.setTableOffset = function(){
-            $scope.tableOffset = 410 +
+            $scope.tableOffset = 510 +
                 ($$("searchBar").isVisible() ? 0 : -55) +
-                ($$("detailView").isVisible() ? 0 : -210) +
+                ($$("detailView").isVisible() ? 0 : -310) +
                 ($scope.showPageButtons() ? 0 : -32);
         };
 
@@ -60,49 +65,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         /**
          *
-         *      DYNAMIC UI BUILDER HELPERS
-         *
-         **/
-        $scope.getDynamicModel = function(resource, path) {
-            var root = $scope.getModelParent(resource, path);
-            var leaf = $scope.getModelLeaf(path);
-
-            if (typeof root !== 'undefined' && typeof leaf !== 'undefined' ) {
-                return root[ leaf ];
-            }
-            return "";
-        };
-
-        $scope.getModelParent = function(obj,path) {
-            var segs = path.split('.');
-            var rootParent = obj;
-            var parentStep = "";
-            var root = obj;
-
-            while (segs.length > 1) {
-                var pathStep = segs.shift();
-                if (typeof root[pathStep] === 'undefined') {
-                    if (isNaN(pathStep)) {
-                        root[pathStep] = {};
-                    } else {
-                        rootParent[parentStep] = [{}];
-                        root = rootParent[parentStep];
-                    }
-                }
-                parentStep = pathStep;
-                rootParent = root;
-                root = root[pathStep];
-            }
-            return root;
-        };
-
-        $scope.getModelLeaf = function(path) {
-            var segs = path.split('.');
-            return segs[segs.length-1];
-        } ;
-
-        /**
-         *
          *      SELECTION AND NAVIGATION
          *
          **/
@@ -124,12 +86,44 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             $scope.setTableOffset();
         };
 
+        $scope.unselectResource = function(resource){
+            var selectedResourceList = $scope.resourceInstanceList.filter(function( obj ) {
+                if ( obj.id === resource.id )
+                    return true;
+            });
+            selectedResourceList[0].isSelected = false;
+            $scope.selectResourceInstance(selectedResourceList[0]);
+        };
+
+        $scope.arrowUpDownResourceTable = function(direction) {
+            var currentIndex = $.map($scope.resourceInstanceList, function(obj, index) {
+                if(obj.id == $scope.selectedResourceInstance.id) {
+                    return index;
+                }
+            });
+            if (currentIndex.length === 0)
+                return;
+
+            var newSelectedResource;
+            if (direction === "up" && currentIndex[0] > 0 ) {
+                newSelectedResource = $scope.resourceInstanceList[currentIndex[0] - 1];
+            } else if (direction === "down" && currentIndex < $scope.resourceInstanceList.length -1) {
+                newSelectedResource = $scope.resourceInstanceList[currentIndex[0] + 1];
+            }
+
+            if (newSelectedResource !== undefined) {
+                newSelectedResource.isSelected = true;
+                $scope.selectResourceInstance(newSelectedResource);
+            }
+        };
+
         $scope.selectResourceType = function() {
             var selectedId = $$("resGroupListId").getSelectedId();
             var result = $.grep($scope.resourceTypeList, function(e){ return e.id == selectedId; });
             $scope.selectedResourceType = $scope.resourceTypeList[result[0].index];
             $scope.selectedResourceTypeConfig = $scope.resourceTypeConfigList[result[0].index];
             rebuildResourceTable($scope.selectedResourceType.pageData);
+            $scope.resourcePages.pageCount = $scope.selectedResourceType.pageCount;
             $scope.showPageButtons();
             $scope.showSearchBar();
             $scope.$apply();
@@ -159,7 +153,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.openCreateDialog = function (operation) {
            var newResource;
             if (operation === 'create') {
-                newResource = populateResourceTemplateDefaults($scope.selectedResourceTypeConfig);
+                newResource = rbh.populateResourceTemplateDefaults($scope.selectedResourceTypeConfig, [{type: "Patient", value : $scope.patient.id}]);
             } else {
                 newResource = angular.copy($scope.selectedResourceInstance);
                 delete newResource.meta;
@@ -178,6 +172,9 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                     },
                     selectedResourceTypeConfig: function () {
                         return $scope.selectedResourceTypeConfig;
+                    },
+                    fhirDataTypeList: function () {
+                        return $scope.fhirDataTypeList;
                     }
                 }
             });
@@ -223,82 +220,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             return pageCnt;
         }
 
-        /**
-         *
-         *      RESOURCE BUILDER HELPERS
-         *
-         **/
-        function formatAttributesFromUIForFhir(resource) {
-            angular.forEach($scope.selectedResourceTypeConfig.displayValues, function (value) {
-                var newValue = $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ];
-                if (value.type === "date") {
-                    $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ] = new Date(newValue).toISOString();
-                }
-                if (newValue === "" || newValue === undefined) {
-                    delete $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ];
-                }
-            });
-            return resource;
-        }
-
-        function formatAttributesFromFhirForUI(resource, resourceTypeConfigIndex) {
-            var resourceConfig = $scope.selectedResourceTypeConfig;
-            if (resourceTypeConfigIndex !== undefined){
-                resourceConfig = $scope.resourceTypeConfigList[resourceTypeConfigIndex];
-            }
-            angular.forEach(resourceConfig.displayValues, function (value) {
-                var newValue = $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ];
-                if (typeof value === 'undefined') {
-
-                }
-                if (value.type === "date" && typeof newValue !== 'undefined') {
-                    var newDate = new Date(newValue);
-                    if (newValue.lastIndexOf("T00:00:00.000Z") != -1) {
-                        newDate.setHours(0,0,0,0);
-                    }
-                    $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ] = newDate;
-                }
-            });
-            return resource;
-        }
-
-        function buildResourceObjectFromConfig(selectedResourceTypeConfig) {
-            var template = {
-                resourceType: selectedResourceTypeConfig.resource
-            };
-            angular.forEach(selectedResourceTypeConfig.displayValues, function (value) {
-                $scope.getModelParent(template, value.path)[ $scope.getModelLeaf(value.path) ] = "";
-            });
-            angular.forEach(selectedResourceTypeConfig.references, function (value) {
-                $scope.getModelParent(template, value.path)[ $scope.getModelLeaf(value.path) ] = "";
-            });
-            return template;
-        }
-
-        function populateResourceTemplateDefaults(selectedResourceTypeConfig) {
-            var newResource = buildResourceObjectFromConfig(selectedResourceTypeConfig);
-
-            angular.forEach($scope.selectedResourceTypeConfig.displayValues, function (value) {
-                var newValue = value.default;
-                if (value.type === "date") {
-                    newValue = new Date();
-                    newValue.setSeconds(0,0)
-                }
-                $scope.getModelParent(newResource, value.path)[ $scope.getModelLeaf(value.path) ] = newValue;
-            });
-            newResource = addReferenceValues(newResource, "Patient", $scope.patient.id);
-            return newResource;
-        }
-
-        function addReferenceValues(resource, type, refValue) {
-            angular.forEach($scope.selectedResourceTypeConfig.references, function (value) {
-                if (value.resource === type) {
-                    $scope.getModelParent(resource, value.path)[ $scope.getModelLeaf(value.path) ] = type + "/" + refValue;
-                }
-            });
-            return resource;
-        }
-
         function buildQueryString(search, enteredSearch) {
             var queryTerm = {};
             if (typeof search.searchParams !== 'undefined' && enteredSearch !== undefined && enteredSearch !== "") {
@@ -339,7 +260,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         }
 
         function createResource(newResource) {
-            $scope.smart.api.create({type: newResource.resourceType, data: JSON.stringify(formatAttributesFromUIForFhir(angular.copy(newResource)))})
+            $scope.smart.api.create({type: newResource.resourceType, data: JSON.stringify(rbh.formatAttributesFromUIForFhir($scope.selectedResourceTypeConfig, angular.copy(newResource)))})
                 .done(function(){
                     queryResourceInstances($scope.selectedResourceType.index);
                     webix.message(newResource.resourceType + " Saved");
@@ -378,10 +299,15 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             var deferred = $.Deferred();
             $.when($scope.smart.patient.api[direction]({bundle: lastResult.data}))
             .done(function(pageResult){
+                    if (direction === "nextPage") {
+                        $scope.resourcePages.currentPage++
+                    } else {
+                        $scope.resourcePages.currentPage--
+                    }
                     var resources = [];
                     if (pageResult.data.entry) {
                         pageResult.data.entry.forEach(function(entry){
-                            resources.push(formatAttributesFromFhirForUI(entry.resource));
+                            resources.push(rbh.formatAttributesFromFhirForUI($scope.selectedResourceTypeConfig, entry.resource));
                         });
                     }
                     deferred.resolve(resources, pageResult);
@@ -423,7 +349,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                     var resourceResults = [];
                     if (resourceSearchResult.data.entry) {
                         resourceSearchResult.data.entry.forEach(function(entry){
-                            resourceResults.push(formatAttributesFromFhirForUI(entry.resource, resourceTypeConfigIndex));
+                            resourceResults.push(rbh.formatAttributesFromFhirForUI($scope.resourceTypeConfigList[resourceTypeConfigIndex], entry.resource));
                         });
                     } else {
                         webix.message({ type:"error", text:"No Results found for the Search"});
@@ -454,6 +380,8 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                         resourceTypeConfigIndex === $scope.selectedResourceType.index) {
                         $scope.selectedResourceType = $scope.resourceTypeList[resourceTypeConfigIndex];
                         rebuildResourceTable(resourceResults);
+                        $scope.resourcePages.pageCount = $scope.resourceTypeList[resourceTypeConfigIndex].pageCount;
+                        $scope.resourcePages.currentPage = 1;
                         $scope.showPageButtons();
                         $scope.showSearchBar();
                     }
@@ -479,34 +407,41 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          **/
         FHIR.oauth2.ready(function(smart){
             $scope.smart = smart;
-            $terminologyService.getObservationCodesValueSetId();
+            $terminology.getObservationCodesValueSetId();
             queryPatient();
-            $resourceJson.success(function(resources){
-                $scope.resourceTypeConfigList = resources;
-                queryResourceInstances(0)
-                    .done(function(){
-                        webix.ready(function() {
-                            $$("resGroupListId").select($$("resGroupListId").getFirstId());
-                            $$("searchBar").define("css", "searchBar");
-                            $$("detailView").hide();
-                            $$("searchBar").hide();
-                            $$("placeholder").hide();
-                            $scope.showSearchBar();
+            $fhirDatatypesJson.success(function(dataTypes){
+                $scope.fhirDataTypeList = dataTypes;
+                $resourceJson.success(function(resources){
+                    $scope.resourceTypeConfigList = resources;
+                    queryResourceInstances(0)
+                        .done(function(){
+                            webix.ready(function() {
+                                $$("resGroupListId").select($$("resGroupListId").getFirstId());
+                                $$("searchBar").define("css", "searchBar");
+                                $$("detailView").hide();
+                                $$("searchBar").hide();
+                                $$("placeholder").hide();
+                                $scope.showSearchBar();
+                            });
+                            $scope.$digest();
+                            getAllResources(1);
                         });
-                        $scope.$digest();
-                        getAllResources(1);
-                    });
+                });
             });
         });
 
-}]).controller('ModalInstanceCtrl',['$scope', '$uibModalInstance', "$http", "$terminologyService", "newResource", "selectedResourceTypeConfig",
-    function ($scope, $uibModalInstance, $http, $terminologyService, newResource, selectedResourceTypeConfig) {
+}]).controller('ModalInstanceCtrl',['$scope', '$uibModalInstance', "$terminology", "$dynamicModelHelpers", "newResource", "selectedResourceTypeConfig", "fhirDataTypeList",
+    function ($scope, $uibModalInstance, $terminology, $dynamicModelHelpers, newResource, selectedResourceTypeConfig, fhirDataTypeList) {
 
         $scope.selectedResourceInstance = newResource;
         $scope.selectedResourceTypeConfig = selectedResourceTypeConfig;
+        $scope.fhirDataTypeList = fhirDataTypeList;
+        $scope.dmh = $dynamicModelHelpers;
+        $scope.isModal = true;
+        $scope.isCreate = true;
 
         $scope.getValueSetExpansion = function(val, min) {
-            return $terminologyService.getValueSetExpansion(val, min);
+            return $terminology.getValueSetExpansion(val, min);
         };
 
         $scope.create = function (newResource) {
@@ -516,24 +451,4 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
         };
-
-        $scope.getModelParent = function(obj,path) {
-            var segs = path.split('.');
-            var root = obj;
-
-            while (segs.length > 1) {
-                var pathStep = segs.shift();
-                if (typeof root[pathStep] === 'undefined') {
-                    root[pathStep] = {};
-                }
-                root = root[pathStep];
-            }
-            return root;
-        };
-
-        $scope.getModelLeaf = function(path) {
-            var segs = path.split('.');
-            return segs[segs.length-1];
-        };
-
-    }]);
+}]);

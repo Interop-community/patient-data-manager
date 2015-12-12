@@ -1,4 +1,4 @@
-/* Filters */
+/* Directives */
 
 angular.module('pdmApp.directives', []).directive("dynamicName",function($compile){
         return {
@@ -69,4 +69,22 @@ angular.module('pdmApp.directives', []).directive("dynamicName",function($compil
                 );
             }
         }
-    } );
+    }).directive('arrowSelector',['$document',function($document){
+    return{
+        restrict:'A',
+        link:function(scope,elem,attrs,ctrl){
+            $document.bind('keydown',function(e){
+                    if(e.keyCode == 38){
+                        scope.$parent.arrowUpDownResourceTable("up");
+                        scope.$parent.$apply();
+                        e.preventDefault();
+                    }
+                    if(e.keyCode == 40){
+                        scope.$parent.arrowUpDownResourceTable("down");
+                        scope.$parent.$apply();
+                        e.preventDefault();
+                    }
+            });
+        }
+    };
+}]);
