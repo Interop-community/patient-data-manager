@@ -1,3 +1,11 @@
+.full-page{
+   margin:10px;
+}
+
+.full-page.div{
+    margin:10px;
+}
+
 .navbar-inverse {
 	background-color: #3498db;
     border-radius: 4px;
@@ -86,10 +94,8 @@ td {
     transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
 }
 
-.dynamic-form-header {
-    height: 16px;
-    width: 100%;
-    padding-right: 6px;
+.dynamic-form-header .float-right-dark-btn {
+    padding-right: 8px;
 }
 
 .float-right-dark-btn {
@@ -102,10 +108,34 @@ td {
     color: #a9a9a9;
 }
 
+.font-awesome-inverse{
+    color: #ffffff;
+}
+
+.font-awesome-inverse:hover{
+    color: #a9a9a9;
+}
+
+.popover-btn:hover {
+    text-decoration: none;
+}
+
+.popover-btn {
+
+}
+
+.popover-btn .fa {
+    padding-right: 4px;
+    width: 20px;
+}
+.popover-btn.font-red,
+.popover-btn.font-red i{
+    color: #fd595f;
+}
+
 .form-btn {
     height: 35px;
     width: 100px;
-
 }
 
 .variable-group-box {
@@ -223,8 +253,16 @@ td {
     width: 100%;
 }
 
+.dynamic-form-header {
+    height: 28px;
+    width: 100%;
+    background: #3498db;
+    padding-top: 4px;
+    margin-bottom: 4px;
+}
+
 .dynamic-form-label {
-    width: 15%;
+    width: 35%;
     float: left;
     position: relative;
     /*text-align: right;*/
@@ -234,14 +272,32 @@ td {
     margin-bottom: 5px;
     font-weight: 700;
 }
-.dynamic-form-label-input {
-    width: 35%;
+.dynamic-form-label-input,
+.dynamic-form-value {
+    width: 65%;
     float: left;
     position: relative;
     display: inline-block;
     min-height: 1px;
     padding: 5px 5px 5px;
 }
+
+.dynamic-form-value {
+    border: 1px solid #ebebeb;
+    border-radius: 4px;
+    padding-right: 4px;
+    min-height: 30px;
+}
+
+.modalForm .dynamic-form-label {
+    width: 15%;
+}
+
+.modalForm .dynamic-form-label-input,
+.modalForm .dynamic-form-value{
+    width: 35%;
+}
+
 .invalid-inp_bottom_label {
     font-size: 13px;
     color: #fd595f;
@@ -270,6 +326,7 @@ td {
     border-color: #ebebeb;
     font-weight: 700;
 }
+
 .webix_list_item.webix_selected .float-right-btn{
     visibility: visible;
     float:right;
@@ -316,8 +373,20 @@ td {
     color: #fff;
 }
 
+.referenceTable{
+    float: left;
+    width: 415px;
+    height: 150px;
+    border: 1px solid #bbb;
+}
+
+.details-form{
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
 .scrollableContainer {
-    height: 200px;
     position: relative;
     padding-top: 37px;
     margin-bottom: 30px;
@@ -397,6 +466,39 @@ td {
     vertical-align: top;
     border-top: 1px solid #ddd;
 }
+/*.scrollableContainer .table>thead>tr>th,*/
+/*.scrollableContainer .table>tbody>tr>th,*/
+/*.scrollableContainer .table>tfoot>tr>th,*/
+/*.scrollableContainer .table>thead>tr>td,*/
+/*.scrollableContainer .table>tbody>tr>td,*/
+/*.scrollableContainer .table>tfoot>tr>td {*/
+    /*line-height: 10px;*/
+    /*font-size: 14px;*/
+/*}*/
+
+.referenceTable.scrollableContainer {
+    padding-top: 27px;
+    margin-bottom: 4px;
+}
+
+.referenceTable.scrollableContainer .headerSpacer {
+    height: 26px;
+}
+
+.referenceTable .scrollArea table .th-inner {
+    height: 26px;
+    line-height: 26px;
+}
+
+.referenceTable .table>thead>tr>th,
+.referenceTable .table>tbody>tr>th,
+.referenceTable .table>tfoot>tr>th,
+.referenceTable .table>thead>tr>td,
+.referenceTable .table>tbody>tr>td,
+.referenceTable .table>tfoot>tr>td {
+    line-height: 10px;
+    font-size: 14px;
+}
 
 .search-bar {
     /*display:inline-block;*/
@@ -442,6 +544,36 @@ td {
     width: 30px;
     display: block;
     padding-top: 5px;
+}
+
+.info_box{min-width:120px;font-family:Tahoma,Arial;z-index:10000;overflow:hidden;margin:5px 5px 10px;-webkit-transition:all .5s ease;-moz-transition:all .5s ease;-o-transition:all .5s ease;transition:all .5s ease}
+.info_box.hidden{height:0;min-height:0;padding-top:0;padding-bottom:0;border-width:0;margin-top:0;margin-bottom:0;overflow:hidden}
+.info_box{cursor:pointer}
+.info_box img{float:left;margin-right:20px}
+.error_box,.info_box{font-size:15px;color:#666;box-shadow:0 0 10px #888;padding:0;background-color:#FFF;border-radius:3px;border:1px solid #fff}
+.info_box div{padding:5px 10px;background-color:#fff;border-radius:3px;border:1px solid #B8B8B8}
+
+
+.message_area {
+    position: fixed;
+    right: 5px;
+    width: 250px;
+    z-index: 1000;
+}
+
+div.modal_cover {
+    background-color: #000;
+    cursor: default;
+    filter: alpha(opacity=10);
+    opacity: .1;
+    position: fixed;
+    z-index: 19999;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    zoom: 1;
 }
 
 [ng\:cloak], [ng-cloak], [data-ng-cloak], [x-ng-cloak], .ng-cloak, .x-ng-cloak {

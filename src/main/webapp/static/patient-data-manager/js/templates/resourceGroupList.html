@@ -1,0 +1,6 @@
+<div ng-repeat="resource in resourceTypeList" ng-click="selectResourceType(resource)" ng-class="{selected: resource === selectedResourceType}">
+    <div autowidth=true select=1 width="220">
+     {{resource.resourceType}} ({{resource.count}})
+     <a href='#' class='float-right-btn' onclick="openModalDialog('create')"><i class='fa fa-plus-square-o fa-lg'></i></a>
+    </div>
+</div>

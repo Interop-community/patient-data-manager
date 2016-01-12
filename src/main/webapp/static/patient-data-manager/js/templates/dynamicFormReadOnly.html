@@ -1,0 +1,31 @@
+<!-- TEXT FIELDS -->
+<div ng-if="attribute.type=='text'" class="form-group">
+    <label class="dynamic-form-label">{{attribute.label}}</label>
+    <label class="dynamic-form-value">{{dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]}}</label>
+</div>
+
+<div ng-if="attribute.type=='date'" class="form-group">
+    <label class="dynamic-form-label">{{attribute.label}}</label>
+    <label class="dynamic-form-value">{{dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ] | date: 'dd MMM yyyy HH:mm'}}</label>
+</div>
+
+<!-- SELECT FIELDS -->
+<div ng-if="attribute.type=='select'" class="form-group" >
+    <label class="dynamic-form-label">{{attribute.label}}</label>
+    <label class="dynamic-form-value">{{dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]}}</label>
+</div>
+
+<!-- TYPEAHEAD FIELDS -->
+<div ng-if="attribute.type=='coded-code-typeahead'" class="form-group">
+    <label class="dynamic-form-label">{{attribute.label}}</label>
+    <label class="dynamic-form-value">{{dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]}}</label>
+</div>
+
+<!-- TYPEAHEAD FIELDS -->
+<div ng-if="attribute.type=='coded-display-typeahead'" class="form-group">
+    <label class="dynamic-form-label">{{attribute.label}}</label>
+    <label class="dynamic-form-value">{{dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]}}</label>
+</div>
+
+
+

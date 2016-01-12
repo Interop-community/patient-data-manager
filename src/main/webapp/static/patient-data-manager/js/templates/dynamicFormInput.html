@@ -58,6 +58,17 @@
     </div>
 </div>
 
+<!-- REFERENCE FIELDS -->
+<div ng-if="attribute.type=='reference'" class="form-group">
+    <label class="dynamic-form-label">{{attribute.label}}</label>
+    <div class="dynamic-form-label-input">
+        <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" class="form-control" required/>
+        <!--<span ng-show=" {{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>-->
+        <!--<span ng-show=" {{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.email'}}">Not email!</span>-->
+    </div>
+</div>
+
+
 <!-- EMAIL FIELDS -->
 <div ng-if="attribute.type=='email'" class="form-group">
     <label class="dynamic-form-label">{{attribute.label}}</label>

@@ -56,8 +56,8 @@
             {
                 "dataType" : "valuePeriod",
                 "displayValues" : [
-                    {"type": "text", "name": "start", "label": "Start" , "required": true, "path":"valuePeriod.start", "default": ""},
-                    {"type": "text", "name": "end", "label": "End" , "required": true, "path":"valuePeriod.end", "default": ""}
+                    {"type": "date", "name": "start", "label": "Start" , "required": true, "path":"valuePeriod.start", "default": ""},
+                    {"type": "date", "name": "end", "label": "End" , "required": true, "path":"valuePeriod.end", "default": ""}
                 ]
             }
         ]

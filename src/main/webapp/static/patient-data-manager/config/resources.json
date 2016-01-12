@@ -1,6 +1,8 @@
 [
     {
         "resource" : "Observation",
+        "index" : 0,
+        "showInResourceList": true,
         "search" : {
                 "searchParams": [{
                     "name" :"code",
@@ -13,14 +15,14 @@
                     }]
             },
         "displayValues" : [
-            {"type": "coded-display-typeahead", "name": "displayName", "label": "Display Name" , "required": true, "path": "code.coding.0.display", "default": "" },
-            {"type": "date", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": ""},
-            {"type": "coded-code-typeahead", "name": "code", "label": "Code" , "required": true, "path": "code.coding.0.code", "default": ""},
-            {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "code.coding.0.system", "default": "http://loinc.org"},
-            {"type": "variable", "name": "value", "label": "Value" , "required": true, "filter": "valueX", "path":"", "default": ""},
+            {"type": "coded-display-typeahead", "name": "displayName", "label": "Display Name" , "required": true, "path": "code.coding.0.display", "default": "", "view": "master"},
+            {"type": "date", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
+            {"type": "coded-code-typeahead", "name": "code", "label": "Code" , "required": true, "path": "code.coding.0.code", "default": "", "view": "detail"},
+            {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "code.coding.0.system", "default": "http://loinc.org", "view": "detail"},
+            {"type": "variable", "name": "value", "label": "Value", "choiceLabel": "Value Type" , "required": true, "filter": "valueX", "path":"", "default": "", "view": "master"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["final", "registered", "preliminary", "amended","cancelled", "entered-in-error", "unknown"],
-                "path": "status", "default": "final"}
+                "path": "status", "default": "final", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "subject.reference"}
@@ -28,6 +30,8 @@
     },
     {
         "resource" : "Appointment",
+        "index" : 1,
+        "showInResourceList": true,
         "search" : {
             "searchParams": [{
                 "name" :"date"
@@ -38,12 +42,12 @@
             }]
         },
         "displayValues" : [
-            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": ""},
-            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": ""},
-            {"type": "text", "name": "description", "label": "Description" , "required": true, "path": "description", "default": ""},
+            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "view": "master"},
+            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": "", "view": "master"},
+            {"type": "text", "name": "description", "label": "Description" , "required": true, "path": "description", "default": "", "view": "master"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["proposed", "pending", "booked", "arrived","fulfilled", "cancelled", "noshow"],
-                "path": "status", "default": "proposed"}
+                "path": "status", "default": "proposed", "view": "master"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "participant.actor.reference"}
@@ -51,8 +55,10 @@
     },
     {
         "resource" : "Schedule",
+        "index" : 2,
+        "showInResourceList": true,
         "displayValues" : [
-            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.0.text", "default": ""}
+            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.0.text", "default": "", "view": "master"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "actor.reference"}
@@ -60,12 +66,13 @@
     },
     {
         "resource" : "Slot",
+        "index" : 3,
+        "showInResourceList": true,
         "displayValues" : [
-            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true},
-            {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": ""},
-            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": ""},
-            {"type": "text", "name": "freeBusy", "label": "Free/Busy" , "required": true, "path": "freeBusyType", "default": ""},
-            {"type": "text", "name": "schedule", "label": "Schedule" , "required": true, "path": "schedule.reference", "default": ""}
+            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
+            {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
+            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": "", "view": "master"},
+            {"type": "text", "name": "freeBusy", "label": "Free/Busy" , "required": true, "path": "freeBusyType", "default": "", "view": "master"}
         ],
         "references" : [
             {"resource": "Schedule", "label": "Schedule", "path": "schedule.reference"}
@@ -73,17 +80,41 @@
     },
     {
         "resource" : "AppointmentResponse",
+        "index" : 4,
+        "showInResourceList": true,
         "displayValues" : [
-            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true},
-            {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": ""},
-            {"type": "text", "name": "participantType", "label": "Participant Type" , "required": true, "path": "participantType.0.text", "default": ""},
-            {"type": "text", "name": "appointment", "label": "Appointment" , "required": true, "path": "appointment.reference", "default": ""},
+            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
+            {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
+            {"type": "text", "name": "participantType", "label": "Participant Type" , "required": true, "path": "participantType.0.text", "default": "", "view": "master"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["accepted", "declined", "tentative", "in-process","completed", "needs-action"],
-                "path": "participantStatus", "default": "needs-action"}
+                "path": "participantStatus", "default": "needs-action", "view": "master"}
         ],
         "references" : [
             {"resource": "Appointment", "label": "Appointment", "path": "appointment.reference"}
+        ]
+    },
+    {
+        "resource" : "Patient",
+        "index" : 5,
+        "showInResourceList": false,
+        "displayValues" : [
+            {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.0.given.0", "default": "", "view": "master"},
+            {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.0.family.0", "default": "", "view": "master"},
+            {"type": "text", "name": "gender", "label": "Gender" , "required": true, "path": "gender", "default": "", "view": "master"},
+            {"type": "text", "name": "birthDate", "label": "Birth Date" , "required": true, "path": "birthDate", "default": "", "view": "master"}
+        ]
+    },
+    {
+        "resource" : "HealthcareService",
+        "index" : 6,
+        "showInResourceList": false,
+        "displayValues" : [
+            {"type": "coded-display-typeahead", "name": "serviceType", "label": "Service Type" , "required": true, "path": "serviceType.0.type.coding.0.display", "default": "", "view": "master"},
+            {"type": "coded-code-typeahead", "name": "code", "label": "Type Code" , "required": true, "path": "serviceType.0.type.coding.0.code", "default": "", "view": "detail"},
+            {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "serviceType.0.type.coding.0.system", "default": "http://loinc.org", "view": "detail"},
+            {"type": "text", "name": "serviceName", "label": "Service Name" , "required": true, "path": "serviceName", "default": "", "view": "master"},
+            {"type": "text", "name": "programName", "label": "Program Name" , "required": true, "path": "programName.0", "default": "", "view": "master"}
         ]
     }
 ]
