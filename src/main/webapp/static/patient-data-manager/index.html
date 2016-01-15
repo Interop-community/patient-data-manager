@@ -1,87 +1,81 @@
 <!DOCTYPE html>
 <html lang="en" ng-app="pdmApp">
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Patient Data Manager</title>
-    <link href="images/favicon.ico" rel="icon" type="image/x-icon" />
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<title>Patient Data Manager</title>
+        <link href="images/favicon.ico" rel="icon" type="image/x-icon" />
 
-    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/app.css">
-    <link rel="stylesheet" href="https://cdn.webix.com/edge/webix.css" type="text/css">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+        <link rel="stylesheet" href="css/app.css">
 
-    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-    <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
 
-    <![endif]-->
-    <style type="text/css">
+		<![endif]-->
+    </head>
+	<body ng-controller="pdmCtrl">
+    <div class="full-screen" ng-style="resizeWithOffset(20)" resize>
 
-    </style>
-
-    <script>
-        function openModalDialog(el) {
-            var $scope = angular.element(el).scope();
-            $scope.openModalDialog('create');
-        }
-    </script>
-
-</head>
-<body ng-controller="pdmCtrl">
-<div webix-ui type="space"> <!--layout rows with type "space" are created-->
-    <div height="65" class="navbar navbar-inverse">
-        <p class="navbar-brand"><span class="glyphicon glyphicon-user"></span>{{patient.name}}</p>
-        <p class="navbar-text">sex <span class="title">{{patient.sex}}</span></p>
-        <p class="navbar-text">dob <span class="title">{{patient.dob | date: 'dd MMM yyyy HH:mm'}}</span></p>
-        <p class="navbar-text">age <span class="title">{{patient.dob | age}}</span></p>
-    </div>
-
-    <div id="mainCols" view="cols" resizeColumn=true type="wide" margin="10"> <!--Webix layout cols are initialized-->
-        <div view="list" id="resGroupListId" webix-event="onSelectChange = selectResourceType()"
-             template="#resourceType# (#count#) <a href='#' class='float-right-btn'
-                     onclick='openModalDialog(this)'><i class='fa fa-plus-square-o fa-lg'></i></a>" autowidth=true select=1 width="220"></div>
-        <!--<div view="resizer"></div>-->
-        <div view="rows" type="wide">
-            <div class="search-bar" id="searchBar" height=45 ng-show="selectedResourceTypeConfig.search.searchParams">
-                <div class="search-label"><label>Search</label></div>
-                <div class="search-field typeahead">
-                    <input ng-show="selectedResourceTypeConfig.search.searchParams[0].codedURL" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch"
-                           uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue, 3)"
-                           typeahead-on-select="enteredSearch = $item.display">
-
-                    <input ng-hide="selectedResourceTypeConfig.search.searchParams[0].codedURL" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch">
-                    <a href='#' class='undo-icon' ng-show="enteredSearch != ''" ng-click="requestResourceSearch('clear')"><i class='fa fa-remove fa-lg'></i></a>
-                    <a href='#' class='search-icon' ng-click="requestResourceSearch()"><i class='fa fa-search fa-lg'></i></a>
+        <div layout="column" class="layout-template">
+            <div class="column-wrapper" >
+                <div class="navbar navbar-inverse">
+                    <p class="navbar-brand"><span class="glyphicon glyphicon-user"></span>{{patient.name}}</p>
+                    <p class="navbar-text">sex <span class="title">{{patient.sex}}</span></p>
+                    <p class="navbar-text">dob <span class="title">{{patient.dob | date: 'dd MMM yyyy HH:mm'}}</span></p>
+                    <p class="navbar-text">age <span class="title">{{patient.dob | age}}</span></p>
                 </div>
             </div>
-            <div>
-                <div ng-include src="'js/templates/dynamicTable.html'"></div>
+
+            <div layout="row" class="layout-template" ng-style="resizeWithOffset(95)">
+                <div class="row-wrapper" ng-include src="'js/templates/resourceGroupList.html'" style="min-width:220px"></div>
+                <div layout="column" class="layout-template">
+                    <div class="column-wrapper search-bar" ng-show="searchBar" height=45 ng-show="selectedResourceTypeConfig.search.searchParams">
+                                <div class="search-label"><label>Search</label></div>
+                                <div class="search-field typeahead">
+                                    <input ng-show="selectedResourceTypeConfig.search.searchParams[0].codedURL" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch"
+                                                                           uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue, 3)"
+                                                                           typeahead-on-select="enteredSearch = $item.display">
+
+                                    <input ng-hide="selectedResourceTypeConfig.search.searchParams[0].codedURL" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch">
+                                <a href='#' class='undo-icon' ng-show="enteredSearch != ''" ng-click="requestResourceSearch('clear')"><i class='fa fa-remove fa-lg'></i></a>
+                                <a href='#' class='search-icon' ng-click="requestResourceSearch()"><i class='fa fa-search fa-lg'></i></a>
+                            </div>
+                    </div>
+                    <div class="column-wrapper" >
+                        <div ng-include src="'js/templates/dynamicTable.html'"></div>
+                    </div>
+                </div>
+                <div class="row-wrapper" ng-show="detailView" style="min-width:425px">
+                    <div ng-include src="'js/templates/dynamicForm.html'"></div>
+                </div>
             </div>
         </div>
-        <!--<div view="resizer"></div>-->
-        <div id="detailView" width="425">
-            <div ng-include src="'js/templates/dynamicForm.html'"></div>
+        <div class="message_area" style="top: 5px;">
+            <div notification ng-repeat="message in messages"></div>
         </div>
-
     </div>
 
-</div>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
-<script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular-animate.js"></script>
-<script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.14.3.js"></script>
-<script src="https://cdn.webix.com/edge/webix.js" type="text/javascript"></script>
-<script src="fhir-client/fhir-client.js"></script>
-<script src="js/app.js"></script>
-<script src="js/services.js"></script>
-<script src="js/controllers.js"></script>
-<script src="js/filters.js"></script>
-<script src="js/directives.js"></script>
-<script src="third-party-libs/smart-table.min.js"></script>
-</body>
+    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.14.3.js"></script>
+    <script src="fhir-client/fhir-client.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/services.js"></script>
+    <script src="js/controllers.js"></script>
+    <script src="js/filters.js"></script>
+    <script src="js/directives.js"></script>
+    <script src="third-party-libs/smart-table.min.js"></script>
+    </body>
 </html>

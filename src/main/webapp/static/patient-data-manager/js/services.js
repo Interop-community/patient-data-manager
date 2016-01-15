@@ -285,16 +285,16 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
         var fhirServices = {};
 
-        fhirServices.searchResourceInstances = function (smart, enteredSearch, resourceTypeList, resourceTypeConfig, clearSearch){
+        fhirServices.searchResourceInstances = function (smart, enteredSearch, resourceTypeList, resourceTypeConfig, clearSearch, notification){
             var deferred = $.Deferred();
             if (typeof resourceTypeConfig.search !== 'undefined' && clearSearch === undefined) {
-                fhirServices.queryResourceInstances(smart, resourceTypeList, resourceTypeConfig, buildQueryString(resourceTypeConfig.search, enteredSearch))
+                fhirServices.queryResourceInstances(smart, resourceTypeList, resourceTypeConfig, notification, buildQueryString(resourceTypeConfig.search, enteredSearch))
                     .done(function(resourceTypeList, index){
                         deferred.resolve(resourceTypeList, index );
                     }).fail(function(){deferred.reject()});
 
             } else {
-                fhirServices.queryResourceInstances(smart, resourceTypeList, resourceTypeConfig)
+                fhirServices.queryResourceInstances(smart, resourceTypeList, resourceTypeConfig, notification)
                     .done(function(resourceTypeList, index){
                         deferred.resolve(resourceTypeList, index );
                     }).fail(function(){deferred.reject()});
@@ -302,60 +302,54 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return deferred;
         };
 
-        fhirServices.createResource = function(smart, newResource, resourceTypeList, resourceTypeConfig) {
+        fhirServices.createResource = function(smart, newResource, resourceTypeList, resourceTypeConfig, notification) {
             var deferred = $.Deferred();
             smart.api.create({type: newResource.resourceType, data: JSON.stringify(rbh.formatAttributesFromUIForFhir(resourceTypeConfig, angular.copy(newResource)))})
                 .done(function(){
-                    fhirServices.queryResourceInstances(smart, resourceTypeList, resourceTypeConfig)
+                    fhirServices.queryResourceInstances(smart, resourceTypeList, resourceTypeConfig, notification)
                         .done(function(resourceTypeList, index){
-                            webix.message(newResource.resourceType + " Created");
+                            notification(newResource.resourceType + " Created");
                             deferred.resolve(resourceTypeList, index );
                         }).fail(function(){deferred.reject()});
                 }).fail(function(){
-                    webix.message({ type:"error", text: newResource.resourceType + " failed to Save" });
+                    notification({ type:"error", text: newResource.resourceType + " failed to Save" });
                     console.log("failed to create " + newResource.resourceType, arguments);
                     deferred.reject()
                 });
             return deferred;
         };
 
-        fhirServices.updateResource = function(smart, resourceInstance, resourceTypeList, resourceTypeConfig) {
+        fhirServices.updateResource = function(smart, resourceInstance, resourceTypeList, resourceTypeConfig, notification) {
             var deferred = $.Deferred();
             var modifiedResource = angular.copy(resourceInstance);
             delete modifiedResource.meta;
 
             smart.api.update({type: modifiedResource.resourceType, data: JSON.stringify(modifiedResource), id: modifiedResource.id})
                 .done(function(){
-                    fhirServices.queryResourceInstances(smart, resourceTypeList, resourceTypeConfig)
+                    fhirServices.queryResourceInstances(smart, resourceTypeList, resourceTypeConfig, notification)
                         .done(function(resourceTypeList, index){
-//                            webix.message(modifiedResource.resourceType + " Saved", expire:-1);
-                            webix.message({
-                                type:"error",
-                                    text:"Form Data is Invalid",
-//                                expire:10000
-                                expire:-1
-                            });
+                            notification(modifiedResource.resourceType + " Saved");
                             deferred.resolve(resourceTypeList, index );
                         }).fail(function(){deferred.reject()});
                 }).fail(function(){
-                    webix.message({ type:"error", text:modifiedResource.resourceType + " failed to Save" });
+                    notification({ type:"error", text:modifiedResource.resourceType + " failed to Save" });
                     console.log("failed to create " + modifiedResource.resourceType, arguments);
                     deferred.reject()
                 });
             return deferred;
         };
 
-        fhirServices.deleteResource = function(smart, resourceInstance, resourceTypeList, resourceTypeConfig) {
+        fhirServices.deleteResource = function(smart, resourceInstance, resourceTypeList, resourceTypeConfig, notification) {
             var deferred = $.Deferred();
             smart.api.delete({type: resourceInstance.resourceType, id: resourceInstance.id})
                 .done(function(){
-                    fhirServices.queryResourceInstances(smart, resourceTypeList, resourceTypeConfig)
+                    fhirServices.queryResourceInstances(smart, resourceTypeList, resourceTypeConfig, notification)
                         .done(function(resourceTypeList, index){
-                            webix.message(resourceInstance.resourceType + " Deleted");
+                            notification(resourceInstance.resourceType + " Deleted");
                             deferred.resolve(resourceTypeList, index );
                         }).fail(function(){deferred.reject()});
                 }).fail(function(){
-                    webix.message({ type:"error", text:resourceInstance.resourceType + " failed to Delete" });
+                    notification({ type:"error", text:resourceInstance.resourceType + " failed to Delete" });
                     console.log("failed to create " + resourceInstance.resourceType, arguments);
                     deferred.reject();
                 });
@@ -406,7 +400,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return deferred;
         };
 
-        fhirServices.queryResourceInstances = function(smart, resourceTypeList, resourceTypeConfig, searchValue) {
+        fhirServices.queryResourceInstances = function(smart, resourceTypeList, resourceTypeConfig, notification, searchValue) {
             var deferred = $.Deferred();
 
             var searchParams = {type: resourceTypeConfig.resource, count: 50};
@@ -427,7 +421,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                             resourceResults.push(rbh.formatAttributesFromFhirForUI(resourceTypeConfig, entry.resource));
                         });
                     } else {
-                        webix.message({ type:"error", text:"No Results found for the Search"});
+                        notification({ type:"error", text:"No Results found for the Search"});
                     }
                     var resourceType = { index: resourceTypeConfig.index,
                         resourceType: resourceTypeConfig.resource,

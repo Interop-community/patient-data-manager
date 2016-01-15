@@ -25,7 +25,9 @@
                 "path": "status", "default": "final", "view": "detail"}
         ],
         "references" : [
-            {"resource": "Patient", "label": "Patient", "path": "subject.reference"}
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
+            {"resource": "Encounter", "label": "Encounter", "path": "encounter.reference"},
+            {"resources": ["Practitioner", "Organization", "Patient", "RelatedPerson"], "label": "Reference", "listPath": "performer", "subPath":"reference"}
         ]
     },
     {
@@ -50,7 +52,7 @@
                 "path": "status", "default": "proposed", "view": "master"}
         ],
         "references" : [
-            {"resource": "Patient", "label": "Patient", "path": "participant.actor.reference"}
+            {"resources": ["Patient", "Practitioner", "RelatedPerson", "Device", "HealthcareService", "Location"], "label": "Patient", "listPath": "participant", "subPath": "actor.reference"}
         ]
     },
     {
@@ -106,8 +108,17 @@
         ]
     },
     {
-        "resource" : "HealthcareService",
+        "resource" : "Practitioner",
         "index" : 6,
+        "showInResourceList": false,
+        "displayValues" : [
+            {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.given.0", "default": "", "view": "master"},
+            {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.family.0", "default": "", "view": "master"}
+        ]
+    },
+    {
+        "resource" : "HealthcareService",
+        "index" : 7,
         "showInResourceList": false,
         "displayValues" : [
             {"type": "coded-display-typeahead", "name": "serviceType", "label": "Service Type" , "required": true, "path": "serviceType.0.type.coding.0.display", "default": "", "view": "master"},
@@ -115,6 +126,19 @@
             {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "serviceType.0.type.coding.0.system", "default": "http://loinc.org", "view": "detail"},
             {"type": "text", "name": "serviceName", "label": "Service Name" , "required": true, "path": "serviceName", "default": "", "view": "master"},
             {"type": "text", "name": "programName", "label": "Program Name" , "required": true, "path": "programName.0", "default": "", "view": "master"}
+        ]
+    },
+    {
+        "resource" : "Encounter",
+        "index" : 8,
+        "showInResourceList": false,
+        "displayValues" : [
+            {"type": "text", "name": "class", "label": "Class" , "required": true, "path": "class", "default": "", "view": "master"},
+            {"type": "date", "name": "start", "label": "Start" , "required": true, "path":"period.start", "default": "", "view": "master"},
+            {"type": "date", "name": "end", "label": "End" , "required": true, "path":"period.end", "default": "", "view": "master"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["planned", "arrived", "in-progress", "onleave", "finished", "cancelled"],
+                "path": "status", "default": "planned", "view": "master"}
         ]
     }
 ]

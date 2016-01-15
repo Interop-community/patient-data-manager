@@ -24,14 +24,19 @@ angular.module('pdmApp.directives', []).directive("dynamicName",function($compil
                 scope.$parent.windowHeight = newValue.h;
                 scope.$parent.windowWidth = newValue.w;
 
-                scope.$parent.resizeWithOffset = function (offsetH) {
+                scope.$parent.resizeWithOffset = function (offsetH, offsetW) {
 
                     scope.$parent.$eval(attr.notifier);
 
-                    return {
+                    var newSize = {
                         'height': (newValue.h - offsetH) + 'px'
-                        //,'width': (newValue.w - 100) + 'px'
                     };
+
+                    if (offsetW !== undefined) {
+                        newSize.width = (newValue.w - offsetW) + 'px'
+                    }
+
+                    return newSize;
                 };
             }, true);
 
@@ -87,4 +92,29 @@ angular.module('pdmApp.directives', []).directive("dynamicName",function($compil
             });
         }
     };
-}]);
+}]).directive('notification', function($timeout, $compile){
+
+    return {
+        restrict: 'A',
+        template: '<div></div>',
+        replace: true,
+        link: function(scope, element) {
+            var el = angular.element('<span/>');
+
+            scope.message.isVisible = true;
+            switch(scope.message.type) {
+                case 'error':
+                    el.append('<div ng-if="message.isVisible" ng-click="message.isVisible=false" class="message_error"><div>{{message.text}}</div></div>');
+                    break;
+                case 'message':
+                    el.append('<div ng-if="message.isVisible" ng-click="message.isVisible=false" class="message_info"><div>{{message.text}}</div></div>');
+                    break;
+            }
+            $compile(el)(scope);
+            element.append(el);
+            $timeout(function (){
+                scope.message.isVisible = false;
+            }, 5000);
+        }
+    }
+});

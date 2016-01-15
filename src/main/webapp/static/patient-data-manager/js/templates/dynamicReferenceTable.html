@@ -1,7 +1,7 @@
 <div class="scrollableContainer referenceTable">
     <div class="headerSpacer"></div>
     <div class="scrollArea">
-        <table st-table="selectedResourceReferences" class="table table-striped" arrow-selector>
+        <table st-table="selectedResourceReferencesList" class="table table-striped">
             <thead class="fixedHeader">
             <tr>
                 <th><div class="th-inner" table-header-inner>Resource</div></th>
@@ -9,7 +9,7 @@
             </tr>
             </thead>
             <tbody class="scrollContent">
-            <tr st-select-row="reference" ng-click="resourceReferenceSelected(reference)" ng-repeat="reference in selectedResourceReferences">
+            <tr st-select-row="reference" ng-click="resourceReferenceSelected(reference)" ng-repeat="reference in selectedResourceReferencesList">
                 <td>{{reference.resource}}</td>
                 <td>{{reference.relativeUrl}}</td>
             </tr>

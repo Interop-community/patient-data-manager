@@ -1,13 +1,14 @@
 <div class="form-group">
     <div class="dynamic-form-header" ng-hide="isModal">
-        <a href='#' class='float-right-dark-btn' ng-click="unselectResource(selectedResourceInstance)"><i class='fa fa-remove fa-lg font-awesome-inverse'></i></a>
+        <a href='#' class='float-right-dark-btn' ng-click="closeDetailView()"><i class='fa fa-remove fa-lg font-awesome-inverse'></i></a>
         <a href='#' class='float-right-dark-btn' ng-click="requestUpdateResource()"><i class='fa fa-check fa-lg font-awesome-inverse'></i></a>
         <a href='#' class='float-right-dark-btn' ng-click="openModalDialog('clone')"><i class='fa fa-copy fa-lg font-awesome-inverse'></i></a>
+        <a href='#' class='float-right-dark-btn' ng-click="json()"><i class='fa fa-file-text-o fa-lg font-awesome-inverse'></i></a>
         <a href='#' uib-popover-template="'js/templates/detailPopover.html'" popover-trigger="focus" popover-placement="bottom" class='float-right-dark-btn'><i class='fa fa-ellipsis-h fa-lg font-awesome-inverse'></i></a>
     </div>
     <div class="details-form"  ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)">
         <div ng-repeat="attribute in selectedResourceTypeConfig.displayValues">
-            <form name="form-fix-later" class="css-form" ng-class="{modalForm: isModal}" novalidate>
+            <form autocomplete="off" name="form-fix-later" class="css-form" ng-class="{modalForm: isModal}" novalidate>
 
                 <div ng-include src="dynamicFormTemplate"></div>
 
@@ -33,10 +34,20 @@
                 </div>
             </form>
         </div>
-        <div ng-if="!isModal && selectedResourceReferences.length > 0">
-            <div><label class="dynamic-form-label">References</label></div>
-            <div ng-include src="'js/templates/dynamicReferenceTable.html'"></div>
+        <div ng-if="!isModal">
+            <!--<div><label class="dynamic-form-section-label">References</label></div>-->
+
+            <div ng-if="selectedResourceReferences.length > 0" ng-repeat="reference in selectedResourceReferences">
+                <label class="dynamic-form-label">{{reference.resource}}</label>
+                <a href='#' class="dynamic-form-hyperlink" ng-click="resourceReferenceSelected(reference)">{{reference.relativeUrl}}</a>
+            </div>
+
+            <div ng-if="selectedResourceReferencesList.length > 0">
+                <div><label class="dynamic-form-section-label">Performers</label></div>
+                <div ng-include src="'js/templates/dynamicReferenceTable.html'"></div>
+            </div>
         </div>
+        <!--<button class="form-btn btn btn-primary" type="button" ng-click="json()">JSON</button>-->
     </div>
 </div>
 
