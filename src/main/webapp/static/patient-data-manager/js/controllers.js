@@ -195,6 +195,43 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
         };
 
+        $scope.fred = function (){
+            var initialValue = angular.copy($scope.selectedResourceInstance);
+            delete initialValue.meta;
+            delete initialValue.isSelected;
+            // Stringify & back to object converts dates to ISO format
+            var json = JSON.stringify(initialValue);
+            initialValue = JSON.parse(json);
+
+            var fredWindow;
+            var messageQueue = [];
+            function beginEdit(){
+                messageQueue.push(initialValue);
+                fredWindow = window.open('fred/index.html?remote=1', 'fredwin');
+                console.log();
+            }
+
+            window.onmessage = function(m){
+                console.log("Message received", m)
+                switch (m.data.action) {
+                    case 'fred-ready':
+                        fredWindow.postMessage({action: 'edit', resource: messageQueue.shift()}, '*')
+                        break;
+                    case 'fred-save':
+                        var resource = m.data.resource
+                        console.log('Edit saved in FRED', resource);
+                        resource = rbh.formatAttributesFromFhirForUI($scope.selectedResourceTypeConfig, resource, $scope.selectedResourceTypeConfig)
+                        $scope.selectedResourceInstance = resource;
+                        $scope.selectedResourceInstance.isSelected = true;
+                        break;
+                    case 'fred-cancel':
+                        console.log('Edit canceled in FRED');
+                        break;
+                }
+            };
+            beginEdit();
+        };
+
         $scope.confirmModalDialog = function (settings) {
 
             $uibModal.open({

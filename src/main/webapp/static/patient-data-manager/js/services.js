@@ -323,6 +323,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             var deferred = $.Deferred();
             var modifiedResource = angular.copy(resourceInstance);
             delete modifiedResource.meta;
+            delete modifiedResource.isSelected;
 
             smart.api.update({type: modifiedResource.resourceType, data: JSON.stringify(modifiedResource), id: modifiedResource.id})
                 .done(function(){
