@@ -159,6 +159,15 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             $scope.showSearchBar();
         };
 
+        $scope.requestResourceSearch = function(clearSearch) {
+            if (clearSearch)
+                $scope.enteredSearch = "";
+            $fhirApiServices.searchResourceInstances($scope.smart, $scope.enteredSearch, $scope.resourceTypeList, $scope.selectedResourceTypeConfig, clearSearch, $scope.notification)
+            .done(function(resourceTypeList, resourceTypeConfigIndex){
+                updateView(resourceTypeList[resourceTypeConfigIndex]);
+            });
+        };
+
         $scope.requestUpdateResource = function() {
             // TODO: validate
             $fhirApiServices.updateResource($scope.smart, $scope.selectedResourceInstance, $scope.resourceTypeList, $scope.selectedResourceTypeConfig, $scope.notification)
@@ -213,6 +222,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                     if (result == true) {
                         $fhirApiServices.deleteResource($scope.smart, $scope.selectedResourceInstance, $scope.resourceTypeList, $scope.selectedResourceTypeConfig, $scope.notification)
                             .done(function(resourceTypeList, resourceTypeConfigIndex){
+                                $scope.closeDetailView();
                                 updateView(resourceTypeList[resourceTypeConfigIndex]);
                             });
                     }
@@ -351,6 +361,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 $scope.resourcePages.currentPage = 1;
                 $scope.showPageButtons();
                 $scope.showSearchBar();
+                $scope.$digest();
             }
         }
 
