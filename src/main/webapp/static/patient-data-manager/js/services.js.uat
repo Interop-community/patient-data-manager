@@ -253,9 +253,9 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                     dmh.getModelParent(template, value.path)[ dmh.getModelLeaf(value.path) ] = "";
                 }
             });
-            angular.forEach(selectedResourceTypeConfig.references, function (value) {
-                dmh.getModelParent(template, value.path)[ dmh.getModelLeaf(value.path) ] = "";
-            });
+//            angular.forEach(selectedResourceTypeConfig.references, function (value) {
+//                dmh.getModelParent(template, value.path)[ dmh.getModelLeaf(value.path) ] = "";
+//            });
             return template;
         }
 
