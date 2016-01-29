@@ -2,7 +2,7 @@
 
 angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
-    var terminologyServer = 'https://sandbox.hspconsortium.org/dstu2/hsp-reference-api/data/_services/terminology';
+    var terminologyServer = 'https://sandbox.hspconsortium.org/dstu2/hspc-reference-api/data/_services/terminology';
     var observationCodesId;
 
     var terminologyService = {};

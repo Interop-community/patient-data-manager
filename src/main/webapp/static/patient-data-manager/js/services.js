@@ -2,7 +2,7 @@
 
 angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
-    var terminologyServer = 'http://localhost:8080/hsp-reference-api/data/_services/terminology';
+    var terminologyServer = 'http://localhost:8080/hspc-reference-api/data/_services/terminology';
     var observationCodesId;
 
     var terminologyService = {};

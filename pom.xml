@@ -57,7 +57,7 @@
     </developers>
 
     <build>
-        <finalName>hsp-patient-data-manager</finalName>
+        <finalName>hspc-patient-data-manager</finalName>
     </build>
 
 </project>
