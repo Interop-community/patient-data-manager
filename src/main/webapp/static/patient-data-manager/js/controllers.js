@@ -24,12 +24,15 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.resourcePages = {};
         $scope.tableOffset = 168;
         $scope.tableOffsetWidth = 270;
-        $scope.detailOffset = 136;
+        $scope.detailOffset = 165;
         $scope.getValueSetExpansion = $terminology.getValueSetExpansion;
         $scope.dynamicFormTemplate = 'js/templates/dynamicFormInput.html';
 
         $scope.searchBar = false;
         $scope.detailView = false;
+        $scope.patientInfo = true;
+        $scope.resourceSet = 'Patient';
+        $scope.viewName = 'Full';
 
         $scope.messages = [];
 
@@ -56,8 +59,20 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          *      UI HELPERS
          *
          **/
+        $scope.togglePatientView = function(){
+            $scope.patientInfo = !$scope.patientInfo;
+            $scope.viewName = $scope.resourceSet;
+            if ($scope.patientInfo) {
+                $scope.resourceSet = 'Patient';
+            } else {
+                $scope.resourceSet = 'Full';
+            }
+            $scope.resourceTypeList = [];
+            getAllResources(0, $scope.resourceTypeList, $scope.resourceTypeConfigList);
+        };
+
         $scope.setTableOffset = function(){
-            $scope.tableOffset = 180 +
+            $scope.tableOffset = 210 +
                 ($scope.searchBar  ? 0 : -55);
             $scope.tableOffsetWidth = 262 +
                 ($scope.detailView  ? 436 : 0);
@@ -70,6 +85,9 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         $scope.showPageButtons = function(){
+            if (typeof $scope.selectedResourceType === 'undefined') {
+                return false;
+            }
             return ($scope.hasLink($scope.selectedResourceType.searchObj, 'previous') ||
                 $scope.hasLink($scope.selectedResourceType.searchObj, 'next'));
         };
@@ -382,7 +400,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             $fhirApiServices.queryResourceInstances($scope.smart, resourceTypeList, resourceTypeConfigList[index], $scope.notification)
                 .done(function(resourceList, index){
                     updateView(resourceTypeList[index]);
-                    if(++index < resourceTypeConfigList.length && resourceTypeConfigList[index].showInResourceList == true) {
+                    if(++index < resourceTypeConfigList.length && resourceTypeConfigList[index].showInResourceList === $scope.resourceSet) {
                         getAllResources(index, resourceTypeList, resourceTypeConfigList);
                     }
                     $scope.$digest();
@@ -422,7 +440,11 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                         .done(function(resourceTypeList, resourceTypeConfigIndex){
                             updateView(resourceTypeList[resourceTypeConfigIndex]);
                             $scope.selectResourceType(resourceTypeList[resourceTypeConfigIndex]);
-                            getAllResources(1, $scope.resourceTypeList, $scope.resourceTypeConfigList);
+                            if(1 < $scope.resourceTypeConfigList.length && $scope.resourceTypeConfigList[1].showInResourceList === $scope.resourceSet) {
+                                getAllResources(1, $scope.resourceTypeList, $scope.resourceTypeConfigList);
+                            } else {
+                                $scope.$digest();
+                            }
                         });
                 });
             });

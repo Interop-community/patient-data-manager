@@ -13,31 +13,31 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
     // Any function returning a promise object can be used to load values asynchronously
     terminologyService.getValueSetExpansion = function(val, min) {
-        if (val.length >= min) {
-            var path = encodeURI('/ValueSet/' + observationCodesId + '/$expand?filter=' + val);
-            return $http.get(terminologyServer + '?uri=' + path, {
-                params: {}
-            }).then(function(response){
-                    if (response.data.expansion.contains !== undefined) {
-                        return response.data.expansion.contains.map(function(item){
-                            return item;
-                        });
-                    }
-                });
-        }
+//        if (val.length >= min) {
+//            var path = encodeURI('/ValueSet/' + observationCodesId + '/$expand?filter=' + val);
+//            return $http.get(terminologyServer + '?uri=' + path, {
+//                params: {}
+//            }).then(function(response){
+//                    if (response.data.expansion.contains !== undefined) {
+//                        return response.data.expansion.contains.map(function(item){
+//                            return item;
+//                        });
+//                    }
+//                });
+//        }
     };
 
     terminologyService.getObservationCodesValueSetId = function() {
         var deferred = $.Deferred();
-        var path = encodeURI('/ValueSet?url=' + 'http://hl7.org/fhir/ValueSet/observation-codes');
-        $http.get(terminologyServer + '?uri=' + path, {
-            params: {}
-        }).then(function(valueSet){
-                if (valueSet.data.entry[0] !== 'undefined'){
-                    observationCodesId = valueSet.data.entry[0].resource.id;
-                }
+//        var path = encodeURI('/ValueSet?url=' + 'http://hl7.org/fhir/ValueSet/observation-codes');
+//        $http.get(terminologyServer + '?uri=' + path, {
+//            params: {}
+//        }).then(function(valueSet){
+//                if (valueSet.data.entry[0] !== 'undefined'){
+//                    observationCodesId = valueSet.data.entry[0].resource.id;
+//                }
                 deferred.resolve();
-            });
+//            });
         return deferred;
     };
 

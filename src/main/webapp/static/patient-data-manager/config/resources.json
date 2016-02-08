@@ -2,7 +2,7 @@
     {
         "resource" : "Observation",
         "index" : 0,
-        "showInResourceList": true,
+        "showInResourceList": "Patient",
         "search" : {
                 "searchParams": [{
                     "name" :"code",
@@ -33,7 +33,7 @@
     {
         "resource" : "Appointment",
         "index" : 1,
-        "showInResourceList": true,
+        "showInResourceList": "Full",
         "search" : {
             "searchParams": [{
                 "name" :"date"
@@ -58,7 +58,7 @@
     {
         "resource" : "Schedule",
         "index" : 2,
-        "showInResourceList": true,
+        "showInResourceList": "Full",
         "displayValues" : [
             {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.0.text", "default": "", "view": "master"}
         ],
@@ -69,7 +69,7 @@
     {
         "resource" : "Slot",
         "index" : 3,
-        "showInResourceList": true,
+        "showInResourceList": "Full",
         "displayValues" : [
             {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
             {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
@@ -83,7 +83,7 @@
     {
         "resource" : "AppointmentResponse",
         "index" : 4,
-        "showInResourceList": true,
+        "showInResourceList": "Full",
         "displayValues" : [
             {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
             {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
@@ -99,7 +99,7 @@
     {
         "resource" : "Patient",
         "index" : 5,
-        "showInResourceList": false,
+        "showInResourceList": "None",
         "displayValues" : [
             {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.0.given.0", "default": "", "view": "master"},
             {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.0.family.0", "default": "", "view": "master"},
@@ -110,7 +110,7 @@
     {
         "resource" : "Practitioner",
         "index" : 6,
-        "showInResourceList": false,
+        "showInResourceList": "None",
         "displayValues" : [
             {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.given.0", "default": "", "view": "master"},
             {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.family.0", "default": "", "view": "master"}
@@ -119,7 +119,7 @@
     {
         "resource" : "HealthcareService",
         "index" : 7,
-        "showInResourceList": false,
+        "showInResourceList": "None",
         "displayValues" : [
             {"type": "coded-display-typeahead", "name": "serviceType", "label": "Service Type" , "required": true, "path": "serviceType.0.type.coding.0.display", "default": "", "view": "master"},
             {"type": "coded-code-typeahead", "name": "code", "label": "Type Code" , "required": true, "path": "serviceType.0.type.coding.0.code", "default": "", "view": "detail"},
@@ -131,7 +131,7 @@
     {
         "resource" : "Encounter",
         "index" : 8,
-        "showInResourceList": false,
+        "showInResourceList": "None",
         "displayValues" : [
             {"type": "text", "name": "class", "label": "Class" , "required": true, "path": "class", "default": "", "view": "master"},
             {"type": "date", "name": "start", "label": "Start" , "required": true, "path":"period.start", "default": "", "view": "master"},

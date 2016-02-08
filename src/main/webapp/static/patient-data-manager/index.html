@@ -25,18 +25,21 @@
 
         <div layout="column" class="layout-template">
             <div class="column-wrapper" >
-                <div class="navbar navbar-inverse">
-                    <p class="navbar-brand"><span class="glyphicon glyphicon-user"></span>{{patient.name}}</p>
-                    <p class="navbar-text">sex <span class="title">{{patient.sex}}</span></p>
-                    <p class="navbar-text">dob <span class="title">{{patient.dob | date: 'dd MMM yyyy HH:mm'}}</span></p>
-                    <p class="navbar-text">age <span class="title">{{patient.dob | age}}</span></p>
+                <div class="navbar">
+                    <div><img src="images/HSPC-logo.png"/></div>
+                    <div ng-show=patientInfo>
+                        <p class="navbar-brand"><span class="glyphicon glyphicon-user"></span>{{patient.name}}</p>
+                        <p class="navbar-text">sex <span class="title">{{patient.sex}}</span></p>
+                        <p class="navbar-text">dob <span class="title">{{patient.dob | date: 'dd MMM yyyy HH:mm'}}</span></p>
+                        <p class="navbar-text">age <span class="title">{{patient.dob | age}}</span></p>
+                    </div>
                 </div>
             </div>
 
-            <div layout="row" class="layout-template" ng-style="resizeWithOffset(95)">
+            <div layout="row" class="layout-template" ng-style="resizeWithOffset(122)">
                 <div class="row-wrapper" ng-include src="'js/templates/resourceGroupList.html'" style="min-width:220px"></div>
                 <div layout="column" class="layout-template">
-                    <div class="column-wrapper search-bar" ng-show="searchBar" height=45 ng-show="selectedResourceTypeConfig.search.searchParams">
+                    <div class="column-wrapper search-bar" ng-show="searchBar">
                                 <div class="search-label"><label>Search</label></div>
                                 <div class="search-field typeahead">
                                     <input ng-show="selectedResourceTypeConfig.search.searchParams[0].codedURL" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch"
