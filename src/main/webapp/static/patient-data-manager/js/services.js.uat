@@ -50,6 +50,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
          *
          **/
         var dynamicModelHelpers = {};
+        var fhirTypeInfo = [];
 
         dynamicModelHelpers.getDynamicModelByName = function(resource, attribute) {
 
@@ -59,12 +60,22 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             } else {
                 parent = dynamicModelHelpers.getDynamicModel(resource, attribute.path);
             }
-            var properties = Object.keys(parent).filter(function( property ) {
-                var start = attributeFilterType(attribute.filter);
-                if (stringStartsWith(property, start)) {
-                    return true;
+            var properties = [];
+                if (attribute.type === 'variable') {
+                    properties = Object.keys(parent).filter(function( property ) {
+                    var start = attributeFilterType(attribute.filter);
+                    if (stringStartsWith(property, start)) {
+                        return true;
+                    }
+                });
+            } else if (attribute.type === 'datatype') {
+                    properties = Object.keys(parent).filter(function( property ) {
+                        //TODO This is wrong!! Just a hack
+                        if (stringStartsWith(property, attribute.name)) {
+                            return true;
+                        }
+                    });
                 }
-            });
             return $filter(attribute.filter)(properties[0], parent[properties[0]]);
         };
 
@@ -74,19 +85,34 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             if (stringIsEmpty(attribute.path)) {
                 parent = resource;
             } else {
-                parent = dynamicModelHelpers.getDynamicModel(resource, attribute.path);
+                parent = dynamicModelHelpers.getModelParent(resource, attribute.path);
             }
-            var properties = Object.keys(parent).filter(function( property ) {
-                var start = attributeFilterType(attribute.filter);
-                if (stringStartsWith(property, start)) {
-                    return true;
-                }
-            });
+
+            var properties = [];
+            if (attribute.type === 'variable') {
+                properties = Object.keys(parent).filter(function( property ) {
+                        var start = attributeFilterType(attribute.filter);
+                        if (stringStartsWith(property, start)) {
+                            return true;
+                        }
+                });
+            } else if (attribute.type === 'datatype') {
+                properties = Object.keys(parent).filter(function( property ) {
+                    //TODO This is wrong!! Just a hack
+                    if (stringStartsWith(property, attribute.name)) {
+                        return true;
+                    }
+                });
+            }
             return properties[0];
         }
 
         dynamicModelHelpers.getFhirDatatypeOnResource = function(fhirDataTypes, resource, attribute) {
-            return dynamicModelHelpers.getFhirDatatypeByName(fhirDataTypes, getFhirDatatypeName(resource, attribute), attribute);
+            if (attribute.type === 'variable') {
+                return dynamicModelHelpers.getFhirDatatypeByName(fhirDataTypes, getFhirDatatypeName(resource, attribute), attribute);
+            } else if (attribute.type === 'datatype') {
+                return dynamicModelHelpers.getFhirDatatypeByName(fhirDataTypes, attribute.filter, attribute);
+            }
         };
 
         dynamicModelHelpers.getFhirDatatypeByName = function(fhirDataTypes, dataTypeName, attribute) {
@@ -98,11 +124,19 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                             result = value.displayValues;
                         }
                     });
+                } else if (datatype.simpleType === attribute.filter) {
+                    result = datatype.displayValues;
                 }
             });
             return result;
         };
 
+//        dynamicModelHelpers.prepDynamicDataType = function(fhirDataTypeList, selectedResourceInstance, attribute) {
+//            var displayValues;
+//            if (dynamicModelHelpers.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute).length > 0) {
+//                displayValues = angular.copy()
+//            }
+//        };
 
         dynamicModelHelpers.getFhirDatatypeChoices = function(fhirDataTypes, attribute) {
             var result = [];
@@ -422,7 +456,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                             resourceResults.push(rbh.formatAttributesFromFhirForUI(resourceTypeConfig, entry.resource));
                         });
                     } else {
-                        notification({ type:"error", text:"No Results found for the Search"});
+//                        notification({ type:"error", text:"No Results found for the Search"});
                     }
                     var resourceType = { index: resourceTypeConfig.index,
                         resourceType: resourceTypeConfig.resource,
