@@ -87,4 +87,12 @@ angular.module('pdmApp.filters', []).filter('age', function() {
                 return value;
             }
         };
-});
+}).filter('simpleQuantity', function () {
+        return function (name, value) {
+            if (name === "quantity") {
+                return value.value + " " + value.unit;
+            } else {
+                return value;
+            }
+        };
+    });

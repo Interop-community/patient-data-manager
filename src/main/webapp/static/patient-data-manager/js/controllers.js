@@ -22,15 +22,17 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         $scope.enteredSearch = '';
         $scope.resourcePages = {};
-        $scope.tableOffset = 168;
-        $scope.tableOffsetWidth = 270;
-        $scope.detailOffset = 165;
+        $scope.tableOffset = 215;
+        $scope.tableOffsetWidth = 220;
+        $scope.detailOffset = 130;
         $scope.getValueSetExpansion = $terminology.getValueSetExpansion;
         $scope.dynamicFormTemplate = 'js/templates/dynamicFormInput.html';
 
+        $scope.modalOpen = false;
         $scope.searchBar = false;
         $scope.detailView = false;
         $scope.patientInfo = true;
+        $scope.showViewToggle = false;
         $scope.resourceSet = 'Patient';
         $scope.viewName = 'Full';
 
@@ -72,10 +74,10 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         $scope.setTableOffset = function(){
-            $scope.tableOffset = 210 +
-                ($scope.searchBar  ? 0 : -55);
-            $scope.tableOffsetWidth = 262 +
-                ($scope.detailView  ? 436 : 0);
+            $scope.tableOffset = 215 +
+                ($scope.searchBar  ? 0 : -65);
+            $scope.tableOffsetWidth = 220 +
+                ($scope.detailView  ? 375 : 0);
         };
 
         $scope.showSearchBar = function(){
@@ -195,6 +197,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         $scope.json = function (){
+            $scope.modalOpen = true;
             $uibModal.open({
                 animation: true,
                 templateUrl: 'js/templates/jsonModal.html',
@@ -204,12 +207,13 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                         return {
                             title:"JSON -" + $scope.selectedResourceInstance.resourceType,
                             ok:"Close",
-                            json:$scope.selectedResourceInstance
-//                            json:JSON.stringify($scope.selectedResourceInstance, null, 2)
+                            json:$scope.selectedResourceInstance,
+                            callback:function(){ //setting callback
+                                $scope.modalOpen = false;
+                            }
                         }
                     }
                 }
-
             });
         };
 
@@ -261,12 +265,12 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                         return settings;
                     }
                 }
-
             });
         };
 
         $scope.requestDeleteResource = function() {
 
+            $scope.modalOpen = true;
             $scope.confirmModalDialog({
                 title:"Delete " + $scope.selectedResourceInstance.resourceType,
                 ok:"Yes",
@@ -274,6 +278,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 type:"confirm-error",
                 text:"Are you sure you want to delete?",
                 callback:function(result){ //setting callback
+                    $scope.modalOpen = false;
                     if (result == true) {
                         $fhirApiServices.deleteResource($scope.smart, $scope.selectedResourceInstance, $scope.resourceTypeList, $scope.selectedResourceTypeConfig, $scope.notification)
                             .done(function(resourceTypeList, resourceTypeConfigIndex){
@@ -339,6 +344,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 delete newResource.id;
             }
 
+            $scope.modalOpen = true;
             var modalInstance = $uibModal.open({
                 animation: true,
                 templateUrl: 'js/templates/createModal.html',
@@ -367,8 +373,10 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 $fhirApiServices.createResource($scope.smart, newResource, $scope.resourceTypeList, $scope.selectedResourceTypeConfig, $scope.notification)
                     .done(function(resourceTypeList, resourceTypeConfigIndex){
                         updateView(resourceTypeList[resourceTypeConfigIndex]);
+                        $scope.modalOpen = false;
                     });
             }, function () {
+                $scope.modalOpen = false;
             });
         };
 
@@ -523,8 +531,10 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.title = (getSettings.title !== undefined) ? getSettings.title : "";
         $scope.json = (getSettings.json !== undefined) ? getSettings.json : "";
         $scope.ok = (getSettings.ok !== undefined) ? getSettings.ok : "Close";
+        var callback = (getSettings.callback !== undefined) ? getSettings.callback : null;
 
         $scope.close = function () {
             $uibModalInstance.close();
+            callback();
         };
     }]);

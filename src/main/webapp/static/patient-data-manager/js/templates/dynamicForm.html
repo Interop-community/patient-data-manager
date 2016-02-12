@@ -1,10 +1,10 @@
 <div class="form-group">
     <div class="dynamic-form-header" ng-hide="isModal">
-        <a href='#' class='float-right-dark-btn' ng-click="closeDetailView()"><i class='fa fa-remove fa-lg font-awesome-inverse'></i></a>
-        <a href='#' class='float-right-dark-btn' ng-click="requestUpdateResource()"><i class='fa fa-check fa-lg font-awesome-inverse'></i></a>
-        <a href='#' class='float-right-dark-btn' ng-click="openModalDialog('clone')"><i class='fa fa-copy fa-lg font-awesome-inverse'></i></a>
-        <a href='#' class='float-right-dark-btn' ng-click="json()"><i class='fa fa-file-text-o fa-lg font-awesome-inverse'></i></a>
-        <a href='#' uib-popover-template="'js/templates/detailPopover.html'" popover-trigger="focus" popover-placement="bottom" class='float-right-dark-btn'><i class='fa fa-ellipsis-h fa-lg font-awesome-inverse'></i></a>
+        <a href='#' class='float-right-dark-btn' ng-click="closeDetailView()"><i class='fa fa-remove fa-lg'></i></a>
+        <a href='#' class='float-right-dark-btn' ng-click="requestUpdateResource()"><i class='fa fa-check fa-lg'></i></a>
+        <a href='#' class='float-right-dark-btn' ng-click="openModalDialog('clone')"><i class='fa fa-copy fa-lg'></i></a>
+        <a href='#' class='float-right-dark-btn' ng-click="json()"><i class='fa fa-file-text-o fa-lg'></i></a>
+        <a href='#' uib-popover-template="'js/templates/detailPopover.html'" popover-trigger="focus" popover-placement="bottom" class='float-right-dark-btn'><i class='fa fa-ellipsis-h fa-lg'></i></a>
     </div>
     <div class="details-form"  ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)">
         <div ng-repeat="attribute in selectedResourceTypeConfig.displayValues">
@@ -12,7 +12,7 @@
 
                 <div ng-include src="dynamicFormTemplate"></div>
 
-                <div ng-if="attribute.type=='variable'" class="form-group">
+                <div ng-if="attribute.type==='variable' && (detailView || isModal)" class="form-group">
                     <div ng-if="dmh.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute).length > 0">
                         <div ng-repeat="attribute in dmh.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute)">
                             <div ng-include src="dynamicFormTemplate"></div>
@@ -30,6 +30,26 @@
                             </div>
                         </div>
                     </div>
+
+                </div>
+                <div ng-if="attribute.type==='datatype' && (detailView || isModal)" class="form-group">
+                    <div ng-if="dmh.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute).length > 0">
+                        <div ng-repeat="attribute in dmh.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute)">
+                            <div ng-include src="dynamicFormTemplate"></div>
+                        </div>
+                    </div>
+                    <!--<div ng-if="isCreate && dmh.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute).length == 0">-->
+                        <!--<label class="dynamic-form-label">{{attribute.choiceLabel}}</label>-->
+                        <!--<div class="dynamic-form-label-input" >-->
+                            <!--<select ng-model="selectedDataType" ng-options="option for option in dmh.getFhirDatatypeChoices(fhirDataTypeList, attribute)"-->
+                                    <!--placeholder="Select a Value Type" class="form-control"/>-->
+                        <!--</div>-->
+                        <!--<div ng-if="selectedDataType != ''" ng-init="attributeOuter = attribute">-->
+                            <!--<div ng-repeat="attribute in dmh.getFhirDatatypeByName(fhirDataTypeList, selectedDataType, attributeOuter)">-->
+                                <!--<div ng-include src="dynamicFormTemplate"></div>-->
+                            <!--</div>-->
+                        <!--</div>-->
+                    <!--</div>-->
 
                 </div>
             </form>

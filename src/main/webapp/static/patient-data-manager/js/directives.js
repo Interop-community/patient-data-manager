@@ -44,7 +44,34 @@ angular.module('pdmApp.directives', []).directive("dynamicName",function($compil
                 scope.$parent.$apply();
             });
         }
-}).directive('enterKey', function () {
+}).directive('center', function ($window) {
+        return function (scope, element, attr) {
+
+            var w = angular.element($window);
+            scope.$parent.$watch(function () {
+                return {
+                    'h': w.height(),
+                    'w': w.width()
+                };
+            }, function (newValue, oldValue) {
+                scope.$parent.windowHeight = newValue.h;
+                scope.$parent.windowWidth = newValue.w;
+
+                scope.$parent.centerWithOffset = function (offsetW) {
+
+                    scope.$parent.$eval(attr.notifier);
+
+                    return {
+                        'left': (newValue.w/2) - offsetW
+                    };
+                };
+            }, true);
+
+            w.bind('center', function () {
+                scope.$parent.$apply();
+            });
+        }
+    }).directive('enterKey', function () {
         return function (scope, element, attrs) {
             element.bind("keydown keypress", function (event) {
                 var key = typeof event.which === "undefined" ? event.keyCode : event.which;

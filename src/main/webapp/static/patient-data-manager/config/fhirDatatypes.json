@@ -61,5 +61,14 @@
                 ]
             }
         ]
+    },
+    {
+        "simpleType" : "simpleQuantity",
+        "displayValues" : [
+            {"type": "text", "name": "value", "label": "Value" , "required": true, "path": "quantity.value", "default": ""},
+            {"type": "text", "name": "unit", "label": "Units" , "required": true, "path":"quantity.unit", "default": ""},
+            {"type": "text", "name": "system", "label": "System" , "required": true, "path":"quantity.system", "default": ""},
+            {"type": "text", "name": "code", "label": "Code" , "required": true, "path":"quantity.code", "default": ""}
+        ]
     }
 ]

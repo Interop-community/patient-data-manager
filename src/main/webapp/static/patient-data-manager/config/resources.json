@@ -4,16 +4,16 @@
         "index" : 0,
         "showInResourceList": "Patient",
         "search" : {
-                "searchParams": [{
-                    "name" :"code",
-                    "modifier": "text",
-                    "codedURL" : "http://hl7.org/fhir/ValueSet/observation-codes"
-                }],
-                    "sortParams": [{
-                        "name": "date",
-                        "modifier": "asc"
-                    }]
-            },
+            "searchParams": [{
+                "name" :"code",
+                "modifier": "text",
+                "codedURL" : "http://hl7.org/fhir/ValueSet/observation-codes"
+            }],
+            "sortParams": [{
+                "name": "date",
+                "modifier": "asc"
+            }]
+        },
         "displayValues" : [
             {"type": "coded-display-typeahead", "name": "displayName", "label": "Display Name" , "required": true, "path": "code.coding.0.display", "default": "", "view": "master"},
             {"type": "date", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
@@ -31,9 +31,54 @@
         ]
     },
     {
-        "resource" : "Appointment",
+        "resource" : "Encounter",
         "index" : 1,
-        "showInResourceList": "Full",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "text", "name": "class", "label": "Class" , "required": true, "path": "class", "default": "", "view": "master"},
+            {"type": "date", "name": "start", "label": "Start" , "required": true, "path":"period.start", "default": "", "view": "master"},
+            {"type": "date", "name": "end", "label": "End" , "required": true, "path":"period.end", "default": "", "view": "master"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["planned", "arrived", "in-progress", "onleave", "finished", "cancelled"],
+                "path": "status", "default": "planned", "view": "master"}
+        ]
+    },
+    {
+        "resource" : "MedicationOrder",
+        "index" : 2,
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "coded-display-typeahead", "name": "displayName", "label": "Display Name" , "required": true, "path": "medicationCodeableConcept.coding.0.display", "default": "", "view": "master"},
+            {"type": "coded-code-typeahead", "name": "code", "label": "Code" , "required": true, "path": "medicationCodeableConcept.coding.0.code", "default": "", "view": "detail"},
+            {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "medicationCodeableConcept.coding.0.system", "default": "http://www.nlm.nih.gov/research/umls/rxnorm", "view": "detail"},
+            {"type": "date", "name": "dateWritten", "label": "Date Written" , "required": true, "path":"dateWritten", "default": "", "view": "detail"},
+            {"type": "date", "name": "dateEnded", "label": "Dat Ended" , "required": true, "path":"dateEnded", "default": "", "view": "detail"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["active", "on-hold", "completed", "entered-in-error", "stopped", "draft"],
+                "path": "status", "default": "active", "view": "master"}
+        ]
+    },
+    {
+        "resource" : "MedicationDispense",
+        "index" : 3,
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "coded-display-typeahead", "name": "displayName", "label": "Display Name" , "required": true, "path": "medicationCodeableConcept.coding.0.display", "default": "", "view": "master"},
+            {"type": "coded-code-typeahead", "name": "code", "label": "Code" , "required": true, "path": "medicationCodeableConcept.coding.0.code", "default": "", "view": "detail"},
+            {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "medicationCodeableConcept.coding.0.system", "default": "http://www.nlm.nih.gov/research/umls/rxnorm", "view": "detail"},
+            {"type": "datatype", "name": "quantity", "label": "Quantity", "required": true, "filter": "simpleQuantity", "path":"", "default": "", "view": "master"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["in-progress", "on-hold", "completed", "entered-in-error", "stopped"],
+                "path": "status", "default": "in-progress", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "MedicationOrder", "label": "MedicationOrder", "path": "authorizingPrescription.reference"}
+        ]
+    },
+    {
+        "resource" : "Appointment",
+        "index" : 4,
+        "showInResourceList": "None",
         "search" : {
             "searchParams": [{
                 "name" :"date"
@@ -57,8 +102,8 @@
     },
     {
         "resource" : "Schedule",
-        "index" : 2,
-        "showInResourceList": "Full",
+        "index" : 5,
+        "showInResourceList": "None",
         "displayValues" : [
             {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.0.text", "default": "", "view": "master"}
         ],
@@ -68,8 +113,8 @@
     },
     {
         "resource" : "Slot",
-        "index" : 3,
-        "showInResourceList": "Full",
+        "index" : 6,
+        "showInResourceList": "None",
         "displayValues" : [
             {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
             {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
@@ -82,8 +127,8 @@
     },
     {
         "resource" : "AppointmentResponse",
-        "index" : 4,
-        "showInResourceList": "Full",
+        "index" : 7,
+        "showInResourceList": "None",
         "displayValues" : [
             {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
             {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
@@ -98,7 +143,7 @@
     },
     {
         "resource" : "Patient",
-        "index" : 5,
+        "index" : 8,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.0.given.0", "default": "", "view": "master"},
@@ -109,7 +154,7 @@
     },
     {
         "resource" : "Practitioner",
-        "index" : 6,
+        "index" : 9,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.given.0", "default": "", "view": "master"},
@@ -118,7 +163,7 @@
     },
     {
         "resource" : "HealthcareService",
-        "index" : 7,
+        "index" : 10,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "coded-display-typeahead", "name": "serviceType", "label": "Service Type" , "required": true, "path": "serviceType.0.type.coding.0.display", "default": "", "view": "master"},
@@ -126,19 +171,6 @@
             {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "serviceType.0.type.coding.0.system", "default": "http://loinc.org", "view": "detail"},
             {"type": "text", "name": "serviceName", "label": "Service Name" , "required": true, "path": "serviceName", "default": "", "view": "master"},
             {"type": "text", "name": "programName", "label": "Program Name" , "required": true, "path": "programName.0", "default": "", "view": "master"}
-        ]
-    },
-    {
-        "resource" : "Encounter",
-        "index" : 8,
-        "showInResourceList": "None",
-        "displayValues" : [
-            {"type": "text", "name": "class", "label": "Class" , "required": true, "path": "class", "default": "", "view": "master"},
-            {"type": "date", "name": "start", "label": "Start" , "required": true, "path":"period.start", "default": "", "view": "master"},
-            {"type": "date", "name": "end", "label": "End" , "required": true, "path":"period.end", "default": "", "view": "master"},
-            {"type": "select", "name": "status", "label": "Status" ,
-                "options":["planned", "arrived", "in-progress", "onleave", "finished", "cancelled"],
-                "path": "status", "default": "planned", "view": "master"}
         ]
     }
 ]
