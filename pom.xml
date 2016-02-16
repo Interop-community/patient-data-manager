@@ -2,7 +2,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>org.hspconsortium</groupId>
+    <parent>
+        <groupId>org.hspconsortium.reference</groupId>
+        <artifactId>hspc-reference-release</artifactId>
+        <version>0.3</version>
+    </parent>
+
+    <groupId>org.hspconsortium.sandbox</groupId>
     <artifactId>patient-data-manager</artifactId>
     <version>0.1-SNAPSHOT</version>
     <packaging>war</packaging>
@@ -10,20 +16,6 @@
     <name>Patient Data Manager</name>
     <description>Application for managing patient data</description>
     <url>https://healthservices.atlassian.net/wiki/display/HSPC/Healthcare+Services+Platform+Consortium</url>
-
-    <organization>
-        <name>Healthcare Services Platform Consortium</name>
-        <url>http://hspconsortium.org</url>
-    </organization>
-
-    <inceptionYear>2015</inceptionYear>
-
-    <licenses>
-        <license>
-            <name>Apache Software License 2.0</name>
-            <url>https://www.apache.org/licenses/LICENSE-2.0.txt</url>
-        </license>
-    </licenses>
 
     <!-- SSH configuration -->
     <!--
@@ -40,21 +32,6 @@
         <connection>scm:git:https://bitbucket.org/hspconsortium/patient-data-manager.git</connection>
         <developerConnection>scm:git:https://bitbucket.org/hspconsortium/patient-data-manager.git</developerConnection>
     </scm>
-
-    <developers>
-        <developer>
-            <name>Travis Cummings</name>
-            <email>travis@iSalusSolutions.com</email>
-            <organization>iSalusSolutions</organization>
-            <organizationUrl>http://www.isalussolutions.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Amy Ballard</name>
-            <email>amy@iSalusSolutions.com</email>
-            <organization>iSalusSolutions</organization>
-            <organizationUrl>http://www.isalussolutions.com</organizationUrl>
-        </developer>
-    </developers>
 
     <build>
         <finalName>hspc-patient-data-manager</finalName>
