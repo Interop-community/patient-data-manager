@@ -1,74 +1,80 @@
 [
     {
-        "variableTypeArray" : "valueX",
-        "dataTypes" : [
-            {
-                "dataType" : "valueQuantity",
-                "displayValues" : [
-                    {"type": "text", "name": "value", "label": "Value" , "required": true, "path": "valueQuantity.value", "default": ""},
-                    {"type": "text", "name": "unit", "label": "Units" , "required": true, "path":"valueQuantity.unit", "default": ""},
-                    {"type": "text", "name": "system", "label": "System" , "required": true, "path":"valueQuantity.system", "default": ""},
-                    {"type": "select", "name": "comparator", "label": "Comparator" ,
-                        "options":["", "<", "<=", ">=", ">"],
-                        "path": "valueQuantity.comparator", "default": ""}
-                ]
-            },
-            {
-                "dataType" : "valueCodeableConcept",
-                "displayValues" : [
-                    {"type": "text", "name": "display", "label": "Display" , "required": true, "path": "valueCodeableConcept.coding.display", "default": ""},
-                    {"type": "text", "name": "code", "label": "Code" , "required": true, "path":"valueCodeableConcept.coding.code", "default": ""},
-                    {"type": "text", "name": "text", "label": "Value" , "required": true, "path":"valueCodeableConcept.text", "default": ""}
-                ]
-            },
-            {
-                "dataType" : "valueString",
-                "displayValues" : [
-                    {"type": "text", "name": "value", "label": "Value" , "required": true, "path":"valueString", "default": ""}
-                ]
-            },
-            {
-                "dataType" : "valueRange",
-                "displayValues" : [
-                    {"type": "text", "name": "low", "label": "Low" , "required": true, "path":"valueRange.low", "default": ""},
-                    {"type": "text", "name": "high", "label": "High" , "required": true, "path":"valueRange.high", "default": ""}
-                ]
-            },
-            {
-                "dataType" : "valueRatio",
-                "displayValues" : [
-                    {"type": "text", "name": "numerator", "label": "Numerator" , "required": true, "path":"valueRatio.numerator", "default": ""},
-                    {"type": "text", "name": "denominator", "label": "Denominator" , "required": true, "path":"valueRatio.denominator", "default": ""}
-                ]
-            },
-            {
-                "dataType" : "valueTime",
-                "displayValues" : [
-                    {"type": "date", "name": "date", "label": "Time" , "required": true, "path":"valueTime", "default": ""}
-                ]
-            },
-            {
-                "dataType" : "valueDateTime",
-                "displayValues" : [
-                    {"type": "date", "name": "dateTime", "label": "Date/Time" , "required": true, "path":"valueDateTime", "default": ""}
-                ]
-            },
-            {
-                "dataType" : "valuePeriod",
-                "displayValues" : [
-                    {"type": "date", "name": "start", "label": "Start" , "required": true, "path":"valuePeriod.start", "default": ""},
-                    {"type": "date", "name": "end", "label": "End" , "required": true, "path":"valuePeriod.end", "default": ""}
-                ]
-            }
+        "dataType" : "SimpleQuantity",
+        "displayValues" : [
+            {"type": "text", "name": "value", "label": "Value" , "required": true, "path": "value", "default": ""},
+            {"type": "text", "name": "unit", "label": "Units" , "required": true, "path":"unit", "default": ""},
+            {"type": "text", "name": "system", "label": "System" , "required": true, "path":"system", "default": ""},
+            {"type": "text", "name": "code", "label": "Code" , "required": true, "path":"code", "default": ""}
         ]
     },
     {
-        "simpleType" : "simpleQuantity",
+        "dataType" : "CodeableConcept",
         "displayValues" : [
-            {"type": "text", "name": "value", "label": "Value" , "required": true, "path": "quantity.value", "default": ""},
-            {"type": "text", "name": "unit", "label": "Units" , "required": true, "path":"quantity.unit", "default": ""},
-            {"type": "text", "name": "system", "label": "System" , "required": true, "path":"quantity.system", "default": ""},
-            {"type": "text", "name": "code", "label": "Code" , "required": true, "path":"quantity.code", "default": ""}
+            {"type": "coded-display-typeahead", "name": "display", "label": "Code Display" , "required": true, "path": "coding.0.display", "default": "", "view": "master"},
+            {"type": "coded-code-typeahead", "name": "code", "label": "Code" , "required": true, "path": "coding.0.code", "default": "", "view": "detail"},
+            {"type": "text", "name": "system", "label": "Code System" , "required": true, "path": "coding.0.system", "default": "", "view": "detail"},
+            {"type": "text", "name": "text", "label": "Text" , "required": true, "path": "text", "default": "", "view": "detail"}
+        ]
+
+    },
+    {
+        "dataType" : "Quantity",
+        "displayValues" : [
+            {"type": "text", "name": "value", "label": "Value" , "required": true, "path": "value", "default": ""},
+            {"type": "text", "name": "unit", "label": "Units" , "required": true, "path":"unit", "default": ""},
+            {"type": "text", "name": "system", "label": "System" , "required": true, "path":"system", "default": ""},
+            {"type": "select", "name": "comparator", "label": "Comparator" ,
+                "options":["", "<", "<=", ">=", ">"],
+                "path": "comparator", "default": ""}
+        ]
+    },
+    {
+        "dataType" : "String",
+        "displayValues" : [
+            {"type": "text", "name": "value", "label": "Value" , "required": true, "path":"", "default": "", "view": "master"}
+        ]
+    },
+    {
+        "dataType" : "Range",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "Low ", "path":"low"},
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "High ", "path":"high"}
+        ]
+    },
+    {
+        "dataType" : "Ratio",
+        "displayValues" : [
+            {"type": "text", "name": "numerator", "label": "Numerator" , "required": true, "path":"numerator", "default": "", "view": "master"},
+            {"type": "text", "name": "denominator", "label": "Denominator" , "required": true, "path":"denominator", "default": "", "view": "master"}
+        ]
+    },
+    {
+        "dataType" : "Time",
+        "displayValues" : [
+            {"type": "date", "name": "date", "label": "Time" , "required": true, "path":"", "default": "", "view": "master"}
+        ]
+    },
+    {
+        "dataType" : "DateTime",
+        "displayValues" : [
+            {"type": "date", "name": "dateTime", "label": "Date/Time" , "required": true, "path":"", "default": "", "view": "master"}
+        ]
+    },
+    {
+        "dataType" : "Period",
+        "displayValues" : [
+            {"type": "date", "name": "start", "label": "Start" , "required": true, "path":"start", "default": "", "view": "master"},
+            {"type": "date", "name": "end", "label": "End" , "required": true, "path":"end", "default": "", "view": "master"}
+        ]
+    },
+    {
+        "dataType" : "Timing",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Event ", "path":"event"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Timing ", "path":"code"},
+            {"type": "text", "name": "count", "label": "Count" , "required": true, "path":"count", "default": "", "view": "master"},
+            {"type": "text", "name": "duration", "label": "Duration" , "required": true, "path":"duration", "default": "", "view": "master"}
         ]
     }
 ]

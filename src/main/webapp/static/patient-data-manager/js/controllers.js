@@ -1,13 +1,11 @@
 'use strict';
 
 angular.module('pdmApp.controllers', []).controller('pdmCtrl',
-    ['$scope','$filter', "$uibModal", "$fhirApiServices", "$terminology", "$dynamicModelHelpers", "$resourceBuilderHelpers", "$resourceJson", "$fhirDatatypesJson",
-    function ($scope, $filter, $uibModal, $fhirApiServices, $terminology, $dynamicModelHelpers, $resourceBuilderHelpers, $resourceJson, $fhirDatatypesJson ) {
+    ['$scope','$filter', "$uibModal", "$fhirApiServices", "$terminology", "$dynamicModelHelpers", "$resourceBuilderHelpers", "$resourceJson",
+    function ($scope, $filter, $uibModal, $fhirApiServices, $terminology, $dynamicModelHelpers, $resourceBuilderHelpers, $resourceJson ) {
 
         $scope.dmh = $dynamicModelHelpers;
         var rbh = $resourceBuilderHelpers;
-
-        $scope.fhirDataTypeList = [];
 
         $scope.resourceTypeConfigList = [];
         $scope.selectedResourceTypeConfig = {};
@@ -130,6 +128,12 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             }
             $scope.setTableOffset();
             $scope.getAvailableReferences();
+        };
+
+        $scope.typeAheadSelected = function(item, attribute) {
+            var path = attribute.path.substring(0, attribute.path.length - (attribute.name.length+1));
+            var parent = $scope.dmh.getModelParent($scope.selectedResourceInstance, path);
+            parent[0] = item;
         };
 
         $scope.closeDetailView = function() {
@@ -357,9 +361,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                     getSelectedResourceTypeConfig: function () {
                         return resourceTypeConfig;
                     },
-                    getFhirDataTypeList: function () {
-                        return $scope.fhirDataTypeList;
-                    },
                     isCreate: function () {
                         return operation === 'create';
                     },
@@ -435,35 +436,32 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          **/
         FHIR.oauth2.ready(function(smart){
             $scope.smart = smart;
-            $terminology.getObservationCodesValueSetId();
+            $terminology.setUrlBase(smart);
+            $terminology.getObservationCodesValueSetId("http://hl7.org/fhir/ValueSet/observation-codes");
             $fhirApiServices.queryPatient(smart)
                 .done(function(patient){
                     $scope.patient = patient;
                 });
-            $fhirDatatypesJson.success(function(dataTypes){
-                $scope.fhirDataTypeList = dataTypes;
-                $resourceJson.success(function(resources){
-                    $scope.resourceTypeConfigList = resources;
-                    $fhirApiServices.queryResourceInstances(smart, $scope.resourceTypeList, $scope.resourceTypeConfigList[0], $scope.notification)
-                        .done(function(resourceTypeList, resourceTypeConfigIndex){
-                            updateView(resourceTypeList[resourceTypeConfigIndex]);
-                            $scope.selectResourceType(resourceTypeList[resourceTypeConfigIndex]);
-                            if(1 < $scope.resourceTypeConfigList.length && $scope.resourceTypeConfigList[1].showInResourceList === $scope.resourceSet) {
-                                getAllResources(1, $scope.resourceTypeList, $scope.resourceTypeConfigList);
-                            } else {
-                                $scope.$digest();
-                            }
-                        });
-                });
+            $resourceJson.getResources().done(function(resources){
+                $scope.resourceTypeConfigList = resources;
+                $fhirApiServices.queryResourceInstances(smart, $scope.resourceTypeList, $scope.resourceTypeConfigList[0], $scope.notification)
+                    .done(function(resourceTypeList, resourceTypeConfigIndex){
+                        updateView(resourceTypeList[resourceTypeConfigIndex]);
+                        $scope.selectResourceType(resourceTypeList[resourceTypeConfigIndex]);
+                        if(1 < $scope.resourceTypeConfigList.length && $scope.resourceTypeConfigList[1].showInResourceList === $scope.resourceSet) {
+                            getAllResources(1, $scope.resourceTypeList, $scope.resourceTypeConfigList);
+                        } else {
+                            $scope.$digest();
+                        }
+                    });
             });
         });
 
-}]).controller('ModalInstanceCtrl',['$scope', '$uibModalInstance', "$terminology", "$dynamicModelHelpers", "getNewResource", "getSelectedResourceTypeConfig", "getFhirDataTypeList", "isCreate", "isReadOnly",
-    function ($scope, $uibModalInstance, $terminology, $dynamicModelHelpers, getNewResource, getSelectedResourceTypeConfig, getFhirDataTypeList, isCreate, isReadOnly) {
+    }]).controller('ModalInstanceCtrl',['$scope', '$uibModalInstance', "$terminology", "$dynamicModelHelpers", "getNewResource", "getSelectedResourceTypeConfig", "isCreate", "isReadOnly",
+    function ($scope, $uibModalInstance, $terminology, $dynamicModelHelpers, getNewResource, getSelectedResourceTypeConfig, isCreate, isReadOnly) {
 
         $scope.selectedResourceInstance = getNewResource;
         $scope.selectedResourceTypeConfig = getSelectedResourceTypeConfig;
-        $scope.fhirDataTypeList = getFhirDataTypeList;
         $scope.dmh = $dynamicModelHelpers;
         $scope.isModal = true;
         $scope.isCreate = isCreate;
@@ -474,35 +472,14 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             $scope.dynamicFormTemplate = 'js/templates/dynamicFormReadOnly.html';
         }
 
-        $scope.getValueSetExpansion = function(val, min) {
-            return $terminology.getValueSetExpansion(val, min);
+        $scope.getValueSetExpansion = function(val, min, uri) {
+            return $terminology.getValueSetExpansion(val, min, uri);
         };
 
-        $scope.create = function (newResource) {
-            $uibModalInstance.close(newResource);
-        };
-
-        $scope.cancel = function () {
-            $uibModalInstance.dismiss('cancel');
-        };
-}]).controller('ModalInstanceCtrl',['$scope', '$uibModalInstance', "$terminology", "$dynamicModelHelpers", "getNewResource", "getSelectedResourceTypeConfig", "getFhirDataTypeList", "isCreate", "isReadOnly",
-    function ($scope, $uibModalInstance, $terminology, $dynamicModelHelpers, getNewResource, getSelectedResourceTypeConfig, getFhirDataTypeList, isCreate, isReadOnly) {
-
-        $scope.selectedResourceInstance = getNewResource;
-        $scope.selectedResourceTypeConfig = getSelectedResourceTypeConfig;
-        $scope.fhirDataTypeList = getFhirDataTypeList;
-        $scope.dmh = $dynamicModelHelpers;
-        $scope.isModal = true;
-        $scope.isCreate = isCreate;
-        $scope.isReadOnly = isReadOnly;
-        $scope.dynamicFormTemplate = 'js/templates/dynamicFormInput.html';
-
-        if (isReadOnly){
-            $scope.dynamicFormTemplate = 'js/templates/dynamicFormReadOnly.html';
-        }
-
-        $scope.getValueSetExpansion = function(val, min) {
-            return $terminology.getValueSetExpansion(val, min);
+        $scope.typeAheadSelected = function(item, attribute) {
+            var path = attribute.path.substring(0, attribute.path.length - (attribute.name.length+1));
+            var parent = $scope.dmh.getModelParent($scope.selectedResourceInstance, path);
+            parent[0] = item;
         };
 
         $scope.create = function (newResource) {

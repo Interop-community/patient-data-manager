@@ -194,6 +194,51 @@ span.title,
     transition: all .2s ease-in-out;
 }
 
+.title-box .title {
+    position: relative;
+    font-size: 12px;
+    font-weight: 400;
+    top: -16px;
+    margin-left: 15px;
+    padding: 0 2px 0 2px;
+    display: inline;
+    background-color: white;
+}
+
+.title-box .content {
+    margin-top: -15px;
+    padding-bottom: 5px;
+    font-size: 12px;
+    font-weight: 300;
+    width: 100%;
+}
+
+.title-box .content .detail-form {
+    height: 25px;
+}
+
+.title-box .content .detail-form-label {
+    margin: 0;
+    padding: 5px 0 0 5px;
+    min-height: 20px;
+}
+
+.title-box .content .detail-form-value {
+    border: none;
+    margin: 0;
+    padding: 5px 0 0 5px;
+    min-height: 20px;
+    font-weight: bold;
+}
+
+.title-box .content .detail-form-label.full-line {
+    border: none;
+    width: 100%;
+    margin: 0;
+    padding: 5px 0 5px 5px;
+    min-height: 20px;
+}
+
 a {
     color: #00AEEF;
     font-size: 12px;
@@ -336,13 +381,13 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
     /*border-bottom: 2px solid #f4f4f4;*/
 /*}*/
 
-/*.searchBar .typeahead .dropdown-menu {*/
-    /*max-height: 300px;*/
-/*}*/
-
-.modal-content .typeahead .dropdown-menu {
+.search-bar .typeahead .dropdown-menu {
     max-height: 300px;
 }
+
+/*.modal-content .typeahead .dropdown-menu {*/
+    /*max-height: 300px;*/
+/*}*/
 
 .typeahead .message {
     padding: 10px 20px;

@@ -14,10 +14,10 @@
                 <tbody class="scrollContent">
                 <tr st-select-row="resource" ng-click="selectResourceInstance(resource)" ng-repeat="resource in resourceInstanceList">
                     <td ng-repeat="attribute in selectedResourceTypeConfig.displayValues">
-                        <div ng-if="attribute.view === 'master' && attribute.filter === undefined">
+                        <div ng-if="attribute.view === 'master' && attribute.type !== 'variable'">
                             {{dmh.getDynamicModel(resource, attribute.path) | formatAttribute}}
                         </div>
-                        <div ng-if="attribute.view === 'master' && attribute.filter !== undefined">
+                        <div ng-if="attribute.view === 'master' && attribute.type === 'variable'">
                             {{dmh.getDynamicModelByName(resource, attribute)}}
                         </div>
                     </td>

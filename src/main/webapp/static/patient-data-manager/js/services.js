@@ -2,42 +2,52 @@
 
 angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
-    var terminologyServer = 'http://localhost:8080/hspc-reference-api/data/_services/terminology';
-    var observationCodesId;
+    var terminologyServerEndpoint = '/_services/smart/terminology';
+    var urlBase = "";
 
+    var valueSetCodeEndpointMap = {};
     var terminologyService = {};
 
-    terminologyService.fhirService = FHIR.client({
-        serviceUrl: terminologyServer
-    });
-
-    // Any function returning a promise object can be used to load values asynchronously
-    terminologyService.getValueSetExpansion = function(val, min) {
-//        if (val.length >= min) {
-//            var path = encodeURI('/ValueSet/' + observationCodesId + '/$expand?filter=' + val);
-//            return $http.get(terminologyServer + '?uri=' + path, {
-//                params: {}
-//            }).then(function(response){
-//                    if (response.data.expansion.contains !== undefined) {
-//                        return response.data.expansion.contains.map(function(item){
-//                            return item;
-//                        });
-//                    }
-//                });
-//        }
+    terminologyService.setUrlBase = function(smart) {
+        urlBase = smart.server.serviceUrl;
     };
 
-    terminologyService.getObservationCodesValueSetId = function() {
+    // Any function returning a promise object can be used to load values asynchronously
+    terminologyService.getValueSetExpansion = function(val, min, url) {
         var deferred = $.Deferred();
-//        var path = encodeURI('/ValueSet?url=' + 'http://hl7.org/fhir/ValueSet/observation-codes');
-//        $http.get(terminologyServer + '?uri=' + path, {
-//            params: {}
-//        }).then(function(valueSet){
-//                if (valueSet.data.entry[0] !== 'undefined'){
-//                    observationCodesId = valueSet.data.entry[0].resource.id;
-//                }
-                deferred.resolve();
-//            });
+        terminologyService.getObservationCodesValueSetId(url).done(function(lookupUrl){
+            if (val.length >= min) {
+                var path = encodeURI('/ValueSet/' + lookupUrl + '/$expand?filter=' + val);
+                deferred.resolve($http.get(urlBase  + terminologyServerEndpoint + '?uri=' + path, {
+                    params: {}
+                }).then(function(response){
+                        if (response.data.expansion !== undefined && response.data.expansion.contains !== undefined) {
+                            return response.data.expansion.contains.map(function(item){
+                                return item;
+                            });
+                        }
+                    })
+                )
+            }
+        });
+        return deferred;
+    };
+
+    terminologyService.getObservationCodesValueSetId = function(url) {
+        var deferred = $.Deferred();
+        if (valueSetCodeEndpointMap[url] !== undefined) {
+            deferred.resolve(valueSetCodeEndpointMap[url]);
+        } else {
+            var path = encodeURI('/ValueSet?url=' + url);
+            $http.get(urlBase + terminologyServerEndpoint + '?uri=' + path, {
+                params: {}
+            }).then(function(valueSet){
+                    if (valueSet.data.entry[0] !== 'undefined'){
+                        valueSetCodeEndpointMap[url] = valueSet.data.entry[0].resource.id;
+                    }
+                    deferred.resolve(valueSetCodeEndpointMap[url]);
+                });
+        }
         return deferred;
     };
 
@@ -50,7 +60,6 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
          *
          **/
         var dynamicModelHelpers = {};
-        var fhirTypeInfo = [];
 
         dynamicModelHelpers.getDynamicModelByName = function(resource, attribute) {
 
@@ -62,21 +71,16 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             }
             var properties = [];
                 if (attribute.type === 'variable') {
-                    properties = Object.keys(parent).filter(function( property ) {
-                    var start = attributeFilterType(attribute.filter);
-                    if (stringStartsWith(property, start)) {
-                        return true;
-                    }
-                });
-            } else if (attribute.type === 'datatype') {
-                    properties = Object.keys(parent).filter(function( property ) {
-                        //TODO This is wrong!! Just a hack
-                        if (stringStartsWith(property, attribute.name)) {
+                        properties = Object.keys(parent).filter(function( property ) {
+                        if (stringStartsWith(property, attribute.namePrefix)) {
                             return true;
                         }
                     });
                 }
-            return $filter(attribute.filter)(properties[0], parent[properties[0]]);
+            if (properties.length > 0 ) {
+                return $filter("fhirTypeFilter")(attributeFilterType (attribute.namePrefix, properties[0]), parent[properties[0]]);
+            }
+            return "";
         };
 
         function getFhirDatatypeName(resource, attribute) {
@@ -91,63 +95,47 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             var properties = [];
             if (attribute.type === 'variable') {
                 properties = Object.keys(parent).filter(function( property ) {
-                        var start = attributeFilterType(attribute.filter);
-                        if (stringStartsWith(property, start)) {
+                        if (stringStartsWith(property, attribute.namePrefix)) {
                             return true;
                         }
-                });
-            } else if (attribute.type === 'datatype') {
-                properties = Object.keys(parent).filter(function( property ) {
-                    //TODO This is wrong!! Just a hack
-                    if (stringStartsWith(property, attribute.name)) {
-                        return true;
-                    }
                 });
             }
             return properties[0];
         }
 
-        dynamicModelHelpers.getFhirDatatypeOnResource = function(fhirDataTypes, resource, attribute) {
+        dynamicModelHelpers.getFhirDatatypeOnResource = function(resource, attribute) {
             if (attribute.type === 'variable') {
-                return dynamicModelHelpers.getFhirDatatypeByName(fhirDataTypes, getFhirDatatypeName(resource, attribute), attribute);
-            } else if (attribute.type === 'datatype') {
-                return dynamicModelHelpers.getFhirDatatypeByName(fhirDataTypes, attribute.filter, attribute);
+                return dynamicModelHelpers.getFhirDatatypeByName(getFhirDatatypeName(resource, attribute), attribute);
             }
         };
 
-        dynamicModelHelpers.getFhirDatatypeByName = function(fhirDataTypes, dataTypeName, attribute) {
+        dynamicModelHelpers.getFhirDatatypeByName = function(dataType, variableType) {
             var result = [];
-            angular.forEach(fhirDataTypes, function (datatype) {
-                if (datatype.variableTypeArray === attribute.filter) {
-                    angular.forEach(datatype.dataTypes, function (value) {
-                        if (value.dataType === dataTypeName) {
-                            result = value.displayValues;
-                        }
-                    });
-                } else if (datatype.simpleType === attribute.filter) {
-                    result = datatype.displayValues;
-                }
+
+            if (dataType !== undefined) {
+                angular.forEach(variableType.variableChoices, function (choice) {
+                    if (choice.dataType === dataType) {
+                        result = choice.displayValues;
+                    }
+                });
+            }
+            return result;
+        };
+
+        dynamicModelHelpers.getFhirDatatypeChoices = function(attribute) {
+            var result = [];
+            angular.forEach(attribute.variableChoices, function (choice) {
+                result.push(choice.dataType);
             });
             return result;
         };
 
-//        dynamicModelHelpers.prepDynamicDataType = function(fhirDataTypeList, selectedResourceInstance, attribute) {
-//            var displayValues;
-//            if (dynamicModelHelpers.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute).length > 0) {
-//                displayValues = angular.copy()
-//            }
-//        };
-
-        dynamicModelHelpers.getFhirDatatypeChoices = function(fhirDataTypes, attribute) {
-            var result = [];
-            angular.forEach(fhirDataTypes, function (datatype) {
-                if (datatype.variableTypeArray === attribute.filter) {
-                    angular.forEach(datatype.dataTypes, function (value) {
-                        result.push(value.dataType);
-                    });
+        dynamicModelHelpers.dataTypeChoiceChange = function(selectedDataType, previousSelectedDataType, selectedResourceInstance) {
+            if (selectedDataType !== previousSelectedDataType) {
+                if (previousSelectedDataType !== undefined && previousSelectedDataType !== "") {
+                    delete selectedResourceInstance[previousSelectedDataType];
                 }
-            });
-            return result;
+            }
         };
 
         dynamicModelHelpers.getDynamicModel = function(resource, path) {
@@ -203,12 +191,12 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return result;
         };
 
-        function attributeFilterType (string) {
-            return string.slice(0, string.length - 1);
+        function attributeFilterType (start, name) {
+            return name.slice(start.length);
         }
 
         function stringStartsWith (string, prefix) {
-            return string.slice(0, prefix.length) == prefix;
+            return string.slice(0, prefix.length) === prefix;
         }
 
         function stringIsEmpty (string) {
@@ -513,7 +501,114 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         return fhirServices;
 
     }).factory('$resourceJson', ['$http',function($http) {
-    return $http.get('config/resources.json');
-}]).factory('$fhirDatatypesJson', ['$http',function($http) {
-    return $http.get('config/fhirDatatypes.json');
+
+    var importedFhirDataTypes;
+    var importedResources;
+
+    function getFhirTypeByName(name) {
+        var type;
+        angular.forEach(importedFhirDataTypes, function (fhirDataType) {
+            if (fhirDataType.dataType === name){
+                type = angular.copy(fhirDataType);
+            }
+        });
+        return type;
+    }
+
+    function subsumeDataType(value, dataTypeValue) {
+//        switch(value.type) {
+//            case 'fhirDatatype':
+//
+//                break;
+//            case 'variable':
+//                break;
+//            default:
+                if (value.name === "CodeableConcept") {
+                    dataTypeValue.codedUri = value.codedUri;
+                }
+                if (value.labelPrefix !== "" && value.labelPrefix !== undefined) {
+                    dataTypeValue.label = value.labelPrefix + dataTypeValue.label;
+                }
+                if (value.path !== "" && value.path !== undefined) {
+                    dataTypeValue.path = value.path + "." +  dataTypeValue.path;
+                }
+                return dataTypeValue;
+//        }
+//        return {};
+    }
+
+    function subsumeVariableDataType(variableDatatypeName, dataType) {
+
+        var fhirDataType = getFhirTypeByName(dataType.name);
+        var newPathStart = variableDatatypeName + dataType.name;
+        var subsumption = [];
+
+        if (fhirDataType !== undefined) {
+            angular.forEach(fhirDataType.displayValues, function (dataTypeValue) {
+                switch(dataTypeValue.type) {
+                    case 'fhirDatatype':
+                        subsumption = subsumption.concat(buildResourceDataType(dataTypeValue));
+                        break;
+                    case 'variable':
+                        break;
+                    default:
+                        dataTypeValue.path = newPathStart + "." +  dataTypeValue.path;
+                        subsumption.push(dataTypeValue);
+                }
+            });
+            return {dataType: newPathStart, displayValues: subsumption};
+        }
+        return {};
+    }
+
+    function buildResourceDataType(dataType) {
+        var newDisplayValues = [];
+        switch(dataType.type) {
+            case 'fhirDatatype':
+                var fhirDataType = getFhirTypeByName(dataType.name);
+                angular.forEach(fhirDataType.displayValues, function (dataTypeValue) {
+                    newDisplayValues.push(subsumeDataType(dataType, dataTypeValue));
+                });
+                break;
+            case 'variable':
+                dataType.variableChoices = [];
+                angular.forEach(dataType.dataTypes, function (subDataType) {
+                    dataType.variableChoices.push(subsumeVariableDataType(dataType.namePrefix, subDataType));
+                });
+                newDisplayValues.push(dataType);
+                break;
+            default:
+                newDisplayValues.push(dataType);
+        }
+        return newDisplayValues;
+    }
+
+    function buildResourceList(resource) {
+        var newDisplayValues = [];
+        for (var i = 0; i < resource.displayValues.length; i++) {
+            newDisplayValues = newDisplayValues.concat(buildResourceDataType(resource.displayValues[i]));
+        }
+        delete resource.displayValues;
+        resource.displayValues = newDisplayValues;
+        return resource;
+    }
+
+    return {
+        getResources: function() {
+            var deferred = $.Deferred();
+            $http.get('config/resources.json').success(function(resources){
+                importedResources = resources;
+                $http.get('config/fhirDatatypes.json').success(function(fhirDataTypes){
+                    importedFhirDataTypes = fhirDataTypes;
+                    var finalResources = [];
+                    angular.forEach(importedResources, function (resource) {
+                        finalResources.push(buildResourceList(resource));
+                    });
+                    deferred.resolve(resources);
+                });
+            });
+
+            return deferred;
+        }
+    }
 }]);

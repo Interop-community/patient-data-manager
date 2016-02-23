@@ -7,56 +7,10 @@
         <a href='#' uib-popover-template="'js/templates/detailPopover.html'" popover-trigger="focus" popover-placement="bottom" class='float-right-dark-btn'><i class='fa fa-ellipsis-h fa-lg'></i></a>
     </div>
     <div class="details-form"  ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)">
-        <div ng-repeat="attribute in selectedResourceTypeConfig.displayValues">
-            <form autocomplete="off" name="form-fix-later" class="css-form" ng-class="{modalForm: isModal}" novalidate>
-
-                <div ng-include src="dynamicFormTemplate"></div>
-
-                <div ng-if="attribute.type==='variable' && (detailView || isModal)" class="form-group">
-                    <div ng-if="dmh.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute).length > 0">
-                        <div ng-repeat="attribute in dmh.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute)">
-                            <div ng-include src="dynamicFormTemplate"></div>
-                        </div>
-                    </div>
-                    <div ng-if="isCreate && dmh.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute).length == 0">
-                        <label class="dynamic-form-label">{{attribute.choiceLabel}}</label>
-                        <div class="dynamic-form-label-input" >
-                            <select ng-model="selectedDataType" ng-options="option for option in dmh.getFhirDatatypeChoices(fhirDataTypeList, attribute)"
-                                    placeholder="Select a Value Type" class="form-control"/>
-                        </div>
-                        <div ng-if="selectedDataType != ''" ng-init="attributeOuter = attribute">
-                            <div ng-repeat="attribute in dmh.getFhirDatatypeByName(fhirDataTypeList, selectedDataType, attributeOuter)">
-                                <div ng-include src="dynamicFormTemplate"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div ng-if="attribute.type==='datatype' && (detailView || isModal)" class="form-group">
-                    <div ng-if="dmh.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute).length > 0">
-                        <div ng-repeat="attribute in dmh.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute)">
-                            <div ng-include src="dynamicFormTemplate"></div>
-                        </div>
-                    </div>
-                    <!--<div ng-if="isCreate && dmh.getFhirDatatypeOnResource(fhirDataTypeList, selectedResourceInstance, attribute).length == 0">-->
-                        <!--<label class="dynamic-form-label">{{attribute.choiceLabel}}</label>-->
-                        <!--<div class="dynamic-form-label-input" >-->
-                            <!--<select ng-model="selectedDataType" ng-options="option for option in dmh.getFhirDatatypeChoices(fhirDataTypeList, attribute)"-->
-                                    <!--placeholder="Select a Value Type" class="form-control"/>-->
-                        <!--</div>-->
-                        <!--<div ng-if="selectedDataType != ''" ng-init="attributeOuter = attribute">-->
-                            <!--<div ng-repeat="attribute in dmh.getFhirDatatypeByName(fhirDataTypeList, selectedDataType, attributeOuter)">-->
-                                <!--<div ng-include src="dynamicFormTemplate"></div>-->
-                            <!--</div>-->
-                        <!--</div>-->
-                    <!--</div>-->
-
-                </div>
-            </form>
+        <div ng-repeat="attribute in selectedResourceTypeConfig.displayValues" ng-class="{modalForm: isModal}">
+            <div ng-include src="dynamicFormTemplate"></div>
         </div>
         <div ng-if="!isModal">
-            <!--<div><label class="dynamic-form-section-label">References</label></div>-->
-
             <div ng-if="selectedResourceReferences.length > 0" ng-repeat="reference in selectedResourceReferences">
                 <label class="dynamic-form-label">{{reference.resource}}</label>
                 <a href='#' class="dynamic-form-hyperlink" ng-click="resourceReferenceSelected(reference)">{{reference.relativeUrl}}</a>
@@ -67,7 +21,6 @@
                 <div ng-include src="'js/templates/dynamicReferenceTable.html'"></div>
             </div>
         </div>
-        <!--<button class="form-btn btn btn-basic" type="button" ng-click="json()">JSON</button>-->
     </div>
 </div>
 

@@ -59,40 +59,35 @@ angular.module('pdmApp.filters', []).filter('age', function() {
                 return input;
             }
         };
-}).filter('valueX', function () {
+}).filter('fhirTypeFilter', function () {
         return function (name, value) {
-            if (name === "valueQuantity") {
+
+            if (name === "Quantity") {
                 var result = value.value + " " + value.unit;
                 if (typeof value.comparator !== 'undefined' && value.comparator !== "")
                     result = value.comparator + "" + result;
                 return result;
-            } else if (name === "valueCodeableConcept") {
+            } else if (name === "SimpleQuantity") {
+                return value.value + " " + value.unit;
+            } else if (name === "CodeableConcept") {
                     if (typeof value.coding === 'undefined' ) {
                         return value.coding.display + ":" + value.coding.code;
                     }
                     return value.text;
-            } else if (name === "valueString") {
+            } else if (name === "String") {
                 return value;
-            } else if (name === "valueRange") {
+            } else if (name === "Range") {
                 return value.low + " to " + value.high;
-            } else if (name === "valueRatio") {
+            } else if (name === "Ratio") {
                 return value.numerator + "/" + value.denominator;
-            } else if (name === "valueTime") {
+            } else if (name === "Time") {
                 return value;
-            } else if (name === "valueDateTime") {
+            } else if (name === "DateTime") {
                 return value;
-            } else if (name === "valuePeriod") {
+            } else if (name === "Period") {
                 return value.start + " to " + value.end;
             } else {
                 return value;
             }
         };
-}).filter('simpleQuantity', function () {
-        return function (name, value) {
-            if (name === "quantity") {
-                return value.value + " " + value.unit;
-            } else {
-                return value;
-            }
-        };
-    });
+});

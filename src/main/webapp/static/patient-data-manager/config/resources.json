@@ -7,7 +7,7 @@
             "searchParams": [{
                 "name" :"code",
                 "modifier": "text",
-                "codedURL" : "http://hl7.org/fhir/ValueSet/observation-codes"
+                "codedUri" : "http://hl7.org/fhir/ValueSet/observation-codes"
             }],
             "sortParams": [{
                 "name": "date",
@@ -15,11 +15,19 @@
             }]
         },
         "displayValues" : [
-            {"type": "coded-display-typeahead", "name": "displayName", "label": "Display Name" , "required": true, "path": "code.coding.0.display", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Obs ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-codes" },
             {"type": "date", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
-            {"type": "coded-code-typeahead", "name": "code", "label": "Code" , "required": true, "path": "code.coding.0.code", "default": "", "view": "detail"},
-            {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "code.coding.0.system", "default": "http://loinc.org", "view": "detail"},
-            {"type": "variable", "name": "value", "label": "Value", "choiceLabel": "Value Type" , "required": true, "filter": "valueX", "path":"", "default": "", "view": "master"},
+            {"type": "variable", "name": "variable", "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type", "view": "master",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "String", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Ratio", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Time", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Value "}
+                ]},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["final", "registered", "preliminary", "amended","cancelled", "entered-in-error", "unknown"],
                 "path": "status", "default": "final", "view": "detail"}
@@ -36,8 +44,7 @@
         "showInResourceList": "Patient",
         "displayValues" : [
             {"type": "text", "name": "class", "label": "Class" , "required": true, "path": "class", "default": "", "view": "master"},
-            {"type": "date", "name": "start", "label": "Start" , "required": true, "path":"period.start", "default": "", "view": "master"},
-            {"type": "date", "name": "end", "label": "End" , "required": true, "path":"period.end", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "Period", "path":"period"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["planned", "arrived", "in-progress", "onleave", "finished", "cancelled"],
                 "path": "status", "default": "planned", "view": "master"}
@@ -48,9 +55,7 @@
         "index" : 2,
         "showInResourceList": "Patient",
         "displayValues" : [
-            {"type": "coded-display-typeahead", "name": "displayName", "label": "Display Name" , "required": true, "path": "medicationCodeableConcept.coding.0.display", "default": "", "view": "master"},
-            {"type": "coded-code-typeahead", "name": "code", "label": "Code" , "required": true, "path": "medicationCodeableConcept.coding.0.code", "default": "", "view": "detail"},
-            {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "medicationCodeableConcept.coding.0.system", "default": "http://www.nlm.nih.gov/research/umls/rxnorm", "view": "detail"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "path":"medication", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
             {"type": "date", "name": "dateWritten", "label": "Date Written" , "required": true, "path":"dateWritten", "default": "", "view": "detail"},
             {"type": "date", "name": "dateEnded", "label": "Dat Ended" , "required": true, "path":"dateEnded", "default": "", "view": "detail"},
             {"type": "select", "name": "status", "label": "Status" ,
@@ -63,10 +68,8 @@
         "index" : 3,
         "showInResourceList": "Patient",
         "displayValues" : [
-            {"type": "coded-display-typeahead", "name": "displayName", "label": "Display Name" , "required": true, "path": "medicationCodeableConcept.coding.0.display", "default": "", "view": "master"},
-            {"type": "coded-code-typeahead", "name": "code", "label": "Code" , "required": true, "path": "medicationCodeableConcept.coding.0.code", "default": "", "view": "detail"},
-            {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "medicationCodeableConcept.coding.0.system", "default": "http://www.nlm.nih.gov/research/umls/rxnorm", "view": "detail"},
-            {"type": "datatype", "name": "quantity", "label": "Quantity", "required": true, "filter": "simpleQuantity", "path":"", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "path":"medication", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
+            {"type": "fhirDatatype", "name": "Quantity", "path":"", "view": "master"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["in-progress", "on-hold", "completed", "entered-in-error", "stopped"],
                 "path": "status", "default": "in-progress", "view": "master"}
@@ -76,8 +79,71 @@
         ]
     },
     {
-        "resource" : "Appointment",
+        "resource" : "AllergyIntolerance",
         "index" : 4,
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "path":"substance", "codedUri" : "http://hl7.org/fhir/ValueSet/allergyintolerance-substance-code"},
+            {"type": "date", "name": "onset", "label": "Onset" , "required": true, "path":"onset", "default": "", "view": "master"},
+            {"type": "date", "name": "recordedDate", "label": "Recorded Date" , "required": true, "path":"recordedDate", "default": "", "view": "master"},
+            {"type": "select", "name": "criticality", "label": "Criticality" ,
+                "options":["CRITL", "CRITH", "CRITU"],
+                "path": "criticality", "default": "CRITL", "view": "master"},
+            {"type": "select", "name": "type", "label": "Type" ,
+                "options":["allergy", "intolerance"],
+                "path": "type", "default": "allergy", "view": "master"},
+            {"type": "select", "name": "category", "label": "Category" ,
+                "options":["food", "medication", "environment", "other"],
+                "path": "category", "default": "food", "view": "master"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["active", "unconfirmed", "confirmed", "inactive", "resolved", "refuted", "entered-in-error"],
+                "path": "status", "default": "active", "view": "master"}
+        ]
+    },
+    {
+        "resource" : "Condition",
+        "index" : 5,
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-code"},
+            {"type": "date", "name": "dateRecorded", "label": "Date Recorded" , "required": true, "path":"dateRecorded", "default": "", "view": "master"},
+            {"type": "select", "name": "category", "label": "Type" ,
+                "options":["complaint", "symptom", "finding", "diagnosis"],
+                "path": "category", "default": "allergy", "view": "detail"},
+            {"type": "select", "name": "verificationStatus", "label": "Verification Status" ,
+                "options":["provisional", "differential", "confirmed", "refuted", "entered-in-error", "unknown"],
+                "path": "verificationStatus", "default": "confirmed", "view": "detail"},
+            {"type": "select", "name": "clinicalStatus", "label": "Clinical Status" ,
+                "options":["active", "relapse", "remission", "resolved"],
+                "path": "clinicalStatus", "default": "active", "view": "master"}
+        ]
+    },
+    {
+        "resource" : "Procedure",
+        "index" : 6,
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/procedure-code"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["in-progress", "aborted", "completed", "entered-in-error"],
+                "path": "status", "default": "in-progress", "view": "master"}
+        ]
+    },
+    {
+        "resource" : "Immunization",
+        "index" : 7,
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "path":"vaccine", "codedUri" : "http://hl7.org/fhir/ValueSet/vaccine-code"},
+            {"type": "date", "name": "date", "label": "Date" , "required": true, "path":"date", "default": "", "view": "master"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["in-progress", "on-hold", "completed", "entered-in-error", "stopped"],
+                "path": "status", "default": "in-progress", "view": "master"}
+        ]
+    },
+    {
+        "resource" : "Appointment",
+        "index" : 8,
         "showInResourceList": "None",
         "search" : {
             "searchParams": [{
@@ -102,7 +168,7 @@
     },
     {
         "resource" : "Schedule",
-        "index" : 5,
+        "index" : 9,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.0.text", "default": "", "view": "master"}
@@ -113,7 +179,7 @@
     },
     {
         "resource" : "Slot",
-        "index" : 6,
+        "index" : 10,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
@@ -127,7 +193,7 @@
     },
     {
         "resource" : "AppointmentResponse",
-        "index" : 7,
+        "index" : 11,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
@@ -143,7 +209,7 @@
     },
     {
         "resource" : "Patient",
-        "index" : 8,
+        "index" : 12,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.0.given.0", "default": "", "view": "master"},
@@ -154,7 +220,7 @@
     },
     {
         "resource" : "Practitioner",
-        "index" : 9,
+        "index" : 13,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.given.0", "default": "", "view": "master"},
@@ -163,7 +229,7 @@
     },
     {
         "resource" : "HealthcareService",
-        "index" : 10,
+        "index" : 14,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "coded-display-typeahead", "name": "serviceType", "label": "Service Type" , "required": true, "path": "serviceType.0.type.coding.0.display", "default": "", "view": "master"},

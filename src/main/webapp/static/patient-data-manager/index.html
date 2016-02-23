@@ -44,11 +44,11 @@
                 <div class="search-bar" ng-show="searchBar">
                     <div class="search-label"><label>Search</label></div>
                     <div class="search-field typeahead">
-                        <input ng-show="selectedResourceTypeConfig.search.searchParams[0].codedURL" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch"
-                               uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue, 3)"
+                        <input ng-show="selectedResourceTypeConfig.search.searchParams[0].codedUri" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch"
+                               uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue, 3, selectedResourceTypeConfig.search.searchParams[0].codedUri)"
                                typeahead-on-select="enteredSearch = $item.display">
 
-                        <input ng-hide="selectedResourceTypeConfig.search.searchParams[0].codedURL" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch">
+                        <input ng-hide="selectedResourceTypeConfig.search.searchParams[0].codedUri" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch">
                         <a href='#' class='undo-icon' ng-show="enteredSearch != ''" ng-click="requestResourceSearch('clear')"><i class='fa fa-remove fa-lg'></i></a>
                         <a href='#' class='search-icon' ng-click="requestResourceSearch()"><i class='fa fa-search fa-lg'></i></a>
                     </div>
