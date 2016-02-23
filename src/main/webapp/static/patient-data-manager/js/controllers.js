@@ -371,6 +371,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
 
             modalInstance.result.then(function (newResource) {
+
                 $fhirApiServices.createResource($scope.smart, newResource, $scope.resourceTypeList, $scope.selectedResourceTypeConfig, $scope.notification)
                     .done(function(resourceTypeList, resourceTypeConfigIndex){
                         updateView(resourceTypeList[resourceTypeConfigIndex]);
