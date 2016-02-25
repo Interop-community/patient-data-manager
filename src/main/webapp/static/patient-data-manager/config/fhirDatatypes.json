@@ -31,9 +31,8 @@
     },
     {
         "dataType" : "String",
-        "displayValues" : [
+        "displayValue" :
             {"type": "text", "name": "value", "label": "Value" , "required": true, "path":"", "default": "", "view": "master"}
-        ]
     },
     {
         "dataType" : "Range",
@@ -45,27 +44,25 @@
     {
         "dataType" : "Ratio",
         "displayValues" : [
-            {"type": "text", "name": "numerator", "label": "Numerator" , "required": true, "path":"numerator", "default": "", "view": "master"},
-            {"type": "text", "name": "denominator", "label": "Denominator" , "required": true, "path":"denominator", "default": "", "view": "master"}
+            {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Num ", "path":"numerator"},
+            {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Den ", "path":"denominator"}
         ]
     },
     {
         "dataType" : "Time",
-        "displayValues" : [
+        "displayValue" :
             {"type": "date", "name": "date", "label": "Time" , "required": true, "path":"", "default": "", "view": "master"}
-        ]
     },
     {
         "dataType" : "DateTime",
-        "displayValues" : [
-            {"type": "date", "name": "dateTime", "label": "Date/Time" , "required": true, "path":"", "default": "", "view": "master"}
-        ]
+        "displayValue" :
+            {"type": "date", "name": "dateTime", "label": "DateTime" , "required": true, "path":"", "default": "", "view": "master"}
     },
     {
         "dataType" : "Period",
         "displayValues" : [
-            {"type": "date", "name": "start", "label": "Start" , "required": true, "path":"start", "default": "", "view": "master"},
-            {"type": "date", "name": "end", "label": "End" , "required": true, "path":"end", "default": "", "view": "master"}
+            {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Start ", "path":"start"},
+            {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "End ", "path":"end"}
         ]
     },
     {

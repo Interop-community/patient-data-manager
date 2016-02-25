@@ -59,35 +59,43 @@ angular.module('pdmApp.filters', []).filter('age', function() {
                 return input;
             }
         };
-}).filter('fhirTypeFilter', function () {
+}).filter('fhirTypeFilter', function ($filter) {
         return function (name, value) {
 
-            if (name === "Quantity") {
-                var result = value.value + " " + value.unit;
-                if (typeof value.comparator !== 'undefined' && value.comparator !== "")
-                    result = value.comparator + "" + result;
-                return result;
-            } else if (name === "SimpleQuantity") {
-                return value.value + " " + value.unit;
-            } else if (name === "CodeableConcept") {
+            switch(name) {
+                case 'Quantity':
+                    var result = value.value + " " + value.unit;
+                    if (typeof value.comparator !== 'undefined' && value.comparator !== "")
+                        result = value.comparator + "" + result;
+                    return result;
+                    break;
+                case 'SimpleQuantity':
+                    return value.value + " " + value.unit;
+                    break;
+                case 'CodeableConcept':
                     if (typeof value.coding === 'undefined' ) {
                         return value.coding.display + ":" + value.coding.code;
                     }
                     return value.text;
-            } else if (name === "String") {
-                return value;
-            } else if (name === "Range") {
-                return value.low + " to " + value.high;
-            } else if (name === "Ratio") {
-                return value.numerator + "/" + value.denominator;
-            } else if (name === "Time") {
-                return value;
-            } else if (name === "DateTime") {
-                return value;
-            } else if (name === "Period") {
-                return value.start + " to " + value.end;
-            } else {
-                return value;
+                    break;
+                case 'Range':
+                    return value.low.value + " " + value.low.unit + " to " + value.high.value + " " + value.high.unit;
+                    break;
+                case 'Ratio':
+                    return value.numerator.value + "/" + value.denominator.value + " " + value.numerator.unit;
+                    break;
+                case 'Period':
+                    return $filter('date')(value.start, 'MM/dd/yyyy HH:mm') + " to " + $filter('date')(value.end, 'MM/dd/yyyy HH:mm');
+                    break;
+                case 'DateTime':
+                    return  $filter('date')(value, 'MM/dd/yyyy HH:mm');
+                    break;
+                case 'Time':
+                    return  $filter('date')(value, 'HH:mm');
+                    break;
+                case 'String':
+                default:
+                    return value;
             }
         };
 });

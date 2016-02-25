@@ -246,6 +246,19 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return resource;
         };
 
+        resourceBuilderHelpers.turnStringsIntoDates = function(resource) {
+            for (var property in resource) {
+                if (resource.hasOwnProperty(property) && (property.lastIndexOf("date") > -1 || property.lastIndexOf("Date") > -1))  {
+                    if (typeof resource[property] !== "string") {
+                        resource[property] = resourceBuilderHelpers.turnStringsIntoDates(resource[property])
+                    } else {
+                        resource[property] = new Date(resource[property]);
+                    }
+                }
+            }
+            return resource;
+        };
+
         resourceBuilderHelpers.populateResourceTemplateDefaults = function(selectedResourceTypeConfig, references) {
             var newResource = buildResourceObjectFromConfig(selectedResourceTypeConfig);
 
@@ -386,7 +399,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                     var resources = [];
                     if (pageResult.data.entry) {
                         pageResult.data.entry.forEach(function(entry){
-                            resources.push(rbh.formatAttributesFromFhirForUI(resourceTypeConfig, entry.resource));
+                            resources.push(rbh.turnStringsIntoDates(entry.resource));
                         });
                     }
                     deferred.resolve(resources, pageResult);
@@ -416,7 +429,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                         patient.name = patient.name + ' ' + value;
                     });
                     patient.sex = patientResult.gender;
-                    patient.dob = patientResult.birthDate;
+                    patient.dob = new Date(patientResult.birthDate);
                     patient.id  = patientResult.id;
                     deferred.resolve(patient);
                 });
@@ -441,7 +454,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                     var resourceResults = [];
                     if (resourceSearchResult.data.entry) {
                         resourceSearchResult.data.entry.forEach(function(entry){
-                            resourceResults.push(rbh.formatAttributesFromFhirForUI(resourceTypeConfig, entry.resource));
+                            resourceResults.push(rbh.turnStringsIntoDates(entry.resource));
                         });
                     } else {
 //                        notification({ type:"error", text:"No Results found for the Search"});
@@ -539,14 +552,17 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
     function subsumeVariableDataType(variableDatatypeName, dataType) {
 
+        var fhirDatatypePrefix = variableDatatypeName + dataType.name;
         var fhirDataType = getFhirTypeByName(dataType.name);
         var newPathStart = variableDatatypeName + dataType.name;
         var subsumption = [];
 
         if (fhirDataType !== undefined) {
-            angular.forEach(fhirDataType.displayValues, function (dataTypeValue) {
+            if (fhirDataType.displayValues !== undefined) {
+                angular.forEach(fhirDataType.displayValues, function (dataTypeValue) {
                 switch(dataTypeValue.type) {
                     case 'fhirDatatype':
+                        dataTypeValue.path = fhirDatatypePrefix + "." + dataTypeValue.path;
                         subsumption = subsumption.concat(buildResourceDataType(dataTypeValue));
                         break;
                     case 'variable':
@@ -556,6 +572,15 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                         subsumption.push(dataTypeValue);
                 }
             });
+            } else if (fhirDataType.displayValue !== undefined) {
+                if (fhirDataType.displayValue.path === "") {
+                    fhirDataType.displayValue.path = newPathStart;
+                } else {
+                    fhirDataType.displayValue.path = newPathStart + "." +  fhirDataType.displayValue.path;
+                }
+                subsumption.push(fhirDataType.displayValue);
+
+            }
             return {dataType: newPathStart, displayValues: subsumption};
         }
         return {};
@@ -566,9 +591,13 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         switch(dataType.type) {
             case 'fhirDatatype':
                 var fhirDataType = getFhirTypeByName(dataType.name);
-                angular.forEach(fhirDataType.displayValues, function (dataTypeValue) {
-                    newDisplayValues.push(subsumeDataType(dataType, dataTypeValue));
-                });
+                if (fhirDataType.displayValues !== undefined) {
+                    angular.forEach(fhirDataType.displayValues, function (dataTypeValue) {
+                        newDisplayValues.push(subsumeDataType(dataType, dataTypeValue));
+                    });
+                } else if (fhirDataType.displayValue !== undefined) {
+                    newDisplayValues.push(subsumeDataType(dataType, fhirDataType.displayValue));
+                }
                 break;
             case 'variable':
                 dataType.variableChoices = [];
@@ -601,7 +630,9 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                 $http.get('config/fhirDatatypes.json').success(function(fhirDataTypes){
                     importedFhirDataTypes = fhirDataTypes;
                     var finalResources = [];
+                    var index = 0;
                     angular.forEach(importedResources, function (resource) {
+                        resource.index = index++;
                         finalResources.push(buildResourceList(resource));
                     });
                     deferred.resolve(resources);

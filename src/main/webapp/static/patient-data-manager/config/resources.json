@@ -1,7 +1,6 @@
 [
     {
         "resource" : "Observation",
-        "index" : 0,
         "showInResourceList": "Patient",
         "search" : {
             "searchParams": [{
@@ -28,6 +27,7 @@
                     {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Value "},
                     {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Value "}
                 ]},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Cat ", "path":"category", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-category" },
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["final", "registered", "preliminary", "amended","cancelled", "entered-in-error", "unknown"],
                 "path": "status", "default": "final", "view": "detail"}
@@ -40,7 +40,6 @@
     },
     {
         "resource" : "Encounter",
-        "index" : 1,
         "showInResourceList": "Patient",
         "displayValues" : [
             {"type": "text", "name": "class", "label": "Class" , "required": true, "path": "class", "default": "", "view": "master"},
@@ -55,7 +54,6 @@
     },
     {
         "resource" : "MedicationOrder",
-        "index" : 2,
         "showInResourceList": "Patient",
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Med ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
@@ -71,7 +69,6 @@
     },
     {
         "resource" : "MedicationDispense",
-        "index" : 3,
         "showInResourceList": "Patient",
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Med ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
@@ -87,7 +84,6 @@
     },
     {
         "resource" : "AllergyIntolerance",
-        "index" : 4,
         "showInResourceList": "Patient",
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Subs ", "path":"substance", "codedUri" : "http://hl7.org/fhir/ValueSet/allergyintolerance-substance-code"},
@@ -112,10 +108,9 @@
     },
     {
         "resource" : "Condition",
-        "index" : 5,
         "showInResourceList": "Patient",
         "displayValues" : [
-            {"type": "fhirDatatype", "name": "CodeableConcept", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-code"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Con ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-code"},
             {"type": "date", "name": "onsetDateTime", "label": "Onset Date Time" , "required": true, "path":"onsetDateTime", "default": "", "view": "master"},
             {"type": "select", "name": "category", "label": "Type" ,
                 "options":["complaint", "symptom", "finding", "diagnosis"],
@@ -133,10 +128,9 @@
     },
     {
         "resource" : "Procedure",
-        "index" : 6,
         "showInResourceList": "Patient",
         "displayValues" : [
-            {"type": "fhirDatatype", "name": "CodeableConcept", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/procedure-code"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Pro ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/procedure-code"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["in-progress", "aborted", "completed", "entered-in-error"],
                 "path": "status", "default": "in-progress", "view": "master"}
@@ -146,11 +140,26 @@
         ]
     },
     {
-        "resource" : "Immunization",
-        "index" : 7,
+        "resource" : "DiagnosticReport",
         "showInResourceList": "Patient",
         "displayValues" : [
-            {"type": "fhirDatatype", "name": "CodeableConcept", "path":"vaccineCode", "codedUri" : "http://hl7.org/fhir/ValueSet/vaccine-code"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "DR ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/procedure-code"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Cat ", "path":"category", "codedUri" : "http://hl7.org/fhir/ValueSet/report-codes"},
+            {"type": "date", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Diag ", "path":"codedDiagnosis.0", "codedUri" : "http://hl7.org/fhir/ValueSet/clinical-findings"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["registered", "partial", "final", "corrected", "appended", "cancelled", "entered-in-error"],
+                "path": "status", "default": "final", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"}
+        ]
+    },
+    {
+        "resource" : "Immunization",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Vac ", "path":"vaccineCode", "codedUri" : "http://hl7.org/fhir/ValueSet/vaccine-code"},
             {"type": "date", "name": "date", "label": "Date" , "required": true, "path":"date", "default": "", "view": "master"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["in-progress", "on-hold", "completed", "entered-in-error", "stopped"],
@@ -162,7 +171,6 @@
     },
     {
         "resource" : "Appointment",
-        "index" : 8,
         "showInResourceList": "None",
         "search" : {
             "searchParams": [{
@@ -187,7 +195,6 @@
     },
     {
         "resource" : "Schedule",
-        "index" : 9,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.0.text", "default": "", "view": "master"}
@@ -198,7 +205,6 @@
     },
     {
         "resource" : "Slot",
-        "index" : 10,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
@@ -212,7 +218,6 @@
     },
     {
         "resource" : "AppointmentResponse",
-        "index" : 11,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
@@ -228,7 +233,6 @@
     },
     {
         "resource" : "Patient",
-        "index" : 12,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.0.given.0", "default": "", "view": "master"},
@@ -239,7 +243,6 @@
     },
     {
         "resource" : "Practitioner",
-        "index" : 13,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.given.0", "default": "", "view": "master"},
@@ -248,7 +251,6 @@
     },
     {
         "resource" : "HealthcareService",
-        "index" : 14,
         "showInResourceList": "None",
         "displayValues" : [
             {"type": "coded-display-typeahead", "name": "serviceType", "label": "Service Type" , "required": true, "path": "serviceType.0.type.coding.0.display", "default": "", "view": "master"},

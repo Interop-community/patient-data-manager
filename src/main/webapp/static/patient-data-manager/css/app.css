@@ -402,6 +402,7 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
     display: none;
     float: left;
     min-width: 160px;
+    max-width: 600px;
     max-height: 100px;
     overflow-y: auto;
     padding: 5px 0;
@@ -609,6 +610,16 @@ fieldset[disabled] .btn-basic.active {
     width: 35%;
 }
 
+.modalForm .details-form {
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: hidden;
+}
+
+.modal-body .details-form  {
+    min-height: 110px
+}
+
 .invalid-inp_bottom_label {
     font-size: 13px;
     color: #fd595f;
@@ -690,6 +701,11 @@ fieldset[disabled] .btn-basic.active {
     right: 0;
     bottom: 0;
 }
+
+/*.modal-body {*/
+    /*min-height: 350px;*/
+    /*min-width: 650px;*/
+/*}*/
 
 .modal-footer {
     padding: 10px 24px 4px;

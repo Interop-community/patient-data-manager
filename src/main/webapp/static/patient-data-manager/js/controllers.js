@@ -246,7 +246,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                     case 'fred-save':
                         var resource = m.data.resource
                         console.log('Edit saved in FRED', resource);
-                        resource = rbh.formatAttributesFromFhirForUI($scope.selectedResourceTypeConfig, resource, $scope.selectedResourceTypeConfig)
+                        resource = rbh.turnStringsIntoDates(resource)
                         $scope.selectedResourceInstance = resource;
                         $scope.selectedResourceInstance.isSelected = true;
                         break;
