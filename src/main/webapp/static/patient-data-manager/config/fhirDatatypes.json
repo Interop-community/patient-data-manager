@@ -68,10 +68,9 @@
     {
         "dataType" : "Timing",
         "displayValues" : [
-            {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Event ", "path":"event"},
-            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Timing ", "path":"code"},
-            {"type": "text", "name": "count", "label": "Count" , "required": true, "path":"count", "default": "", "view": "master"},
-            {"type": "text", "name": "duration", "label": "Duration" , "required": true, "path":"duration", "default": "", "view": "master"}
+            {"type": "text", "name": "frequency", "label": "Frequency" , "required": true, "path":"repeat.frequency", "default": "", "view": "master"},
+            {"type": "text", "name": "period", "label": "Period" , "required": true, "path":"repeat.period", "default": "", "view": "master"},
+            {"type": "text", "name": "periodUnits", "label": "Period Units" , "required": true, "path":"repeat.periodUnits", "default": "", "view": "master"}
         ]
     }
 ]

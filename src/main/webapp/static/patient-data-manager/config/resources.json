@@ -57,6 +57,8 @@
         "showInResourceList": "Patient",
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Med ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
+            {"type": "text", "name": "dose", "label": "Dose Text", "path":"dosageInstruction.0.text", "view": "master"},
+            {"type": "fhirDatatype", "name": "Timing", "labelPrefix": "Dose ", "path":"dosageInstruction.0.timing"},
             {"type": "date", "name": "dateWritten", "label": "Date Written" , "required": true, "path":"dateWritten", "default": "", "view": "detail"},
             {"type": "date", "name": "dateEnded", "label": "Dat Ended" , "required": true, "path":"dateEnded", "default": "", "view": "detail"},
             {"type": "select", "name": "status", "label": "Status" ,
@@ -72,7 +74,8 @@
         "showInResourceList": "Patient",
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Med ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
-            {"type": "fhirDatatype", "name": "Quantity", "path":"", "view": "master"},
+            {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Qnty ", "path":"quantity", "view": "master"},
+            {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Sply ", "path":"daysSupply", "view": "master"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["in-progress", "on-hold", "completed", "entered-in-error", "stopped"],
                 "path": "status", "default": "in-progress", "view": "master"}

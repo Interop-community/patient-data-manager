@@ -2,8 +2,8 @@
 <div ng-if="attribute.type=='text'" class="form-group">
     <label class="dynamic-form-label">{{attribute.label}}</label>
     <div class="dynamic-form-label-input">
-        <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" id="{{attribute.name}}" class="form-control" required/>
-        <span ng-show="{{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>
+        <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" id="{{attribute.name}}" class="form-control" />
+        <!--<span ng-show="{{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>-->
     </div>
 </div>
 
@@ -11,7 +11,7 @@
     <label class="dynamic-form-label">{{attribute.label}}</label>
     <div class="dynamic-form-label-input">
         <input type="datetime-local" class="form-control" id="{{attribute.name}}"
-               required ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]"
+               ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]"
                aria-describedby="dateErrorStatus" >
         <!--<span id="dateIcon" class="glyphicon form-control-feedback" aria-hidden="true"></span>-->
         <!--<span id="dateErrorStatus" class="sr-only">(success)</span>-->
@@ -22,7 +22,7 @@
 <div ng-if="attribute.type=='select'" class="form-group" >
     <label class="dynamic-form-label">{{attribute.label}}</label>
     <div class="dynamic-form-label-input">
-        <select ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" ng-options="option for option in attribute.options" class="form-control" required/>
+        <select ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" ng-options="option for option in attribute.options" class="form-control" />
     </div>
 </div>
 
@@ -62,7 +62,7 @@
 <div ng-if="attribute.type=='reference'" class="form-group">
     <label class="dynamic-form-label">{{attribute.label}}</label>
     <div class="dynamic-form-label-input">
-        <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" class="form-control" required/>
+        <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" class="form-control" />
         <!--<span ng-show=" {{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>-->
         <!--<span ng-show=" {{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.email'}}">Not email!</span>-->
     </div>
@@ -73,7 +73,7 @@
 <div ng-if="attribute.type=='email'" class="form-group">
     <label class="dynamic-form-label">{{attribute.label}}</label>
     <div class="dynamic-form-label-input">
-        <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" class="form-control" required/>
+        <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" class="form-control" />
         <span ng-show=" {{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>
         <span ng-show=" {{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.email'}}">Not email!</span>
     </div>
