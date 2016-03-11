@@ -17,7 +17,7 @@ HSPC Patient Data Manager is a SMART on FHIR application.  It must be launched f
 #### Try It Out ####
 <script async src="//jsfiddle.net/2bs8710s/embed/"></script>
 
-[JSFiddle](<script async src="//jsfiddle.net/2bs8710s/embed/"></script>)
+[JSFiddle](http://jsfiddle.net/2bs8710s/embedded/js,html,result/)
 
 <iframe width="100%" height="300" src="//jsfiddle.net/2bs8710s/embedded/js,html,result/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
 
