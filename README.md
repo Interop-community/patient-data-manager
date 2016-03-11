@@ -14,5 +14,8 @@ HSPC Patient Data Manager is a SMART on FHIR application.  It must be launched f
 * App API: patient_data_manager
 * Launch URL: http://localhost:8080/hspc-patient-data-manager/static/patient-data-manager/launch.html
 
+#### Try It Out ####
+<script async src="//jsfiddle.net/2bs8710s/embed/"></script>
+
 ### Where to go from here ###
 https://healthservices.atlassian.net/wiki/display/HSPC/Healthcare+Services+Platform+Consortium
