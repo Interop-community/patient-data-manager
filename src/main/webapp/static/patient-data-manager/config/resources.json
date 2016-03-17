@@ -6,7 +6,7 @@
             {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.0.given.0", "default": "", "view": "master"},
             {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.0.family.0", "default": "", "view": "master"},
             {"type": "text", "name": "gender", "label": "Gender" , "required": true, "path": "gender", "default": "", "view": "master"},
-            {"type": "date", "name": "birthDate", "label": "Birth Date" , "required": true, "path": "birthDate", "default": "", "view": "master"}
+            {"type": "text", "name": "birthDate", "label": "Birth Date" , "required": true, "path": "birthDate", "default": "", "view": "master"}
         ]
     },
     {
@@ -25,7 +25,7 @@
         },
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Obs ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-codes" },
-            {"type": "date", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
+            {"type": "text", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
             {"type": "variable", "name": "variable", "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type", "view": "master",
                 "dataTypes" : [
                     {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Value "},
@@ -69,8 +69,8 @@
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Med ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
             {"type": "text", "name": "dose", "label": "Dose Text", "path":"dosageInstruction.0.text", "view": "master"},
             {"type": "fhirDatatype", "name": "Timing", "labelPrefix": "Dose ", "path":"dosageInstruction.0.timing"},
-            {"type": "date", "name": "dateWritten", "label": "Date Written" , "required": true, "path":"dateWritten", "default": "", "view": "detail"},
-            {"type": "date", "name": "dateEnded", "label": "Dat Ended" , "required": true, "path":"dateEnded", "default": "", "view": "detail"},
+            {"type": "text", "name": "dateWritten", "label": "Date Written" , "required": true, "path":"dateWritten", "default": "", "view": "detail"},
+            {"type": "text", "name": "dateEnded", "label": "Dat Ended" , "required": true, "path":"dateEnded", "default": "", "view": "detail"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["active", "on-hold", "completed", "entered-in-error", "stopped", "draft"],
                 "path": "status", "default": "active", "view": "master"}
@@ -100,8 +100,8 @@
         "showInResourceList": "Patient",
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Subs ", "path":"substance", "codedUri" : "http://hl7.org/fhir/ValueSet/allergyintolerance-substance-code"},
-            {"type": "date", "name": "onset", "label": "Onset" , "required": true, "path":"onset", "default": "", "view": "detail"},
-            {"type": "date", "name": "recordedDate", "label": "Recorded Date" , "required": true, "path":"recordedDate", "default": "", "view": "master"},
+            {"type": "text", "name": "onset", "label": "Onset" , "required": true, "path":"onset", "default": "", "view": "detail"},
+            {"type": "text", "name": "recordedDate", "label": "Recorded Date" , "required": true, "path":"recordedDate", "default": "", "view": "master"},
             {"type": "select", "name": "criticality", "label": "Criticality" ,
                 "options":["CRITL", "CRITH", "CRITU"],
                 "path": "criticality", "default": "CRITL", "view": "master"},
@@ -124,7 +124,7 @@
         "showInResourceList": "Patient",
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Con ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-code"},
-            {"type": "date", "name": "onsetDateTime", "label": "Onset Date Time" , "required": true, "path":"onsetDateTime", "default": "", "view": "master"},
+            {"type": "text", "name": "onsetDateTime", "label": "Onset Date Time" , "required": true, "path":"onsetDateTime", "default": "", "view": "master"},
             {"type": "select", "name": "category", "label": "Type" ,
                 "options":["complaint", "symptom", "finding", "diagnosis"],
                 "path": "category", "default": "allergy", "view": "detail"},
@@ -158,7 +158,7 @@
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "DR ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/procedure-code"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Cat ", "path":"category", "codedUri" : "http://hl7.org/fhir/ValueSet/report-codes"},
-            {"type": "date", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
+            {"type": "text", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Diag ", "path":"codedDiagnosis.0", "codedUri" : "http://hl7.org/fhir/ValueSet/clinical-findings"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["registered", "partial", "final", "corrected", "appended", "cancelled", "entered-in-error"],
@@ -173,7 +173,7 @@
         "showInResourceList": "Patient",
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Vac ", "path":"vaccineCode", "codedUri" : "http://hl7.org/fhir/ValueSet/vaccine-code"},
-            {"type": "date", "name": "date", "label": "Date" , "required": true, "path":"date", "default": "", "view": "master"},
+            {"type": "text", "name": "text", "label": "text" , "required": true, "path":"text", "default": "", "view": "master"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["in-progress", "on-hold", "completed", "entered-in-error", "stopped"],
                 "path": "status", "default": "in-progress", "view": "detail"}
@@ -195,7 +195,7 @@
             }]
         },
         "displayValues" : [
-            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "view": "master"},
+            {"type": "text", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "view": "master"},
             {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": "", "view": "master"},
             {"type": "text", "name": "description", "label": "Description" , "required": true, "path": "description", "default": "", "view": "master"},
             {"type": "select", "name": "status", "label": "Status" ,
@@ -220,8 +220,8 @@
         "resource" : "Slot",
         "showInResourceList": "None",
         "displayValues" : [
-            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
-            {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
+            {"type": "text", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
+            {"type": "text", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
             {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": "", "view": "master"},
             {"type": "text", "name": "freeBusy", "label": "Free/Busy" , "required": true, "path": "freeBusyType", "default": "", "view": "master"}
         ],
@@ -233,8 +233,8 @@
         "resource" : "AppointmentResponse",
         "showInResourceList": "None",
         "displayValues" : [
-            {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
-            {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
+            {"type": "text", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
+            {"type": "text", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
             {"type": "text", "name": "participantType", "label": "Participant Type" , "required": true, "path": "participantType.0.text", "default": "", "view": "master"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["accepted", "declined", "tentative", "in-process","completed", "needs-action"],
