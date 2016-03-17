@@ -1,5 +1,15 @@
 [
     {
+        "resource" : "Patient",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.0.given.0", "default": "", "view": "master"},
+            {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.0.family.0", "default": "", "view": "master"},
+            {"type": "text", "name": "gender", "label": "Gender" , "required": true, "path": "gender", "default": "", "view": "master"},
+            {"type": "date", "name": "birthDate", "label": "Birth Date" , "required": true, "path": "birthDate", "default": "", "view": "master"}
+        ]
+    },
+    {
         "resource" : "Observation",
         "showInResourceList": "Patient",
         "search" : {
@@ -232,16 +242,6 @@
         ],
         "references" : [
             {"resource": "Appointment", "label": "Appointment", "path": "appointment.reference"}
-        ]
-    },
-    {
-        "resource" : "Patient",
-        "showInResourceList": "None",
-        "displayValues" : [
-            {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.0.given.0", "default": "", "view": "master"},
-            {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.0.family.0", "default": "", "view": "master"},
-            {"type": "text", "name": "gender", "label": "Gender" , "required": true, "path": "gender", "default": "", "view": "master"},
-            {"type": "text", "name": "birthDate", "label": "Birth Date" , "required": true, "path": "birthDate", "default": "", "view": "master"}
         ]
     },
     {
