@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -10,27 +9,18 @@
 
     <groupId>org.hspconsortium.sandbox</groupId>
     <artifactId>hspc-patient-data-manager</artifactId>
-    <version>0.1-SNAPSHOT</version>
+    <version>0.2-SNAPSHOT</version>
     <packaging>war</packaging>
 
     <name>Patient Data Manager</name>
     <description>Application for managing patient data</description>
     <url>https://healthservices.atlassian.net/wiki/display/HSPC/Healthcare+Services+Platform+Consortium</url>
 
-    <!-- SSH configuration -->
-    <!--
-        <scm>
-            <connection>scm:git:ssh://git@bitbucket.org/travistcummings/hspconsortium/reference-impl.git</connection>
-            <developerConnection>scm:git:ssh://git@bitbucket.org/travistcummings/hspconsortium/reference-impl.git</developerConnection>
-            <url>https://bitbucket.org/travistcummings/hspconsortium/reference-impl.git</url>
-        </scm>
-    -->
-
-    <!-- HTTPS configuration -->
     <scm>
-        <url>https://bitbucket.org/hspconsortium/patient-data-manager</url>
-        <connection>scm:git:https://bitbucket.org/hspconsortium/patient-data-manager.git</connection>
-        <developerConnection>scm:git:https://bitbucket.org/hspconsortium/patient-data-manager.git</developerConnection>
+        <connection>scm:git:ssh://git@bitbucket.org/hspconsortium/patient-data-manager.git</connection>
+        <developerConnection>scm:git:ssh://git@bitbucket.org/hspconsortium/patient-data-manager.git</developerConnection>
+        <url>https://bitbucket.org/hspconsortium/patient-data-manager.git</url>
+        <tag>HEAD</tag>
     </scm>
 
     <build>
