@@ -252,7 +252,13 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                     if (typeof resource[property] !== "string") {
                         resource[property] = resourceBuilderHelpers.turnStringsIntoDates(resource[property])
                     } else {
-                        resource[property] = new Date(resource[property]);
+                        // if there is a time component, then convert it to a date
+                        // YYYY-MM-DDTHH:mm:ss.sssZ
+                        if (resource[property].length > 10) {
+                            resource[property] = new Date(resource[property]);
+                        }
+                        // otherwise leave it as a string
+                        // ex: birthDate = "2015-10-20" not "2015-10-19T16:00:00.000-6000"
                     }
                 }
             }
@@ -429,7 +435,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                         patient.name = patient.name + ' ' + value;
                     });
                     patient.sex = patientResult.gender;
-                    patient.dob = new Date(patientResult.birthDate);
+                    patient.dob = patientResult.birthDate;
                     patient.id  = patientResult.id;
                     deferred.resolve(patient);
                 });

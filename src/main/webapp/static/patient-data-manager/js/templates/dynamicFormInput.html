@@ -7,6 +7,9 @@
     </div>
 </div>
 
+<!-- DATES
+     Not sure if it makes since to use a date control because FHIR dates aren't in alignment
+     with Javascript dates.  For example, "2010" is a FHIR date -->
 <div ng-if="attribute.type=='date'" class="form-group">
     <label class="dynamic-form-label">{{attribute.label}}</label>
     <div class="dynamic-form-label-input">
