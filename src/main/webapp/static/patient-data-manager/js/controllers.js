@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('pdmApp.controllers', []).controller('pdmCtrl',
-    ['$scope','$filter', "$uibModal", "$fhirApiServices", "$terminology", "$dynamicModelHelpers", "$resourceBuilderHelpers", "$resourceJson",
-    function ($scope, $filter, $uibModal, $fhirApiServices, $terminology, $dynamicModelHelpers, $resourceBuilderHelpers, $resourceJson ) {
+    ['$scope', '$rootScope','$filter', "$uibModal", "$fhirApiServices", "$terminology", "$dynamicModelHelpers", "$resourceBuilderHelpers", "$resourceJson",
+    function ($scope, $rootScope, $filter, $uibModal, $fhirApiServices, $terminology, $dynamicModelHelpers, $resourceBuilderHelpers, $resourceJson ) {
 
         $scope.dmh = $dynamicModelHelpers;
         var rbh = $resourceBuilderHelpers;
@@ -212,6 +212,65 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                             title:"JSON -" + $scope.selectedResourceInstance.resourceType,
                             ok:"Close",
                             json:$scope.selectedResourceInstance,
+                            callback:function(){ //setting callback
+                                $scope.modalOpen = false;
+                            }
+                        }
+                    }
+                }
+            });
+        };
+
+        $scope.bundle = function (){
+            $scope.modalOpen = true;
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'js/templates/bundleModal.html',
+                controller: 'BundleModalInstanceCtrl',
+                size: 'lg',
+                resolve: {
+                    getSettings: function () {
+                        return {
+                            callback:function(){ //setting callback
+                                $scope.modalOpen = false;
+                            }
+                        }
+                    }
+                }
+            });
+
+            modalInstance.result.then(function (bundle) {
+                var modalProgress = openModalProgressDialog();
+                $fhirApiServices.createBundle($scope.smart, bundle, $scope.resourceTypeList, $scope.selectedResourceTypeConfig, $scope.notification).then(function () {
+                    modalProgress.dismiss();
+                }, function() {
+                    modalProgress.dismiss();
+                });
+            });
+
+        };
+
+        function openModalProgressDialog() {
+            return $uibModal.open({
+                animation: true,
+                templateUrl: 'js/templates/progressModal.html',
+                size: 'sm'
+            });
+        }
+
+        $rootScope.$on('error-occurred', function(){
+            $scope.error();
+        });
+
+        $scope.error = function (){
+            $scope.modalOpen = true;
+            $uibModal.open({
+                animation: true,
+                templateUrl: 'js/templates/errorModal.html',
+                controller: 'ErrorModalInstanceCtrl',
+                resolve: {
+                    getSettings: function () {
+                        return {
                             callback:function(){ //setting callback
                                 $scope.modalOpen = false;
                             }
@@ -515,4 +574,27 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             $uibModalInstance.close();
             callback();
         };
-    }]);
+    }]).controller('BundleModalInstanceCtrl',['$scope', '$uibModalInstance', 'getSettings',
+    function ($scope, $uibModalInstance, getSettings) {
+
+        var callback = (getSettings.callback !== undefined) ? getSettings.callback : null;
+
+        $scope.upload = function (bundle) {
+            $uibModalInstance.close(bundle);
+            callback();
+        };
+
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss();
+            callback();
+        };
+    }]).controller("ErrorModalInstanceCtrl",
+    function($scope, $uibModalInstance, errorService, getSettings){
+        var callback = (getSettings.callback !== undefined) ? getSettings.callback : null;
+        $scope.errorMessage = errorService.getErrorMessage();
+        $scope.isFormatted = errorService.messageIsFormatted();
+
+        $scope.close = function () {
+            $uibModalInstance.close();
+        };
+    });

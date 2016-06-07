@@ -7,13 +7,21 @@
     </div>
 </div>
 
-<!-- DATES
-     Not sure if it makes since to use a date control because FHIR dates aren't in alignment
-     with Javascript dates.  For example, "2010" is a FHIR date -->
 <div ng-if="attribute.type=='date'" class="form-group">
     <label class="dynamic-form-label">{{attribute.label}}</label>
     <div class="dynamic-form-label-input">
-        <input type="datetime-local" class="form-control" id="{{attribute.name}}"
+        <input type="text" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" id="{{attribute.name}}" class="form-control" />
+        <!--<span ng-show="{{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>-->
+    </div>
+</div>
+
+<!-- DATES
+     Not sure if it makes since to use a date control because FHIR dates aren't in alignment
+     with Javascript dates.  For example, "2010" is a FHIR date -->
+<div ng-if="attribute.type=='do-not-use-yet-date'" class="form-group">
+    <label class="dynamic-form-label">{{attribute.label}}</label>
+    <div class="dynamic-form-label-input">
+        <input type="datetime-local" class="form-control"
                ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]"
                aria-describedby="dateErrorStatus" >
         <!--<span id="dateIcon" class="glyphicon form-control-feedback" aria-hidden="true"></span>-->

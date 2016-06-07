@@ -52,6 +52,23 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
     };
 
     return terminologyService;
+}).factory('errorService', function($rootScope) {
+    var errorMessage;
+    var messageIsFormatted = false;
+    return {
+        getErrorMessage: function () {
+            return errorMessage;
+        },
+        messageIsFormatted: function () {
+            return messageIsFormatted;
+        },
+        setErrorMessage: function (error, isFormatted) {
+            errorMessage = error;
+            messageIsFormatted = isFormatted;
+            $rootScope.$emit('error-occurred', {});
+
+        }
+    };
 }).factory('$dynamicModelHelpers', function ($filter) {
 
         /**
@@ -314,7 +331,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         }
 
         return resourceBuilderHelpers;
-    }).factory('$fhirApiServices', function ($resourceBuilderHelpers) {
+    }).factory('$fhirApiServices', function ($resourceBuilderHelpers, errorService) {
 
         /**
          *
@@ -352,9 +369,8 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                             notification(newResource.resourceType + " Created");
                             deferred.resolve(resourceTypeList, index );
                         }).fail(function(){deferred.reject()});
-                }).fail(function(){
-                    notification({ type:"error", text: newResource.resourceType + " failed to Save" });
-                    console.log("failed to create " + newResource.resourceType, arguments);
+                }).fail(function(error){
+                    errorService.setErrorMessage(error.data.responseText, true);
                     deferred.reject()
                 });
             return deferred;
@@ -366,18 +382,17 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             delete modifiedResource.meta;
             delete modifiedResource.isSelected;
 
-            smart.api.update({type: modifiedResource.resourceType, data: JSON.stringify(modifiedResource), id: modifiedResource.id})
+            smart.api.update({type: modifiedResource.resourceType, data: JSON.stringify(rbh.formatAttributesFromUIForFhir(resourceTypeConfig, angular.copy(modifiedResource))), id: modifiedResource.id})
                 .done(function(){
                     fhirServices.queryResourceInstances(smart, resourceTypeList, resourceTypeConfig, notification)
                         .done(function(resourceTypeList, index){
                             notification(modifiedResource.resourceType + " Saved");
                             deferred.resolve(resourceTypeList, index );
                         }).fail(function(){deferred.reject()});
-                }).fail(function(){
-                    notification({ type:"error", text:modifiedResource.resourceType + " failed to Save" });
-                    console.log("failed to create " + modifiedResource.resourceType, arguments);
-                    deferred.reject()
-                });
+                }).fail(function(error){
+                errorService.setErrorMessage(error.data.responseText, true);
+                deferred.reject()
+            });
             return deferred;
         };
 
@@ -390,11 +405,10 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                             notification(resourceInstance.resourceType + " Deleted");
                             deferred.resolve(resourceTypeList, index );
                         }).fail(function(){deferred.reject()});
-                }).fail(function(){
-                    notification({ type:"error", text:resourceInstance.resourceType + " failed to Delete" });
-                    console.log("failed to create " + resourceInstance.resourceType, arguments);
-                    deferred.reject();
-                });
+                }).fail(function(error){
+                errorService.setErrorMessage(error.data.responseText, true);
+                deferred.reject()
+            });
             return deferred;
         };
 
@@ -483,6 +497,22 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return deferred;
         };
 
+        fhirServices.createBundle = function(smart, bundle, resourceTypeList, resourceTypeConfig, notification) {
+            var deferred = $.Deferred();
+            smart.api.transaction({data: angular.copy(bundle)})
+                .done(function(){
+                    fhirServices.queryResourceInstances(smart, resourceTypeList, resourceTypeConfig, notification)
+                        .done(function(resourceTypeList, index){
+                            notification("Bundle Uploaded");
+                            deferred.resolve(resourceTypeList, index );
+                        }).fail(function(){deferred.reject()});
+                }).fail(function(error){
+                errorService.setErrorMessage(error.data.responseText, true);
+                deferred.reject()
+            });
+            return deferred;
+        };
+    
         function buildQueryString(search, enteredSearch) {
             var queryTerm = {};
             if (typeof search.searchParams !== 'undefined' && enteredSearch !== undefined && enteredSearch !== "") {
