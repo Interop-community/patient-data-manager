@@ -512,8 +512,35 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             });
             return deferred;
         };
-    
-        function buildQueryString(search, enteredSearch) {
+
+        fhirServices.exportPatientData = function (resourceTypeList){
+            var deferred = $.Deferred();
+            var transactionBundle = {
+                resourceType:"Bundle",
+                type : "transaction",
+                entry:[]
+            };
+            angular.forEach(resourceTypeList, function (resourceType) {
+                angular.forEach(resourceType.pageData, function (resource) {
+                    var resourceObject = angular.copy(resource);
+                    delete resourceObject.metadata;
+                    delete resourceObject.isSelected;
+                    var transactionEntry = {
+                        resource: resourceObject,
+                        request : {
+                            method : "PUT",
+                            url : resource.resourceType + "/" + resource.id
+                        }
+
+                    };
+                    transactionBundle.entry.push(transactionEntry);
+                });
+            });
+            deferred.resolve(transactionBundle );
+            return deferred;
+        };
+
+    function buildQueryString(search, enteredSearch) {
             var queryTerm = {};
             if (typeof search.searchParams !== 'undefined' && enteredSearch !== undefined && enteredSearch !== "") {
 
@@ -546,7 +573,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             }
             return pageCnt;
         }
-
+    
         return fhirServices;
 
     }).factory('$resourceJson', ['$http',function($http) {

@@ -250,6 +250,30 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         };
 
+        $scope.export = function (){
+            $fhirApiServices.exportPatientData($scope.resourceTypeList).then(function (exportedBundle) {
+                $scope.modalOpen = true;
+                $uibModal.open({
+                    animation: true,
+                    templateUrl: 'js/templates/jsonModal.html',
+                    controller: 'JsonModalInstanceCtrl',
+                    resolve: {
+                        getSettings: function () {
+                            return {
+                                title:"JSON",
+                                ok:"Close",
+                                json:exportedBundle,
+                                callback:function(){ //setting callback
+                                    $scope.modalOpen = false;
+                                }
+                            }
+                        }
+                    }
+                });
+            }, function() {
+            });
+        };
+
         function openModalProgressDialog() {
             return $uibModal.open({
                 animation: true,
@@ -579,7 +603,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         var callback = (getSettings.callback !== undefined) ? getSettings.callback : null;
 
-        $scope.upload = function (bundle) {
+        $scope.export = function (bundle) {
             $uibModalInstance.close(bundle);
             callback();
         };
