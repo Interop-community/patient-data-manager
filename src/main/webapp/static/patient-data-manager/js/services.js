@@ -523,7 +523,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             angular.forEach(resourceTypeList, function (resourceType) {
                 angular.forEach(resourceType.pageData, function (resource) {
                     var resourceObject = angular.copy(resource);
-                    delete resourceObject.metadata;
+                    delete resourceObject.meta;
                     delete resourceObject.isSelected;
                     var transactionEntry = {
                         resource: resourceObject,
