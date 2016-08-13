@@ -539,6 +539,10 @@ fieldset[disabled] .btn-basic.active {
     outline: none;
 }
 
+.float-right-dark-btn:focus {
+    outline: none;
+}
+
 .dynamic-form-header {
     height: 28px;
     width: 100%;

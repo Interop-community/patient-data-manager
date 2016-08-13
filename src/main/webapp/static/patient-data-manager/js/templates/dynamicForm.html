@@ -4,9 +4,9 @@
         <a href='#' class='float-right-dark-btn' ng-click="requestUpdateResource()"><i class='fa fa-save fa-lg'></i></a>
         <a href='#' class='float-right-dark-btn' ng-click="openModalDialog('clone')"><i class='fa fa-copy fa-lg'></i></a>
         <a href='#' class='float-right-dark-btn' ng-click="json()"><i class='fa fa-file-text-o fa-lg'></i></a>
-        <a href='#' uib-popover-template="'js/templates/detailPopover.html'" popover-trigger="focus" popover-placement="bottom" class='float-right-dark-btn'><i class='fa fa-ellipsis-h fa-lg'></i></a>
+        <a href='#' tabindex="0" uib-popover-template="'js/templates/detailPopover.html'" popover-trigger="focus" popover-placement="bottom" class='float-right-dark-btn'><i class='fa fa-ellipsis-h fa-lg'></i></a>
     </div>
-    <div class="details-form"  ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)">
+    <div class="details-form" ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)">
         <div ng-repeat="attribute in selectedResourceTypeConfig.displayValues" ng-class="{modalForm: isModal}">
             <div ng-include src="dynamicFormTemplate"></div>
         </div>
