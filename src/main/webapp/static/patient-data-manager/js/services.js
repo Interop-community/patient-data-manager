@@ -220,7 +220,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             angular.forEach(selectedResourceTypeConfig.displayValues, function (value) {
                 var newValue = dmh.getModelParent(resource, value.path)[ dmh.getModelLeaf(value.path) ];
                 if (value.type === "date") {
-                    dmh.getModelParent(resource, value.path)[ dmh.getModelLeaf(value.path) ] = new Date(newValue).toISOString();
+                    dmh.getModelParent(resource, value.path)[ dmh.getModelLeaf(value.path) ] = newValue && new Date(newValue).toISOString();
                 }
                 if (stringIsEmpty(newValue)) {
                     delete dmh.getModelParent(resource, value.path)[ dmh.getModelLeaf(value.path) ];
