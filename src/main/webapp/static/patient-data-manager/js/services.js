@@ -17,7 +17,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         var deferred = $.Deferred();
         terminologyService.getObservationCodesValueSetId(url).done(function(lookupUrl){
             if (val.length >= min) {
-                var path = encodeURI('/ValueSet/' + lookupUrl + '/$expand?filter=' + val);
+                var path = encodeURIComponent('/ValueSet/' + lookupUrl + '/$expand?filter=' + val);
                 deferred.resolve($http.get(urlBase  + terminologyServerEndpoint + '?uri=' + path, {
                     params: {}
                 }).then(function(response){
@@ -26,9 +26,16 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                                 return item;
                             });
                         }
+                    }, function() {
+                    deferred.reject();
                     })
                 )
             }
+        }, function() {
+                deferred.reject();
+            }
+        ).fail(function(){
+            deferred.reject();
         });
         return deferred;
     };
@@ -38,7 +45,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         if (valueSetCodeEndpointMap[url] !== undefined) {
             deferred.resolve(valueSetCodeEndpointMap[url]);
         } else {
-            var path = encodeURI('/ValueSet?url=' + url);
+            var path = encodeURIComponent('/ValueSet?url=' + url);
             $http.get(urlBase + terminologyServerEndpoint + '?uri=' + path, {
                 params: {}
             }).then(function(valueSet){
@@ -46,7 +53,9 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                         valueSetCodeEndpointMap[url] = valueSet.data.entry[0].resource.id;
                     }
                     deferred.resolve(valueSetCodeEndpointMap[url]);
-                });
+                }, function() {
+                deferred.reject();
+            });
         }
         return deferred;
     };
@@ -80,24 +89,40 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
         dynamicModelHelpers.getDynamicModelByName = function(resource, attribute) {
 
-            var parent;
-            if (stringIsEmpty(attribute.path)) {
-                parent = resource;
+            if (attribute.type !== 'variable') {
+                var model = dynamicModelHelpers.getDynamicModel(resource, attribute.path);
+
+                if (attribute.type === "datetime") {
+                    return $filter('date')(model, 'MM/dd/yyyy HH:mm');
+                } else if (attribute.type === "date") {
+                    return $filter('date')(model, 'MM/dd/yyyy');
+                } else if (attribute.type === "time") {
+                    return $filter('date')(model, 'HH:mm');
+                } else {
+                    return model;
+                }
             } else {
-                parent = dynamicModelHelpers.getDynamicModel(resource, attribute.path);
-            }
-            var properties = [];
+
+                var parent;
+                if (stringIsEmpty(attribute.path)) {
+                    parent = resource;
+                } else {
+                    parent = dynamicModelHelpers.getDynamicModel(resource, attribute.path);
+                }
+                var properties = [];
                 if (attribute.type === 'variable') {
-                        properties = Object.keys(parent).filter(function( property ) {
+                    properties = Object.keys(parent).filter(function (property) {
                         if (stringStartsWith(property, attribute.namePrefix)) {
                             return true;
                         }
                     });
                 }
-            if (properties.length > 0 ) {
-                return $filter("fhirTypeFilter")(attributeFilterType (attribute.namePrefix, properties[0]), parent[properties[0]]);
+                if (properties.length > 0) {
+                    return $filter("fhirTypeFilter")(attributeFilterType(attribute.namePrefix, properties[0]), parent[properties[0]]);
+                }
             }
             return "";
+                
         };
 
         function getFhirDatatypeName(resource, attribute) {
@@ -222,7 +247,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
         return dynamicModelHelpers;
 
-    }).factory('$resourceBuilderHelpers', function ($dynamicModelHelpers) {
+    }).factory('$resourceBuilderHelpers', function ($dynamicModelHelpers, $filter) {
 
         /**
          *
@@ -235,24 +260,28 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
         resourceBuilderHelpers.formatAttributesFromUIForFhir = function(selectedResourceTypeConfig, resource) {
             angular.forEach(selectedResourceTypeConfig.displayValues, function (value) {
-                var newValue = dmh.getModelParent(resource, value.path)[ dmh.getModelLeaf(value.path) ];
-                if (value.type === "date") {
-                    dmh.getModelParent(resource, value.path)[ dmh.getModelLeaf(value.path) ] = new Date(newValue).toISOString();
+                var newValue = dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)];
+                if (value.type === "datetime" && newValue !== undefined && newValue !== "") {
+                    dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)] = new Date($filter('date')(new Date(newValue), 'MM/dd/yyyy HH:mm')).toISOString();
+                } else if (value.type === "date" && newValue !== undefined && newValue !== "") {
+                    dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)] = new Date($filter('date')(new Date(newValue), 'MM/dd/yyyy')).toISOString();
+                } else if (value.type === "time" && newValue !== undefined && newValue !== "") {
+                    dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)] = new Date($filter('date')(new Date(newValue), 'HH:mm')).toISOString();
                 }
                 if (stringIsEmpty(newValue)) {
-                    delete dmh.getModelParent(resource, value.path)[ dmh.getModelLeaf(value.path) ];
+                    delete dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)];
                 }
             });
             return resource;
         };
 
-        resourceBuilderHelpers.formatAttributesFromFhirForUI = function(selectedResourceTypeConfig, resource, resourceTypeConfig) {
+        resourceBuilderHelpers.formatAttributesFromFhirForUI = function(selectedResourceTypeConfig, resource) {
             angular.forEach(selectedResourceTypeConfig.displayValues, function (value) {
                 var newValue = dmh.getModelParent(resource, value.path)[ dmh.getModelLeaf(value.path) ];
                 if (typeof value === 'undefined') {
 
                 }
-                if (value.type === "date" && typeof newValue !== 'undefined') {
+                if ((value.type === "datetime" || value.type === "date" || value.type === "time") && typeof newValue !== 'undefined') {
                     var newDate = new Date(newValue);
                     if (newValue.lastIndexOf("T00:00:00.000Z") != -1) {
                         newDate.setHours(0,0,0,0);
@@ -289,7 +318,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                 var newValue = value.default;
                 if (value.type === "variable") {
                     return;
-                } else if (value.type === "date") {
+                } else if (value.type === "date" || value.type === "datetime" || value.type === "time") {
                     newValue = new Date();
                     newValue.setSeconds(0,0)
                 }
@@ -338,11 +367,21 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
          *      FHIR SERVICE API CALLS
          *
          **/
+        
+        var fhirClient;
 
         var rbh = $resourceBuilderHelpers;
 
         var fhirServices = {};
 
+        fhirServices.setFhirClient = function (fhirClientNew) {
+            fhirClient = fhirClientNew;
+        };
+
+        fhirServices.fhirClient = function () {
+            return smart;
+        };
+    
         fhirServices.searchResourceInstances = function (smart, enteredSearch, resourceTypeList, resourceTypeConfig, clearSearch, notification){
             var deferred = $.Deferred();
             if (typeof resourceTypeConfig.search !== 'undefined' && clearSearch === undefined) {
@@ -412,6 +451,34 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return deferred;
         };
 
+        fhirServices.hasNext = function(lastSearch) {
+            var hasLink = false;
+            if (lastSearch  === undefined) {
+                return false;
+            } else {
+                lastSearch.data.link.forEach(function(link) {
+                    if (link.relation == "next") {
+                        hasLink = true;
+                    }
+                });
+            }
+            return hasLink;
+        };
+
+        fhirServices.hasPrev = function(lastSearch) {
+            var hasLink = false;
+            if (lastSearch  === undefined) {
+                return false;
+            } else {
+                lastSearch.data.link.forEach(function(link) {
+                    if (link.relation == "previous") {
+                        hasLink = true;
+                    }
+                });
+            }
+            return hasLink;
+        };
+
         fhirServices.getNextOrPrevPage = function(smart, lastResult, direction, resourceTypeConfig) {
             var deferred = $.Deferred();
             $.when(smart.patient.api[direction]({bundle: lastResult.data}))
@@ -419,7 +486,8 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                     var resources = [];
                     if (pageResult.data.entry) {
                         pageResult.data.entry.forEach(function(entry){
-                            resources.push(rbh.turnStringsIntoDates(entry.resource));
+                            resources.push(rbh.formatAttributesFromFhirForUI(resourceTypeConfig, entry.resource));
+                            // resources.push(rbh.turnStringsIntoDates(entry.resource));
                         });
                     }
                     deferred.resolve(resources, pageResult);
@@ -474,7 +542,8 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                     var resourceResults = [];
                     if (resourceSearchResult.data.entry) {
                         resourceSearchResult.data.entry.forEach(function(entry){
-                            resourceResults.push(rbh.turnStringsIntoDates(entry.resource));
+                            resourceResults.push(rbh.formatAttributesFromFhirForUI(resourceTypeConfig, entry.resource));
+                            // resourceResults.push(rbh.turnStringsIntoDates(entry.resource));
                         });
                     } else {
 //                        notification({ type:"error", text:"No Results found for the Search"});
@@ -497,6 +566,128 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return deferred;
         };
 
+        fhirServices.getNextOrPrevPageSimple = function(direction, lastSearch) {
+            var deferred = $.Deferred();
+            $.when(fhirClient.api[direction]({bundle: lastSearch.data}))
+                .done(function(pageResult){
+                    var resources = [];
+                    if (pageResult.data.entry) {
+                        pageResult.data.entry.forEach(function(entry){
+                            resources.push(entry.resource);
+                        });
+                    }
+                    deferred.resolve(resources, pageResult);
+                });
+            return deferred;
+        };
+    
+        fhirServices.filterResources = function(resource, tokens, sort, sortReverse, count, resourceTypeConfig) {
+            var deferred = $.Deferred();
+    
+            if (count === undefined) {
+                count = 50;
+            }
+
+            var searchParams = {type: resource, count: count};
+            searchParams.query = buildQueryFilter(resourceTypeConfig.search, tokens, sort, sortReverse);
+
+            $.when(fhirClient.api.search(searchParams))
+                .done(function(resourceSearchResult){
+                    var resourceResults = [];
+                    if (resourceSearchResult.data.entry) {
+                        resourceSearchResult.data.entry.forEach(function(entry){
+                            resourceResults.push(entry.resource);
+                        });
+                    }
+                    deferred.resolve(resourceResults, resourceSearchResult);
+                }).fail(function(error){
+                var test = error;
+            });
+            return deferred;
+        };
+
+        //NOTE: This is FHIR implementation specific.
+        // Next, Prev and Self link impls are not defined in the FHIR spec
+        fhirServices.calculateResultSet = function(lastSearch) {
+            var count = {start: 0, end: 0, total: 0};
+            count.total = lastSearch.data.total;
+            var pageSize;
+            var hasNext = this.hasNext(lastSearch);
+    
+            if (this.hasNext(lastSearch)) {
+                lastSearch.data.link.forEach(function (link) {
+                    if (link.relation == "next") {
+                        var querySting = decodeURIComponent(link.url).split("?");
+                        var paramPairs = querySting[1].split("&");
+                        for (var i = 0; i < paramPairs.length; i++) {
+                            var parts = paramPairs[i].split('=');
+                            if (parts[0] === "_count") {
+                                pageSize = Number(parts[1]);
+                            }
+                        }
+                    }
+                });
+                lastSearch.data.link.forEach(function(link) {
+                    if (link.relation == "next") {
+                        var querySting = decodeURIComponent(link.url).split("?");
+                        var paramPairs = querySting[1].split("&");
+                        for (var i = 0; i < paramPairs.length; i++) {
+                            var parts = paramPairs[i].split('=');
+                            if (parts[0] === "_getpagesoffset") {
+                                if (Number(parts[1]) === pageSize) {
+                                    count.start = 1;
+                                } else {
+                                    count.start = Number(parts[1]) - pageSize + 1;
+                                }
+                                if ((Number(parts[1]) + pageSize) != count.total) {
+                                    count.end = Number(parts[1]);
+                                } else {
+                                    count.end = count.total;
+                                }
+                            }
+                        }
+                    }
+                });
+            } else {
+                lastSearch.data.link.forEach(function (link) {
+                    if (link.relation == "self") {
+                        var querySting = decodeURIComponent(link.url).split("?");
+                        var paramPairs = querySting[1].split("&");
+                        for (var i = 0; i < paramPairs.length; i++) {
+                            var parts = paramPairs[i].split('=');
+                            if (parts[0] === "_count") {
+                                pageSize = Number(parts[1]);
+                            }
+                        }
+                    }
+                });
+                lastSearch.data.link.forEach(function(link) {
+                    if (link.relation == "self") {
+                        var querySting = decodeURIComponent(link.url).split("?");
+                        var paramPairs = querySting[1].split("&");
+                        for (var i = 0; i < paramPairs.length; i++) {
+                            var parts = paramPairs[i].split('=');
+                            if (parts[0] === "_getpagesoffset") {
+                                if (Number(parts[1]) === 0) {
+                                    count.start = 1;
+                                } else {
+                                    count.start = Number(parts[1]) + 1;
+                                }
+                                if ((Number(parts[1]) + pageSize) < count.total) {
+                                    count.end = Number(parts[1]) + pageSize;
+                                } else {
+                                    count.end = count.total;
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+    
+            return count;
+        };
+    
+    
         fhirServices.createBundle = function(smart, bundle, resourceTypeList, resourceTypeConfig, notification) {
             var deferred = $.Deferred();
             smart.api.transaction({data: angular.copy(bundle)})
@@ -540,7 +731,16 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return deferred;
         };
 
-    function buildQueryString(search, enteredSearch) {
+        fhirServices.queryFhirVersion = function (smart){
+            var deferred = $.Deferred();
+            $.when(smart.api.conformance({}))
+                .done(function(statement){
+                    deferred.resolve(statement.data.fhirVersion);
+                });
+            return deferred;
+        };
+    
+        function buildQueryString(search, enteredSearch) {
             var queryTerm = {};
             if (typeof search.searchParams !== 'undefined' && enteredSearch !== undefined && enteredSearch !== "") {
 
@@ -566,6 +766,42 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return queryTerm;
         }
 
+        function buildQueryFilter(search, tokens, sortSelected, sortReverse) {
+            var queryTerm = {};
+
+            if (typeof search.searchFilter !== 'undefined' && tokens !== undefined && tokens !== "" && tokens[0] !== "") {
+               
+                var queryItem = search.searchFilter.name;
+                if (search.searchFilter.modifier) {
+                    queryItem += ":" + search.searchFilter.modifier;
+                }
+                queryTerm[queryItem] = tokens;
+            } else if (typeof search.searchFilter !== 'undefined' && search.searchFilter.name === 'patient') {
+                var queryItem = search.searchFilter.name;
+                queryTerm[queryItem] = fhirClient.patient.id;
+            }
+
+            if (typeof search.searchFilter !== 'undefined' && search.searchFilter.name !== 'patient') {
+                var sortValues = [];
+                for (var i = 0; i < sortSelected.length; i++) {
+                    sortValues[i] = [];
+                    sortValues[i][0] = sortSelected[i][0];
+                    if (sortSelected[i][1] === "asc") {
+                        // natural
+                        sortValues[i][1] = (sortReverse ? "desc" : "asc");
+                    } else {
+                        // inverted
+                        sortValues[i][1] = (sortReverse ? "asc" : "desc");
+                    }
+                }
+
+                if (sortValues.length > 0) {
+                    queryTerm['$sort'] = sortValues;
+                }
+            }
+            return queryTerm;
+        }
+    
         function calculatePages(searchResult) {
             var pageCnt = Math.floor(searchResult.data.total / 50);
             if ((searchResult.data.total % 50) != 0) {
@@ -591,7 +827,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         return type;
     }
 
-    function subsumeDataType(value, dataTypeValue) {
+    function subsumeDataType(value, dataTypeValue, parentType) {
 //        switch(value.type) {
 //            case 'fhirDatatype':
 //
@@ -603,17 +839,25 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                     dataTypeValue.codedUri = value.codedUri;
                 }
                 if (value.labelPrefix !== "" && value.labelPrefix !== undefined) {
-                    dataTypeValue.label = value.labelPrefix + dataTypeValue.label;
+                    if (parentType !== "" && parentType !== undefined) {
+                        dataTypeValue.label = parentType.labelPrefix + value.labelPrefix + dataTypeValue.label;
+                    } else {
+                        dataTypeValue.label = value.labelPrefix + dataTypeValue.label;
+                    }
                 }
                 if (value.path !== "" && value.path !== undefined) {
-                    dataTypeValue.path = value.path + "." +  dataTypeValue.path;
+                    if (parentType !== "" && parentType !== undefined) {
+                        dataTypeValue.path = parentType.path + "." +  value.path;
+                    } else {
+                        dataTypeValue.path = value.path + "." +  dataTypeValue.path;
+                    }
                 }
                 return dataTypeValue;
 //        }
 //        return {};
     }
 
-    function subsumeVariableDataType(variableDatatypeName, dataType) {
+    function subsumeVariableDataType(variableDatatypeName, dataType, parentType) {
 
         var fhirDatatypePrefix = variableDatatypeName + dataType.name;
         var fhirDataType = getFhirTypeByName(dataType.name);
@@ -649,23 +893,31 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         return {};
     }
 
-    function buildResourceDataType(dataType) {
+    function buildResourceDataType(dataType, parentType) {
         var newDisplayValues = [];
         switch(dataType.type) {
             case 'fhirDatatype':
                 var fhirDataType = getFhirTypeByName(dataType.name);
                 if (fhirDataType.displayValues !== undefined) {
                     angular.forEach(fhirDataType.displayValues, function (dataTypeValue) {
-                        newDisplayValues.push(subsumeDataType(dataType, dataTypeValue));
+                        if (dataTypeValue.type === 'fhirDatatype') {
+                            newDisplayValues = newDisplayValues.concat(buildResourceDataType(dataTypeValue, dataType));
+                        } else {
+                            newDisplayValues.push(subsumeDataType(dataType, dataTypeValue, parentType));
+                        }
                     });
                 } else if (fhirDataType.displayValue !== undefined) {
-                    newDisplayValues.push(subsumeDataType(dataType, fhirDataType.displayValue));
+                    if (fhirDataType.displayValue.type === 'fhirDatatype') {
+                        newDisplayValues = newDisplayValues.concat(buildResourceDataType(fhirDataType.displayValue, dataType));
+                    } else {
+                        newDisplayValues.push(subsumeDataType(dataType, fhirDataType.displayValue, parentType));
+                    }
                 }
                 break;
             case 'variable':
                 dataType.variableChoices = [];
                 angular.forEach(dataType.dataTypes, function (subDataType) {
-                    dataType.variableChoices.push(subsumeVariableDataType(dataType.namePrefix, subDataType));
+                    dataType.variableChoices.push(subsumeVariableDataType(dataType.namePrefix, subDataType, parentType));
                 });
                 newDisplayValues.push(dataType);
                 break;
@@ -686,9 +938,10 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
     }
 
     return {
-        getResources: function() {
+        getResources: function(fhirVersion) {
             var deferred = $.Deferred();
-            $http.get('config/resources.json').success(function(resources){
+            $http.get('config/resources_' + fhirVersion +'.json').success(function(resources){
+                // importedResources = JSON.parse(JSON.stringify(resources));
                 importedResources = resources;
                 $http.get('config/fhirDatatypes.json').success(function(fhirDataTypes){
                     importedFhirDataTypes = fhirDataTypes;

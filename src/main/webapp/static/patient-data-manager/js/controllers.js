@@ -30,6 +30,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.searchBar = false;
         $scope.detailView = false;
         $scope.patientInfo = true;
+        $scope.showFRED = false;
         $scope.showViewToggle = false;
         $scope.resourceSet = 'Patient';
         $scope.viewName = 'Full';
@@ -192,11 +193,18 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
         };
 
-        $scope.requestUpdateResource = function() {
+        $scope.requestUpdateResource = function(reselect) {
             // TODO: validate
+            var modalProgress = openModalProgressDialog("Updating...");
             $fhirApiServices.updateResource($scope.smart, $scope.selectedResourceInstance, $scope.resourceTypeList, $scope.selectedResourceTypeConfig, $scope.notification)
                 .done(function(resourceTypeList, resourceTypeConfigIndex){
+                    if (reselect) {
+                        $scope.selectResourceInstance($scope.selectedResourceInstance);
+                    }
                     updateView(resourceTypeList[resourceTypeConfigIndex]);
+                    modalProgress.dismiss();
+                }, function() {
+                    modalProgress.dismiss();
                 });
         };
 
@@ -240,7 +248,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
 
             modalInstance.result.then(function (bundle) {
-                var modalProgress = openModalProgressDialog();
+                var modalProgress = openModalProgressDialog("Saving...");
                 $fhirApiServices.createBundle($scope.smart, bundle, $scope.resourceTypeList, $scope.selectedResourceTypeConfig, $scope.notification).then(function () {
                     modalProgress.dismiss();
                 }, function() {
@@ -274,11 +282,17 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
         };
 
-        function openModalProgressDialog() {
+        function openModalProgressDialog(title) {
             return $uibModal.open({
                 animation: true,
                 templateUrl: 'js/templates/progressModal.html',
-                size: 'sm'
+                controller: 'ProgressModalCtrl',
+                size: 'sm',
+                resolve: {
+                    getTitle: function () {
+                        return title;
+                    }
+                }
             });
         }
 
@@ -358,6 +372,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.requestDeleteResource = function() {
 
             $scope.modalOpen = true;
+            var modalProgress = openModalProgressDialog("Deleting...");
             $scope.confirmModalDialog({
                 title:"Delete " + $scope.selectedResourceInstance.resourceType,
                 ok:"Yes",
@@ -371,10 +386,61 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                             .done(function(resourceTypeList, resourceTypeConfigIndex){
                                 $scope.closeDetailView();
                                 updateView(resourceTypeList[resourceTypeConfigIndex]);
+                                modalProgress.dismiss();
                             });
                     }
                 }
             });
+        };
+
+        $scope.resourceChooser = function(resourceMeta) {
+            $scope.modalOpen = true;
+            var resourceTypeConfig = getResourceTypeConfig(resourceMeta.resource);
+            var isParticipant = $scope.selectedResourceInstance.resourceType === "CareTeam" && resourceMeta.listPath === "participant";
+            $uibModal.open({
+                animation: true,
+                templateUrl: 'js/templates/resourceSearchModal.html',
+                controller: 'ResourceSearchController',
+                resolve: {
+                    getSettings: function () {
+                        return {
+                            resourceTypeConfig:resourceTypeConfig,
+                            isParticipant:isParticipant,
+                            callback:function(result){ //setting callback
+                                $scope.modalOpen = false;
+                                if (result !== undefined) {
+                                    setOrUpdateReference(result, resourceMeta, isParticipant);
+                                    $scope.requestUpdateResource(true);
+                                }
+                            }
+                        };
+                    }
+                }
+            });
+        };
+
+        $scope.removeReference = function(typeConfig){
+            if (typeConfig.listPath) {
+                var collection = $scope.dmh.getModelParent($scope.selectedResourceInstance, typeConfig.listPath)[ $scope.dmh.getModelLeaf(typeConfig.listPath)];
+                if (collection !== undefined) {
+
+                    var newCollection = [];
+                    angular.forEach(collection, function (reference) {
+                        var item = $scope.dmh.getDynamicModel(reference, typeConfig.subPath);
+
+                        if (item !== typeConfig.relativeUrl) {
+                            newCollection.push(reference);
+                        }
+                    });
+
+                    var parent = $scope.dmh.getModelParent($scope.selectedResourceInstance, typeConfig.listPath);
+                    parent[typeConfig.listPath] = newCollection;
+                }
+            } else {
+                var removeItem = $scope.dmh.getModelParent($scope.selectedResourceInstance, typeConfig.path);
+                delete removeItem[typeConfig.path];
+            }
+            $scope.requestUpdateResource(true);
         };
 
         $scope.resourceReferenceSelected = function(currentReference){
@@ -391,25 +457,58 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             $scope.selectedResourceReferences = [];
             $scope.selectedResourceReferencesList = [];
             angular.forEach($scope.selectedResourceTypeConfig.references, function (reference) {
-                if (reference.resource !== undefined) {
+                if (reference.path !== undefined) {
                     var relativeUrl = $scope.dmh.getDynamicModel($scope.selectedResourceInstance, reference.path);
                     if (relativeUrl !== undefined) {
                         $scope.selectedResourceReferences.push({
-                            "resource": reference.resource,
-                            "relativeUrl": relativeUrl
+                            resource: reference.resource,
+                            relativeUrl: relativeUrl,
+                            label: reference.label,
+                            linkBack: reference.path
+                        });
+                    } else {
+                        // insert
+                        $scope.selectedResourceReferences.push({
+                            resource: reference.resource,
+                            relativeUrl: "Not Set",
+                            label: reference.label,
+                            linkBack: reference.path
                         });
                     }
-                } else if (reference.resources !== undefined) {
+                } else if (reference.listPath !== undefined) {
+                    var selectedResourceReferencesGroup = {groupName: reference.label, referencesList: []};
+                    $scope.selectedResourceReferencesList.push(selectedResourceReferencesGroup);
                     var references = $scope.dmh.getDynamicModel($scope.selectedResourceInstance, reference.listPath);
                     if (references !== undefined) {
-                        angular.forEach(references, function (ref) {
+                        var referencesList = $scope.dmh.getModelParent($scope.selectedResourceInstance, reference.listPath)[ $scope.dmh.getModelLeaf(reference.listPath) ];
+                        angular.forEach(referencesList, function (ref) {
                             var relativeUrl = $scope.dmh.getDynamicModel(ref, reference.subPath);
-                                if (relativeUrl !== undefined) {
-                                    $scope.selectedResourceReferencesList.push({
-                                    "resource": ref.resource,
-                                    "relativeUrl": relativeUrl
-                                });
+                            if (relativeUrl !== undefined) {
+                                var resourceTypeAndId = relativeUrl.split("/");
+                                selectedResourceReferencesGroup.referencesList.push({
+                                resource: resourceTypeAndId[0],
+                                relativeUrl: relativeUrl,
+                                listPath: reference.listPath,
+                                subPath: reference.subPath
+                            });
                             }
+                        });
+                    }
+                    // inserts
+                    if (reference.resource !== undefined) {
+                        selectedResourceReferencesGroup.referencesList.push({
+                            resource: reference.resource,
+                            relativeUrl: "Add",
+                            linkBack: reference.path
+                        });
+                    } else {
+                        angular.forEach(reference.resources, function (resource) {
+                            selectedResourceReferencesGroup.referencesList.push({
+                                resource: resource,
+                                relativeUrl: "Add",
+                                listPath: reference.listPath,
+                                subPath: reference.subPath
+                            });
                         });
                     }
                 }
@@ -454,11 +553,16 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
 
             modalInstance.result.then(function (newResource) {
+                var modalProgress = openModalProgressDialog("Saving...");
 
                 $fhirApiServices.createResource($scope.smart, newResource, $scope.resourceTypeList, $scope.selectedResourceTypeConfig, $scope.notification)
                     .done(function(resourceTypeList, resourceTypeConfigIndex){
                         updateView(resourceTypeList[resourceTypeConfigIndex]);
                         $scope.modalOpen = false;
+                        modalProgress.dismiss();
+
+                    }, function() {
+                        modalProgress.dismiss();
                     });
             }, function () {
                 $scope.modalOpen = false;
@@ -479,6 +583,37 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                     $scope.$apply();
                 });
         };
+
+        function setOrUpdateReference(reference, typeConfig, isParticipant) {
+
+            if (typeConfig.listPath) {
+                var collection = $scope.dmh.getModelParent($scope.selectedResourceInstance, typeConfig.listPath)[ $scope.dmh.getModelLeaf(typeConfig.listPath)];
+                if (collection === undefined) {
+                    var parent = $scope.dmh.getModelParent($scope.selectedResourceInstance, typeConfig.listPath);
+                    parent[typeConfig.listPath] = [];
+                    collection = $scope.dmh.getModelParent($scope.selectedResourceInstance, typeConfig.listPath)[ $scope.dmh.getModelLeaf(typeConfig.listPath)];
+                }
+                var item = {};
+                if (isParticipant) {
+                    collection.push(reference);
+                } else {
+                    item[typeConfig.subPath] = reference.resourceType + "/" + reference.id;
+                    collection.push(item);
+                }
+            } else {
+                $scope.dmh.getModelParent($scope.selectedResourceInstance, typeConfig.linkBack)[ $scope.dmh.getModelLeaf(typeConfig.linkBack) ] = reference.resourceType + "/" + reference.id;
+            }
+        }
+
+        function getResourceTypeConfig(resourceType) {
+            var resourceTypeConfig;
+            angular.forEach($scope.resourceTypeConfigList, function (typeConfig) {
+                if (typeConfig.resource === resourceType){
+                    resourceTypeConfig = typeConfig;
+                }
+            });
+            return resourceTypeConfig;
+        }
 
         function rebuildResourceTable(resourceList) {
             while ($scope.resourceInstanceList.length > 0) {
@@ -519,26 +654,36 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          *
          **/
         FHIR.oauth2.ready(function(smart){
+            $fhirApiServices.setFhirClient(smart);
             $scope.smart = smart;
             $terminology.setUrlBase(smart);
-            $terminology.getObservationCodesValueSetId("http://hl7.org/fhir/ValueSet/observation-codes");
+            //$terminology.getObservationCodesValueSetId("http://hl7.org/fhir/ValueSet/observation-codes");
             $fhirApiServices.queryPatient(smart)
                 .done(function(patient){
                     $scope.patient = patient;
                 });
-            $resourceJson.getResources().done(function(resources){
-                $scope.resourceTypeConfigList = resources;
-                $fhirApiServices.queryResourceInstances(smart, $scope.resourceTypeList, $scope.resourceTypeConfigList[0], $scope.notification)
-                    .done(function(resourceTypeList, resourceTypeConfigIndex){
-                        updateView(resourceTypeList[resourceTypeConfigIndex]);
-                        $scope.selectResourceType(resourceTypeList[resourceTypeConfigIndex]);
-                        if(1 < $scope.resourceTypeConfigList.length && $scope.resourceTypeConfigList[1].showInResourceList === $scope.resourceSet) {
-                            getAllResources(1, $scope.resourceTypeList, $scope.resourceTypeConfigList);
-                        } else {
-                            $scope.$digest();
-                        }
+            $fhirApiServices.queryFhirVersion(smart)
+                .done(function(version){
+                    if (version === "1.0.2") {
+                        $scope.fhirVersion = 1;
+                        $scope.showFRED = true;
+                    } else {
+                        $scope.fhirVersion = 2;
+                    }
+                    $resourceJson.getResources($scope.fhirVersion).done(function(resources){
+                        $scope.resourceTypeConfigList = resources;
+                        $fhirApiServices.queryResourceInstances(smart, $scope.resourceTypeList, $scope.resourceTypeConfigList[0], $scope.notification)
+                            .done(function(resourceTypeList, resourceTypeConfigIndex){
+                                updateView(resourceTypeList[resourceTypeConfigIndex]);
+                                $scope.selectResourceType(resourceTypeList[resourceTypeConfigIndex]);
+                                if(1 < $scope.resourceTypeConfigList.length && $scope.resourceTypeConfigList[1].showInResourceList === $scope.resourceSet) {
+                                    getAllResources(1, $scope.resourceTypeList, $scope.resourceTypeConfigList);
+                                } else {
+                                    $scope.$digest();
+                                }
+                            });
                     });
-            });
+                });
         });
 
     }]).controller('ModalInstanceCtrl',['$scope', '$uibModalInstance', "$terminology", "$dynamicModelHelpers", "getNewResource", "getSelectedResourceTypeConfig", "isCreate", "isReadOnly",
@@ -621,4 +766,211 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.close = function () {
             $uibModalInstance.close();
         };
+    }).controller('ProgressModalCtrl',['$scope', '$uibModalInstance', "getTitle",
+    function ($scope, $uibModalInstance, getTitle) {
+
+        $scope.title = getTitle;
+
+    }]).controller("ResourceSearchController",
+    function($rootScope, $scope, $fhirApiServices, $filter, $dynamicModelHelpers, $uibModalInstance, $uibModal, getSettings){
+
+        $scope.dmh = $dynamicModelHelpers;
+
+        $scope.resourceType = getSettings.resourceTypeConfig.resource;
+        $scope.searchField =  getSettings.resourceTypeConfig.search.searchFilter.label;
+        var isParticipant =  getSettings.isParticipant;
+        var callback = (getSettings.callback !== undefined) ? getSettings.callback : null;
+        $scope.showing = {searchloading: false};
+        $scope.isModal = true;
+        $scope.typeConfig = [];
+        $scope.selectedResourceInstance = {};
+        if (isParticipant) {
+            $scope.typeConfig = {
+                displayValues : [
+                    {type: "coded-display-typeahead", name: "display", label: "Participant Role Code Display" , required: true, path: "role.coding.0.display", default: "", view: "master"},
+                    {type: "coded-code-typeahead", name: "code", label: "Participant Role Code" , required: true, path: "participant.role.coding.0.code", default: "", view: "detail"},
+                    {type: 'text', name: "system", label: "Participant Role Code System" , required: true, path: "participant.role.coding.0.system", default: "", view: "detail"},
+                    {type: "text", name: "text", label: "Participant Role Text" , required: true, path: "participant.role.text", default: "", view: "detail"},
+                    {type: "datetime", name: "dateTime", label: "Participant Start DateTime" , required: true, path:"participant.period.start", default: "", view: "master"},
+                    {type: "datetime", name: "dateTime", label: "Participant End DateTime" , required: true, path:"participant.period.end", default: "", view: "master"}
+                ]
+            };
+        }
+
+        $scope.close = function () {
+            $uibModalInstance.dismiss();
+            callback();
+        };
+
+        function buildSortMap(resourceTypeConfig) {
+            var sortMap = new Map();
+            sortMap.set("id", [['_id', "asc"]]);
+            sortMap.set(resourceTypeConfig.search.searchFilter.label, resourceTypeConfig.search.searchFilter.search);
+            angular.forEach(resourceTypeConfig.search.sortFilters, function (filter) {
+                sortMap.set(filter.label, filter.search);
+            });
+            return sortMap;
+        }
+
+        function buildViewValues(resourceTypeConfig) {
+            var tableView = [];
+            tableView.push({label: resourceTypeConfig.search.searchFilter.label, filter: resourceTypeConfig.search.searchFilter.filter});
+            angular.forEach(resourceTypeConfig.search.sortFilters, function (sort) {
+                tableView.push({label: sort.label, filter: sort.filter});
+            });
+            return tableView;
+        }
+
+        $scope.sortMap = buildSortMap(getSettings.resourceTypeConfig);
+        $scope.tableView = buildViewValues(getSettings.resourceTypeConfig);
+        $scope.sortSelected = $scope.searchField;
+        $scope.sortReverse = false;
+
+        $scope.resources = [];
+        $scope.searchterm = "";
+        var lastQueryResult;
+
+        $scope.count = {start: 0, end: 0, total: 0};
+
+        $rootScope.$on('set-loading', function () {
+            $scope.showing.searchloading = true;
+        });
+
+        $scope.loadMore = function (direction) {
+            $scope.showing.searchloading = true;
+            var modalProgress = openModalProgressDialog("Searching...");
+
+            $fhirApiServices.getNextOrPrevPageSimple(direction, lastQueryResult).then(function (resultList, queryResult) {
+                lastQueryResult = queryResult;
+                $scope.resources = resultList;
+                $scope.showing.searchloading = false;
+                $scope.count = $fhirApiServices.calculateResultSet(queryResult);
+                $rootScope.$digest();
+
+                modalProgress.dismiss();
+            }, function () {
+                modalProgress.dismiss();
+            });
+        };
+
+        $scope.getColumn = function (index, resource) {
+            var result;
+            
+            if (index === 'searchField') {
+                var value;
+                if (getSettings.resourceTypeConfig.search.searchFilter.name === "patient") {
+                    
+                }
+                if (getSettings.resourceTypeConfig.search.searchFilter.path !== undefined) {
+                    value = $scope.dmh.getDynamicModel(resource, getSettings.resourceTypeConfig.search.searchFilter.path);
+                } else {
+                    value = resource;
+                }
+
+                result = filterValue(getSettings.resourceTypeConfig.search.searchFilter, value);
+            } else if (getSettings.resourceTypeConfig.search.sortFilters !== undefined && getSettings.resourceTypeConfig.search.sortFilters[index] !== undefined ) {
+                var sortPath;
+                if (getSettings.resourceTypeConfig.search.sortFilters[index].path !== undefined) {
+                    sortPath = $scope.dmh.getDynamicModel(resource, getSettings.resourceTypeConfig.search.sortFilters[index].path);
+                } else {
+                    sortPath = resource;
+                }
+                result = filterValue(getSettings.resourceTypeConfig.search.sortFilters[index], sortPath);
+            }
+            return result;    
+        };
+
+        function filterValue(searchFilter, value) {
+            if (value === undefined) {
+                return "";
+            }
+            if (searchFilter !== undefined && searchFilter.filter !== undefined) {
+                if (searchFilter.filter === "fhirTypeFilter") {
+                    value = $filter("fhirTypeFilter")(searchFilter.pathType, value);
+                } else {
+                    value = $filter(searchFilter.filter)(value);
+                }
+            }
+            return value;
+        }
+
+        $scope.select = function (i) {
+
+            var reference = $scope.resources[i];
+            if (isParticipant) {
+                reference = $scope.selectedResourceInstance;
+                reference.participant.member = {reference: $scope.resources[i].resourceType + "/" + $scope.resources[i].id};
+                callback(reference.participant);
+            } else {
+                callback(reference);
+            }
+
+            $uibModalInstance.dismiss();
+        };
+
+        $scope.hasPrev = function () {
+            return $fhirApiServices.hasPrev(lastQueryResult);
+        };
+
+        $scope.hasNext = function () {
+            return $fhirApiServices.hasNext(lastQueryResult);
+        };
+
+        $scope.$watchGroup(["searchterm", "sortSelected", "sortReverse"], function () {
+            var tokens = [];
+            ($scope.searchterm || "").split(/\s/).forEach(function (t) {
+                tokens.push(t.toLowerCase());
+            });
+            $scope.tokens = tokens;
+            if ($scope.getMore !== undefined) {
+                $scope.getMore();
+            }
+        });
+
+        var loadCount = 0;
+        var search = _.debounce(function (thisLoad) {
+
+            var modalProgress = openModalProgressDialog("Searching...");
+
+            $fhirApiServices.filterResources($scope.resourceType, $scope.tokens, $scope.sortMap.get($scope.sortSelected), $scope.sortReverse, 10, getSettings.resourceTypeConfig)
+                .then(function (results, queryResult) {
+                    lastQueryResult = queryResult;
+                    if (thisLoad < loadCount) {
+                        return;
+                    }
+                    $scope.resources = results;
+                    $scope.showing.searchloading = false;
+                    $scope.count = $fhirApiServices.calculateResultSet(queryResult);
+                    $rootScope.$digest();
+
+                    modalProgress.dismiss();
+                }, function() {
+                    modalProgress.dismiss();
+                });
+        }, 600);
+
+        $scope.getMore = function () {
+            $scope.showing.searchloading = true;
+            search(++loadCount);
+        };
+
+        $scope.toggleSort = function (field) {
+            $scope.sortReverse = ($scope.sortSelected === field ? !$scope.sortReverse : false);
+            $scope.sortSelected = field;
+        };
+
+        function openModalProgressDialog(title) {
+            return $uibModal.open({
+                animation: true,
+                templateUrl: 'js/templates/progressModal.html',
+                controller: 'ProgressModalCtrl',
+                size: 'sm',
+                resolve: {
+                    getTitle: function () {
+                        return title;
+                    }
+                }
+            });
+        }
+
     });

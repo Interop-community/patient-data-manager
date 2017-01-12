@@ -12,13 +12,16 @@
         </div>
         <div ng-if="!isModal">
             <div ng-if="selectedResourceReferences.length > 0" ng-repeat="reference in selectedResourceReferences">
-                <label class="dynamic-form-label">{{reference.resource}}</label>
-                <a href='#' class="dynamic-form-hyperlink" ng-click="resourceReferenceSelected(reference)">{{reference.relativeUrl}}</a>
+                <label class="dynamic-form-label short">{{reference.label}}</label>
+                <label ng-show="reference.relativeUrl === 'Not Set'" class="dynamic-form-label short">{{reference.relativeUrl}}</label>
+                <a ng-show="reference.relativeUrl !== 'Not Set'" href='#' class="dynamic-form-hyperlink short" ng-click="resourceReferenceSelected(reference)">{{reference.relativeUrl}}</a>
+                <a ng-show="reference.resource !== 'Patient'" class='dynamic-form-edit float-right-dark-btn' ng-click="resourceChooser(reference)"><i class='fa fa-pencil fa-lg'></i></a>
+
             </div>
 
-            <div ng-if="selectedResourceReferencesList.length > 0">
-                <div><label class="dynamic-form-section-label">Performers</label></div>
-                <div ng-include src="'js/templates/dynamicReferenceTable.html'"></div>
+            <div ng-if="selectedResourceReferencesList.length > 0" ng-repeat="referenceGroup in selectedResourceReferencesList">
+                <div style="padding-left: 10px"><label style="margin-bottom: -5px" class="dynamic-form-section-label">{{referenceGroup.groupName}}</label></div>
+                <div style="padding-left: 15px" ng-include src="'js/templates/dynamicReferenceTable.html'"></div>
             </div>
         </div>
     </div>

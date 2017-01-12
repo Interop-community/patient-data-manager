@@ -1,17 +1,21 @@
 <div class="scrollableContainer referenceTable">
     <div class="headerSpacer"></div>
     <div class="scrollArea">
-        <table st-table="selectedResourceReferencesList" class="table table-striped">
+        <table st-table="referenceGroup" class="table table-striped">
             <thead class="fixedHeader">
             <tr>
                 <th><div class="th-inner" table-header-inner>Resource</div></th>
-                <th><div class="th-inner" table-header-inner>Detail</div></th>
+                <th><div class="th-inner" table-header-inner>Reference Id</div></th>
+                <th><div class="th-inner" table-header-inner></div></th>
             </tr>
             </thead>
             <tbody class="scrollContent">
-            <tr st-select-row="reference" ng-click="resourceReferenceSelected(reference)" ng-repeat="reference in selectedResourceReferencesList">
+            <tr st-select-row="reference" ng-repeat="reference in referenceGroup.referencesList">
                 <td>{{reference.resource}}</td>
-                <td>{{reference.relativeUrl}}</td>
+                <td ng-if="reference.relativeUrl !== 'Add'"><a href='#' class="dynamic-form-hyperlink" ng-click="resourceReferenceSelected(reference)">{{reference.relativeUrl}}</a></td>
+                <td ng-if="reference.relativeUrl === 'Add'"></td>
+                <td ng-if="reference.relativeUrl !== 'Add'" style="padding-top: 0"><a class='dynamic-form-edit float-right-dark-btn' ng-click="removeReference(reference)"><i style="margin-left: -5px" class='fa fa-remove fa-lg'></i></a></td>
+                <td ng-if="reference.relativeUrl === 'Add'" style="padding-top: 0"><a class='dynamic-form-edit float-right-dark-btn' ng-click="resourceChooser(reference)"><i style="margin-left: -5px" class='fa fa-plus fa-lg'></i></a></td>
             </tr>
             </tbody>
         </table>

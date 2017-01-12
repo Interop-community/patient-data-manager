@@ -570,32 +570,51 @@ fieldset[disabled] .btn-basic.active {
 }
 
 .dynamic-form-label {
-    width: 35%;
+    width: 100%;
     float: left;
     position: relative;
     /*text-align: right;*/
     min-height: 1px;
-    padding: 10px 5px 5px 15px;
+    padding: 5px 15px 1px 15px;
     display: inline-block;
-    margin-bottom: 0px;
+    margin-bottom: 0;
     font-weight: 600;
 }
+
+.dynamic-form-label.short {
+    width: 35%;
+    padding: 10px 5px 5px 15px;
+}
+
 .dynamic-form-hyperlink,
 .dynamic-form-label-input,
 .dynamic-form-value {
-    width: 65%;
+    width: 100%;
     float: left;
     position: relative;
     display: inline-block;
     min-height: 1px;
+    padding: 0 15px 5px 15px;
+}
+
+.dynamic-form-hyperlink.short,
+.dynamic-form-label-input.short,
+.dynamic-form-value.short {
+    width: 55%;
     padding: 5px 15px 5px 0;
 }
 
-.dynamic-form-hyperlink {
+.dynamic-form-hyperlink,
+.dynamic-form-hyperlink.short {
     text-decoration: none;
     outline: none;
     padding-top: 12px;
     font-weight: 400;
+}
+
+.dynamic-form-edit {
+    width: 10%;
+    padding: 5px 0 0 0;
 }
 
 .dynamic-form-value {
@@ -605,13 +624,19 @@ fieldset[disabled] .btn-basic.active {
     min-height: 30px;
 }
 
+.modalForm .form-group {
+    float: left;
+    position: relative;
+    display: inline-block;
+    width: 48%;
+}
 .modalForm .dynamic-form-label {
-    width: 15%;
+    width: 98%;
 }
 
 .modalForm .dynamic-form-label-input,
 .modalForm .dynamic-form-value{
-    width: 35%;
+    width: 98%;
 }
 
 .modalForm .details-form {
@@ -624,8 +649,43 @@ fieldset[disabled] .btn-basic.active {
     min-height: 110px
 }
 
+.variable-type-box {
+    display: block;
+    padding: 0;
+    margin: 0 2px 10px 2px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #e6e6e6;
+    border-radius: 4px;
+    -webkit-transition: all .2s ease-in-out;
+    transition: all .2s ease-in-out;
+}
+
+.input-long {
+    width: 100%;
+    border-radius: 4px;
+    margin-bottom: 5px
+}
+
+.basic-text {
+    font-size: 12px;
+    font-weight: 300;
+}
+
+/*.progress-spinner {*/
+    /*margin: 20px 0 20px 120px;*/
+/*}*/
+
 .progress-spinner {
-    margin: 20px 0 20px 120px;
+    margin: 0 80px;
+    font-size: 25px;
+    text-align: center;
+    color: #fff;
+    background: transparent;
+    border: none;
+    position: absolute;
+    top: 175px;
+    box-shadow: none;
 }
 
 .invalid-inp_bottom_label {
@@ -729,13 +789,6 @@ fieldset[disabled] .btn-basic.active {
     outline: none; !important;
 }
 
-.referenceTable{
-    float: left;
-    width: 406px;
-    height: 150px;
-    border: 1px solid #bbb;
-}
-
 .details-form{
     height: 100%;
     overflow-x: hidden;
@@ -833,6 +886,14 @@ fieldset[disabled] .btn-basic.active {
     /*font-size: 14px;*/
 /*}*/
 
+.referenceTable{
+    float: left;
+    width: 343px;
+    height: 150px;
+    border: 1px solid #bbb;
+    border-radius: 4px;
+}
+
 .referenceTable.scrollableContainer {
     padding-top: 27px;
     margin-bottom: 4px;
@@ -854,8 +915,12 @@ fieldset[disabled] .btn-basic.active {
 .referenceTable .table>tbody>tr>td,
 .referenceTable .table>tfoot>tr>td {
     line-height: 10px;
-    font-size: 14px;
+    font-size: 12px;
     border: none;
+}
+
+.referenceTable .dynamic-form-hyperlink {
+    padding: 0;
 }
 
 .search-bar {
@@ -891,7 +956,7 @@ fieldset[disabled] .btn-basic.active {
 .search-bar .search-field .undo-icon i {
     position:absolute;
     z-index: 2;
-    right: 14px;
+    right: 12px;
     width: 30px;
     display: block;
     padding-top: 4px;
@@ -929,7 +994,7 @@ fieldset[disabled] .btn-basic.active {
     color: #666;
     box-shadow: 0 0 10px #888;
     padding: 0;
-    background-color: #FFF;
+    background-color: #ccf1ff;
     border-radius: 3px;
     border: 1px solid #fff;
     cursor:pointer
@@ -943,7 +1008,7 @@ fieldset[disabled] .btn-basic.active {
 }
 .message_info div {
     padding: 5px 10px;
-    background-color: #fff;
+    background-color: #ccf1ff;
     border-radius: 3px;
     border: 1px solid #B8B8B8;
 }

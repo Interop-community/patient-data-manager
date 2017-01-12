@@ -1,0 +1,151 @@
+<div class="modal-header">
+    <h3 class="modal-title">Choose a {{resourceType}}</h3>
+</div>
+<div class="modal-body">
+    <div id="resource-results">
+        <div class="row">
+            <div class="col-md-1"></div>
+
+            <div class="col-md-10" style="padding-left: 20px; padding-right: 20px;" ng-style="{'height' : (typeConfig.displayValues.length > 0) ? '600px' : '450px'}">
+
+                <div ng-if="typeConfig.displayValues.length > 0" style="height: 200px; margin: -23px;" >
+                <div ng-repeat="attribute in typeConfig.displayValues" ng-class="{modalForm: isModal}">
+                    <div ng-if="attribute.type=='text'" class="form-group">
+                        <label class="dynamic-form-label">{{attribute.label}}</label>
+                        <div class="dynamic-form-label-input">
+                            <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" id="{{attribute.name}}" class="form-control" />
+                            <!--<span ng-show="{{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>-->
+                        </div>
+                    </div>
+                    <div ng-if="attribute.type=='datetime'" class="form-group">
+                        <label class="dynamic-form-label">{{attribute.label}}</label>
+                        <div class="dynamic-form-label-input">
+                            <input type="datetime-local" class="form-control"
+                                   ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]"
+                                   aria-describedby="dateErrorStatus" >
+                            <!--<span id="dateIcon" class="glyphicon form-control-feedback" aria-hidden="true"></span>-->
+                            <!--<span id="dateErrorStatus" class="sr-only">(success)</span>-->
+                        </div>
+                    </div>
+                    <div ng-if="attribute.type=='coded-code-typeahead'" class="form-group">
+                        <label class="dynamic-form-label">{{attribute.label}}</label>
+                        <div class='typeahead'>
+                            <div class="dynamic-form-label-input">
+                                <input type="text" class="form-control" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" placeholder="Enter the Code Value"> <!--typeahead-editable="false"-->
+                                <!--TODO: Fix terminology Look up-->
+                                <!--<input type="text" class="form-control" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" placeholder="Enter the Code Value"-->
+                                <!--uib-typeahead="coding.code for coding in getValueSetExpansion($viewValue, 1, attribute.codedUri)" typeahead-loading="loadingValueSetDisplay"-->
+                                <!--typeahead-no-results="noResultsDisplay" typeahead-on-select="typeAheadSelected($item, attribute)"> &lt;!&ndash;typeahead-editable="false"&ndash;&gt;-->
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- TYPEAHEAD FIELDS -->
+                    <div ng-if="attribute.type=='coded-display-typeahead'" class="form-group">
+                        <label class="dynamic-form-label">{{attribute.label}}</label>
+                        <div class='typeahead'>
+                            <div class="dynamic-form-label-input">
+                                <input type="text" class="form-control" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" placeholder="Enter the Display Value"> <!--typeahead-editable="false"-->
+                                <!--TODO: Fix terminology Look up-->
+                                <!--<input type="text" class="form-control" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" placeholder="Enter the Display Value"-->
+                                <!--uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue, 3, attribute.codedUri)" typeahead-loading="loadingValueSetDisplay"-->
+                                <!--typeahead-no-results="noResultsDisplay" typeahead-on-select="typeAheadSelected($item, attribute)"> &lt;!&ndash;typeahead-editable="false"&ndash;&gt;-->
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                </div>
+                <div ng-show="resourceType !== 'Patient'">
+                <div class="row">
+                    <div class="pull-left basic-text">Search for {{resourceType}} by {{searchField}}</div>
+                </div>
+
+                <div class="row">
+                    <input
+                            id="resource-search"
+                            class="input-long basic-text"
+                            type="text"
+                            autofocus
+                            contenteditable
+                            focus-on-key="191"
+                            ng-model="searchterm"
+                            placeholder="john smith ..."/>
+                </div>
+
+                </div>
+                <div class="row table-container box" style="height: 380px; margin-bottom: 0">
+                    <div id="resource-results-list" ng-cloak>
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <td>
+                                    <a href="#"
+                                       ng-click="toggleSort('id');">
+                                        Resource Id
+                                    <span ng-show="sortSelected === 'id'" class="glyphicon"
+                                          ng-class="sortReverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes'"></span>
+                                    </a>
+                                </td>
+                                <td ng-show="tableView[0] !== undefined">
+                                    <a href="#" ng-click="toggleSort(tableView[0].label)">
+                                        {{tableView[0].label}}
+                                    <span ng-show="sortSelected === tableView[0].label" class="glyphicon"
+                                          ng-class="sortReverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes'"></span>
+                                    </a>
+                                </td>
+                                <td ng-show="tableView[1] !== undefined">
+                                    <a href="#" ng-click="toggleSort(tableView[1].label)">
+                                        {{tableView[1].label}}
+                                    <span ng-show="sortSelected === tableView[1].label" class="glyphicon"
+                                          ng-class="sortReverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes'"></span>
+                                    </a>
+                                </td>
+                                <td ng-show="tableView[2] !== undefined">
+                                    <a href="#" ng-click="toggleSort(tableView[2].label)">
+                                        {{tableView[2].label}}
+                                    <span ng-show="sortSelected === tableView[2].label" class="glyphicon"
+                                          ng-class="sortReverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes'"></span>
+                                    </a>
+                                </td>
+                            </tr>
+                            </thead>
+                            <tr ng-click="select($index)" ng-repeat="resource in resources">
+                                <td >
+                                    {{resource.id}}
+                                </td>
+                                <td ng-show="tableView[0] !== undefined">
+                                    {{getColumn('searchField', resource)}}
+                                </td>
+                                <td ng-show="tableView[1] !== undefined">
+                                    {{getColumn(0, resource)}}
+                                </td>
+                                <td ng-show="tableView[2] !== undefined">
+                                    {{getColumn(1, resource)}}
+                                </td>
+                            </tr>
+                        </table>
+
+                        <div ng-show="!showing.searchloading && (resources.length==0)">
+                            <p>No matches, try broadening your search.</p>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="col-md-12 content-column">
+                    <div ng-show="hasPrev() || hasNext()" style="text-align: center">Showing {{count.start}} to {{count.end}} of {{count.total}}</div>
+                    <div ng-show="hasPrev()" class="btn btn-basic btn-md" style="float: left" ng-click="loadMore('prevPage')"><i class="fa fa-chevron-left fa-lg"></i> Prev</div>
+                    <div ng-show="hasNext()" class="btn btn-basic btn-md" style="float: right" ng-click="loadMore('nextPage')"><i class="fa fa-chevron-right fa-lg"></i> Next</div>
+                </div>
+
+            </div>
+
+            <div class="col-md-1"></div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button class="form-btn btn btn-basic" type="button" ng-click="close()">Cancel</button>
+
+</div>
+

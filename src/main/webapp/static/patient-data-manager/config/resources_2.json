@@ -1,0 +1,630 @@
+[
+    {
+        "resource" : "Patient",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.0.given.0", "default": "", "view": "master"},
+            {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.0.family.0", "default": "", "view": "master"},
+            {
+                "type": "select",
+                "name": "gender",
+                "label": "Gender",
+                "options": [
+                    "male", "female","other","unknown"
+                ],
+                "path": "gender", "default": "", "view": "master", "required": true},
+            {"type": "date", "name": "birthDate", "label": "Birth Date" , "required": true, "path": "birthDate", "default": "", "view": "master"}
+        ],
+        "search" : {
+            "searchFilter":
+            {
+                "search": [["family", "asc"], ["given", "asc"]],
+                "name": "name",
+                "modifier": "text",
+                "label": "Name",
+                "filter": "nameFamilyGiven"
+            },
+            "sortFilters": [
+                {
+                    "search": [["birthdate", "desc"]],
+                    "label": "Age",
+                    "filter": "ageFilter",
+                    "path" : "birthDate"
+                }
+
+            ]
+        }
+    },
+    {
+        "resource" : "Observation",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Observation ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-codes" },
+            {"type": "datetime", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
+            {"type": "variable", "name": "variable", "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type", "view": "master",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "String", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Ratio", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Time", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Value "}
+                ]},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Category ", "path":"category.0", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-category" },
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["final", "registered", "preliminary", "amended","cancelled", "entered-in-error", "unknown"],
+                "path": "status", "default": "final", "view": "detail"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
+            {"resource": "Encounter", "label": "Encounter", "path": "encounter.reference"},
+            {"resources": ["Practitioner", "Patient"], "label": "Performer", "listPath": "performer", "subPath":"reference"}
+        ],
+        "search" : {
+            "searchParams": [{
+                "name" :"code",
+                "modifier": "text",
+                "codedUri" : "http://hl7.org/fhir/ValueSet/observation-codes"
+            }],
+            "sortParams": [{
+                "name": "date",
+                "modifier": "asc"
+            }],
+            "searchFilter":
+            {
+                "name": "patient",
+                "label": "Patient",
+                "path": "subject.reference",
+                "pathType": "Patient"
+            },
+            "sortFilters": [
+                {
+                    "search": [["code", "desc"]],
+                    "label": "Code",
+                    "path" : "code",
+                    "pathType": "CodeableConcept",
+                    "filter": "fhirTypeFilter"
+                },
+                {
+                    "search": [["date", "asc"]],
+                    "label": "Effective Date",
+                    "path": "effectiveDateTime",
+                    "pathType": "DateTime",
+                    "filter": "fhirTypeFilter"
+                }
+            ]
+        }
+    },
+    {
+        "resource" : "Encounter",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Reason ", "path":"reason.0", "codedUri" : "http://hl7.org/fhir/ValueSet/encounter-reason"},
+            {"type": "fhirDatatype", "name": "Coding", "labelPrefix": "Class ", "path":"class"},
+            {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Period ", "path":"period"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["planned", "arrived", "in-progress", "onleave", "finished", "cancelled", "entered-in-error"],
+                "path": "status", "default": "planned", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "patient.reference"},
+            {"resource": "Encounter", "label": "Part Of Encounter", "path": "partOf.reference"}
+        ],
+        "search" : {
+            "searchFilter":
+            {
+                "name": "patient",
+                "label": "Patient",
+                "path": "patient.reference",
+                "pathType": "Patient"
+            },
+            "sortFilters": [
+                {
+                    "search": [["reason", "desc"]],
+                    "label": "Reason",
+                    "path" : "reason.0",
+                    "pathType": "CodeableConcept",
+                    "filter": "fhirTypeFilter"
+                },
+                {
+                    "search": [["date", "asc"]],
+                    "label": "Date",
+                    "path": "period",
+                    "pathType": "Period",
+                    "filter": "fhirTypeFilter"
+                }
+            ]
+        }
+    },
+    {
+        "resource" : "MedicationOrder",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Medication ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
+            {"type": "text", "name": "dose", "label": "Dose Instruction Text", "path":"dosageInstruction.0.text", "view": "detail"},
+            {"type": "datetime", "name": "dateWritten", "label": "Date Written" , "required": true, "path":"dateWritten", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Reason ", "path":"reasonCode.0"},
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["active", "on-hold", "completed", "entered-in-error", "stopped", "draft"],
+                "path": "status", "default": "active", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "patient.reference"},
+            {"resource": "Practitioner", "label": "Prescriber", "path": "prescriber.reference"},
+            {"resource": "Encounter", "label": "Part Of", "path": "encounter.reference"}
+        ],
+        "search" : {
+            "searchFilter": {
+                "name": "patient",
+                "label": "Patient",
+                "path": "patient.reference",
+                "pathType": "Patient"
+            },
+            "sortFilters": [
+                {
+                    "search": [["code", "desc"]],
+                    "label": "Medication Code",
+                    "path": "medicationCodeableConcept",
+                    "pathType": "CodeableConcept",
+                    "filter": "fhirTypeFilter"
+                },
+                {
+                    "search": [["date", "asc"]],
+                    "label": "Date",
+                    "path": "dateWritten",
+                    "pathType": "DateTime",
+                    "filter": "fhirTypeFilter"
+                }
+            ]
+        }
+    },
+    {
+        "resource" : "MedicationDispense",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Medication ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "Quantity ", "path":"quantity", "view": "master"},
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "Days Supply ", "path":"daysSupply", "view": "master"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["in-progress", "on-hold", "completed", "entered-in-error", "stopped"],
+                "path": "status", "default": "in-progress", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "patient.reference"},
+            {"resources": ["MedicationOrder"], "label": "Authorizing Prescription", "listPath": "authorizingPrescription", "subPath": "reference"},
+            {"resource": "Practitioner", "label": "Dispenser", "path": "dispenser.reference"}
+        ]
+    },
+    {
+        "resource" : "AllergyIntolerance",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Allergy/Intolerance ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/allergyintolerance-code"},
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"},
+            {"type": "datetime", "name": "onset", "label": "Onset" , "required": true, "path":"onset", "default": "", "view": "master"},
+            {"type": "datetime", "name": "attestedDate", "label": "Attested Date" , "required": true, "path":"attestedDate", "default": "", "view": "master"},
+            {"type": "select", "name": "criticality", "label": "Criticality" ,
+                "options":["low", "high", "unable-to-assess"],
+                "path": "criticality", "default": "high", "view": "master"},
+            {"type": "select", "name": "type", "label": "Type" ,
+                "options":["allergy", "intolerance"],
+                "path": "type", "default": "allergy", "view": "detail"},
+            {"type": "select", "name": "category", "label": "Category" ,
+                "options":["food", "medication", "environment", "biologic"],
+                "path": "category", "default": "food", "view": "master"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["active", "active-confirmed", "inactive", "resolved", "refuted", "entered-in-error"],
+                "path": "status", "default": "active", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "patient.reference"},
+            {"resource": "Practitioner", "label": "Reporter", "path": "reporter.reference"},
+            {"resource": "Practitioner", "label": "Recorder", "path": "recorder.reference"}
+        ]
+    },
+    {
+        "resource" : "Condition",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Condition ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-code"},
+            {"type": "datetime", "name": "onsetDateTime", "label": "Onset Date Time" , "required": true, "path":"onsetDateTime", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Category ", "path":"category"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Severity ", "path":"severity"},
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"},
+            {"type": "select", "name": "verificationStatus", "label": "Verification Status" ,
+                "options":["provisional", "differential", "confirmed", "refuted", "entered-in-error", "unknown"],
+                "path": "verificationStatus", "default": "confirmed", "view": "master"},
+            {"type": "select", "name": "clinicalStatus", "label": "Clinical Status" ,
+                "options":["active", "relapse", "remission", "resolved"],
+                "path": "clinicalStatus", "default": "active", "view": "detail"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
+            {"resource": "Encounter", "label": "Context", "path": "context.reference"},
+            {"resource": "Practitioner", "label": "Asserter", "path": "asserter.reference"}
+        ],
+        "search" : {
+            "searchFilter":
+            {
+                "name": "patient",
+                "label": "Patient",
+                "path": "subject.reference",
+                "pathType": "Patient"
+            },
+            "sortFilters": [
+                {
+                    "search": [["code", "desc"]],
+                    "label": "Condition",
+                    "path" : "code",
+                    "pathType": "CodeableConcept",
+                    "filter": "fhirTypeFilter"
+                },
+                {
+                    "search": [["date", "asc"]],
+                    "label": "Onset Date Time",
+                    "path": "onsetDateTime",
+                    "pathType": "DateTime",
+                    "filter": "fhirTypeFilter"
+                }
+            ]
+        }
+    },
+    {
+        "resource": "Procedure",
+        "showInResourceList": "Patient",
+        "displayValues": [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Procedure ", "path": "code", "codedUri": "http://hl7.org/fhir/ValueSet/procedure-code"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Category ", "path": "category", "codedUri": "http://hl7.org/fhir/ValueSet/procedure-category"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Reason Code ", "path": "reasonCode.0"},
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Notes ", "path": "notes.0"},
+            {"type": "select", "name": "status", "label": "Status",
+                "options": ["in-progress", "aborted", "completed", "entered-in-error"],
+                "path": "status", "default": "in-progress", "view": "master"
+            }
+        ],
+        "references": [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
+            {"resources": ["Condition"], "label": "Reasons", "listPath": "reasonReference", "subPath": "reference"},
+            {"resource": "CarePlan", "label": "Request", "path": "request.reference"},
+            {"resource": "Encounter", "label": "Encounter", "path": "encounter.reference"},
+            {"resources": ["Observation", "Procedure"], "label": "Components", "listPath": "component", "subPath": "reference"}
+        ],
+        "search": {
+            "searchFilter": {
+                "name": "patient",
+                "label": "Patient",
+                "path": "subject.reference",
+                "pathType": "Patient"
+            },
+            "sortFilters": [
+                {
+                    "search": [["code", "desc"]],
+                    "label": "Procedure",
+                    "path": "code",
+                    "pathType": "CodeableConcept",
+                    "filter": "fhirTypeFilter"
+                },
+                {
+                    "search": [["category", "desc"]],
+                    "label": "Category",
+                    "path": "category",
+                    "pathType": "CodeableConcept",
+                    "filter": "fhirTypeFilter"
+                }
+            ]
+        }
+    },
+    {
+        "resource" : "DiagnosticRequest",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Diagnostic Request ", "path":"code"},
+            {"type": "datetime", "name": "occurrenceDateTime", "label": "Occurrence Date Time" , "required": true, "path":"occurrenceDateTime", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["draft", "active", "suspended", "completed",
+                    "entered-in-error", "cancelled"],
+                "path": "status", "default": "active", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
+            {"resource": "Practitioner", "label": "Requester", "path": "requester.reference"},
+            {"resource": "Practitioner", "label": "Performer", "path": "performer.reference"},
+            {"resources": ["Observation", "Condition"], "label": "Supporting Information", "listPath": "supportingInformation", "subPath": "reference"},
+            {"resource": "Encounter", "label": "Context", "path": "context.reference"}
+        ],
+        "search": {
+            "searchFilter": {
+                "name": "patient",
+                "label": "Patient",
+                "path": "subject.reference",
+                "pathType": "Patient"
+            },
+            "sortFilters": [
+                {
+                    "search": [["code", "desc"]],
+                    "label": "Diagnostic Request Code",
+                    "path": "code",
+                    "pathType": "CodeableConcept",
+                    "filter": "fhirTypeFilter"
+                },
+                {
+                    "search": [["date", "desc"]],
+                    "label": "Occurrence Date",
+                    "path": "occurrenceDateTime",
+                    "pathType": "DateTime",
+                    "filter": "fhirTypeFilter"
+                }
+            ]
+        }
+    },
+    {
+        "resource" : "DiagnosticReport",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Diagnostic Report ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/report-codes"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Category ", "path":"category", "codedUri" : "http://hl7.org/fhir/ValueSet/diagnostic-service-sections"},
+            {"type": "datetime", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
+            {"type": "datetime", "name": "issued", "label": "Issued" , "required": true, "path": "issued", "default": "", "view": "detail"},
+            {"type": "text", "name": "conclusion", "label": "Conclusion", "path":"conclusion", "view": "detail"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Diagnosis ", "path":"codedDiagnosis.0", "codedUri" : "http://hl7.org/fhir/ValueSet/clinical-findings"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["registered", "partial", "final", "corrected", "appended", "cancelled", "entered-in-error"],
+                "path": "status", "default": "final", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
+            {"resources": ["Practitioner"], "label": "Performers", "listPath": "performer", "subPath": "reference"},
+            {"resources": ["DiagnosticRequest"], "label": "Requests", "listPath": "request", "subPath": "reference"},
+            {"resources": ["Observation"], "label": "Results", "listPath": "result", "subPath": "reference"},
+            {"resource": "Encounter", "label": "Encounter", "path": "encounter.reference"}
+        ]
+    },
+    {
+        "resource" : "Immunization",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Vaccine Code ", "path":"vaccineCode", "codedUri" : "http://hl7.org/fhir/ValueSet/vaccine-code"},
+            {"type": "datetime", "name": "date", "label": "Date" , "required": true, "path":"date", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "Dose Quantity ", "path":"doseQuantity", "view": "detail"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["in-progress", "on-hold", "completed", "entered-in-error", "stopped"],
+                "path": "status", "default": "completed", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "patient.reference"},
+            {"resource": "Practitioner", "label": "Performer", "path": "performer.reference"},
+            {"resource": "Practitioner", "label": "Requester", "path": "requester.reference"},
+            {"resource": "Encounter", "label": "Encounter", "path": "encounter.reference"}
+        ]
+    },
+    {
+        "resource" : "CarePlan",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Category ", "path":"category.0", "codedUri" : "http://hl7.org/fhir/ValueSet/care-plan-category" },
+            {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Period ", "path":"period", "view": "master"},
+            {"type": "text", "name": "Description", "label": "Desc", "required": true, "path":"description", "default": "", "view": "master"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["proposed", "draft", "active", "completed", "cancelled"],
+                "path": "status", "default": "active", "view": "detail"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
+            {"resource": "Encounter", "label": "Context", "path": "context.reference"},
+            {"resources": ["Condition"], "label": "Conditions","listPath": "addresses", "subPath":"reference"},
+            {"resources": ["CareTeam"], "label": "Care Teams", "listPath": "careTeam", "subPath":"reference"},
+            {"resources": ["Goal"], "label": "Goals", "listPath": "goal", "subPath":"reference"}
+        ],
+        "search": {
+            "searchFilter": {
+                "name": "patient",
+                "label": "Patient",
+                "path": "subject.reference",
+                "pathType": "Patient"
+            },
+            "sortFilters": [
+                {
+                    "search": [["code", "desc"]],
+                    "label": "Care Plan Category",
+                    "path": "category",
+                    "pathType": "CodeableConcept",
+                    "filter": "fhirTypeFilter"
+                },
+                {
+                    "search": [["date", "desc"]],
+                    "label": "Period",
+                    "path": "period",
+                    "pathType": "Period",
+                    "filter": "fhirTypeFilter"
+                }
+            ]
+        }
+    },
+    {
+        "resource" : "CareTeam",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "text", "name": "Name", "label": "Name", "required": true, "path":"name", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Type ", "path":"type.0", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Status ", "path":"status", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Period ", "path":"period", "view": "master"}
+        ],
+        "backboneElements" : [
+            {"type": "Participant", "name": "BackboneElementParticipant", "labelPrefix": "Participant ", "path":"participant", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
+            {"resources": ["Practitioner", "Patient"], "label": "Participant", "listPath": "participant", "subPath":"member.reference"}
+        ],
+        "search" : {
+            "searchFilter":
+            {
+                "name": "patient",
+                "label": "Patient",
+                "path": "subject.reference",
+                "pathType": "Patient"
+            },
+            "sortFilters": [
+                {
+                    "search": [["type", "desc"]],
+                    "label": "Type",
+                    "path" : "type.0",
+                    "pathType": "CodeableConcept",
+                    "filter": "fhirTypeFilter"
+                },
+                {
+                    "search": [["date", "desc"]],
+                    "label": "Period",
+                    "path": "period",
+                    "pathType": "Period",
+                    "filter": "fhirTypeFilter"
+                }
+
+            ]
+        }
+    },
+    {
+        "resource" : "Goal",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Category ", "path":"category.0", "codedUri" : "http://hl7.org/fhir/ValueSet/goal-category"},
+            {"type": "date", "name": "date", "label": "Status Date" , "required": true, "path":"statusDate", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Description ", "path":"description", "default": "", "view": "master"},
+            {"type": "variable", "name": "variable", "namePrefix": "start", "label": "Start", "path":"", "choiceLabel": "Start Type", "view": "master",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Start "},
+                    {"type": "fhirDatatype", "name": "Date", "labelPrefix": "Start "}
+                ]},
+            {"type": "date", "name": "date", "label": "Target" , "required": true, "path":"targetDate", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path": "note.0"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["proposed", "planned", "accepted", "rejected", "in-progress", "achieved", "sustaining", "on-hold", "cancelled", "on-target", "ahead-of-target", "behind-target"],
+                "path": "status", "default": "proposed", "view": "detail"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
+            {"resource": "Practitioner", "label": "Expressed By", "path": "expressedBy.reference"},
+            {"resources": ["Condition", "Observation"], "label": "Addresses", "listPath": "addresses", "subPath":"reference"}
+        ],
+        "search" : {
+            "searchFilter":
+            {
+                "name": "patient",
+                "label": "Patient",
+                "path": "subject.reference",
+                "pathType": "Patient"
+            },
+            "sortFilters": [
+                {
+                    "search": [["targetdate", "asc"]],
+                    "label": "Target Date",
+                    "path": "targetDate",
+                    "pathType": "DateTime",
+                    "filter": "fhirTypeFilter"
+                },
+                {
+                    "search": [["category", "asc"]],
+                    "label": "Category",
+                    "path" : "category.0",
+                    "pathType": "CodeableConcept",
+                    "filter": "fhirTypeFilter"
+                }
+            ]
+        }
+    },
+    {
+        "resource" : "Appointment",
+        "showInResourceList": "None",
+        "search" : {
+            "searchParams": [{
+                "name" :"date"
+            }],
+            "sortParams": [{
+                "name": "date",
+                "modifier": "asc"
+            }]
+        },
+        "displayValues" : [
+            {"type": "time", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "view": "master"},
+            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": "", "view": "master"},
+            {"type": "text", "name": "description", "label": "Description" , "required": true, "path": "description", "default": "", "view": "master"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["proposed", "pending", "booked", "arrived","fulfilled", "cancelled", "noshow"],
+                "path": "status", "default": "proposed", "view": "master"}
+        ],
+        "references" : [
+            {"resources": ["Patient", "Practitioner", "RelatedPerson", "Device", "HealthcareService", "Location"], "label": "Patient", "listPath": "participant", "subPath": "actor.reference"}
+        ]
+    },
+    {
+        "resource" : "Schedule",
+        "showInResourceList": "None",
+        "displayValues" : [
+            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.0.text", "default": "", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "actor.reference"}
+        ]
+    },
+    {
+        "resource" : "Slot",
+        "showInResourceList": "None",
+        "displayValues" : [
+            {"type": "datetime", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
+            {"type": "datetime", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
+            {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": "", "view": "master"},
+            {"type": "text", "name": "freeBusy", "label": "Free/Busy" , "required": true, "path": "freeBusyType", "default": "", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Schedule", "label": "Schedule", "path": "schedule.reference"}
+        ]
+    },
+    {
+        "resource" : "AppointmentResponse",
+        "showInResourceList": "None",
+        "displayValues" : [
+            {"type": "datetime", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
+            {"type": "datetime", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
+            {"type": "text", "name": "participantType", "label": "Participant Type" , "required": true, "path": "participantType.0.text", "default": "", "view": "master"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["accepted", "declined", "tentative", "in-process","completed", "needs-action"],
+                "path": "participantStatus", "default": "needs-action", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Appointment", "label": "Appointment", "path": "appointment.reference"}
+        ]
+    },
+    {
+        "resource" : "Practitioner",
+        "showInResourceList": "None",
+        "displayValues" : [
+            {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.given.0", "default": "", "view": "master"},
+            {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.family.0", "default": "", "view": "master"}
+        ],
+        "search" : {
+            "searchFilter":
+            {
+                "search": [["family", "asc"], ["given", "asc"]],
+                "name": "name",
+                "modifier": "text",
+                "label": "Name",
+                "filter": "nameFamilyGiven"
+            }
+        }
+    },
+    {
+        "resource" : "HealthcareService",
+        "showInResourceList": "None",
+        "displayValues" : [
+            {"type": "coded-display-typeahead", "name": "serviceType", "label": "Service Type" , "required": true, "path": "serviceType.0.type.coding.0.display", "default": "", "view": "master"},
+            {"type": "coded-code-typeahead", "name": "code", "label": "Type Code" , "required": true, "path": "serviceType.0.type.coding.0.code", "default": "", "view": "detail"},
+            {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "serviceType.0.type.coding.0.system", "default": "http://loinc.org", "view": "detail"},
+            {"type": "text", "name": "serviceName", "label": "Service Name" , "required": true, "path": "serviceName", "default": "", "view": "master"},
+            {"type": "text", "name": "programName", "label": "Program Name" , "required": true, "path": "programName.0", "default": "", "view": "master"}
+        ]
+    }
+]

@@ -43,9 +43,7 @@
                 "path": "status", "default": "final", "view": "detail"}
         ],
         "references" : [
-            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
-            {"resource": "Encounter", "label": "Encounter", "path": "encounter.reference"},
-            {"resources": ["Practitioner", "Organization", "Patient", "RelatedPerson"], "label": "Reference", "listPath": "performer", "subPath":"reference"}
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"}
         ]
     },
     {
@@ -91,8 +89,7 @@
                 "path": "status", "default": "in-progress", "view": "master"}
         ],
         "references" : [
-            {"resource": "Patient", "label": "Patient", "path": "patient.reference"},
-            {"resource": "MedicationOrder", "label": "MedicationOrder", "path": "authorizingPrescription.reference"}
+            {"resource": "Patient", "label": "Patient", "path": "patient.reference"}
         ]
     },
     {

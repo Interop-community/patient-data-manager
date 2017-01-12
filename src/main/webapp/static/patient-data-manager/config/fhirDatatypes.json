@@ -9,6 +9,15 @@
         ]
     },
     {
+        "dataType" : "Coding",
+        "displayValues" : [
+            {"type": "text", "name": "display", "label": "Code Display" , "required": true, "path": "display", "default": "", "view": "detail"},
+            {"type": "text", "name": "code", "label": "Code" , "required": true, "path": "code", "default": "", "view": "master"},
+            {"type": "text", "name": "system", "label": "Code System" , "required": true, "path": "system", "default": "", "view": "detail"}
+        ]
+
+    },
+    {
         "dataType" : "CodeableConcept",
         "displayValues" : [
             {"type": "coded-display-typeahead", "name": "display", "label": "Code Display" , "required": true, "path": "coding.0.display", "default": "", "view": "master"},
@@ -51,12 +60,17 @@
     {
         "dataType" : "Time",
         "displayValue" :
-            {"type": "date", "name": "date", "label": "Time" , "required": true, "path":"", "default": "", "view": "master"}
+            {"type": "time", "name": "time", "label": "Time" , "required": true, "path":"", "default": "", "view": "master"}
+    },
+    {
+        "dataType" : "Date",
+        "displayValue" :
+        {"type": "date", "name": "date", "label": "Time" , "required": true, "path":"", "default": "", "view": "master"}
     },
     {
         "dataType" : "DateTime",
         "displayValue" :
-            {"type": "date", "name": "dateTime", "label": "DateTime" , "required": true, "path":"", "default": "", "view": "master"}
+            {"type": "datetime", "name": "dateTime", "label": "DateTime" , "required": true, "path":"", "default": "", "view": "master"}
     },
     {
         "dataType" : "Period",
@@ -71,6 +85,22 @@
             {"type": "text", "name": "frequency", "label": "Frequency" , "required": true, "path":"repeat.frequency", "default": "", "view": "master"},
             {"type": "text", "name": "period", "label": "Period" , "required": true, "path":"repeat.period", "default": "", "view": "master"},
             {"type": "text", "name": "periodUnits", "label": "Period Units" , "required": true, "path":"repeat.periodUnits", "default": "", "view": "master"}
+        ]
+    },
+    {
+        "dataType" : "Annotation",
+        "displayValues" : [
+            {"type": "text", "name": "string", "label": "Text" , "required": true, "path":"text", "default": "", "view": "detail"},
+            {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Time ", "path":"time", "view": "detail"},
+            {"type": "text", "name": "string ", "label": "Author", "path":"authorString", "view": "detail"}
+        ]
+    },
+    {
+        "dataType" : "BackboneElementParticipant",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Role ", "path":"role"},
+            {"type": "fhirDatatype", "name": "Reference ", "labelPrefix": "Member ", "path":"member"},
+            {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Period ", "path":"period"}
         ]
     }
 ]
