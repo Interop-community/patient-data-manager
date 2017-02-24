@@ -1,5 +1,15 @@
 [
     {
+        "resource" : "Patient",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.0.given.0", "default": "", "view": "master"},
+            {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.0.family.0", "default": "", "view": "master"},
+            {"type": "text", "name": "gender", "label": "Gender" , "required": true, "path": "gender", "default": "", "view": "master"},
+            {"type": "date", "name": "birthDate", "label": "Birth Date" , "required": true, "path": "birthDate", "default": "", "view": "master"}
+        ]
+    },
+    {
         "resource" : "Observation",
         "showInResourceList": "Patient",
         "search" : {
@@ -33,9 +43,7 @@
                 "path": "status", "default": "final", "view": "detail"}
         ],
         "references" : [
-            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
-            {"resource": "Encounter", "label": "Encounter", "path": "encounter.reference"},
-            {"resources": ["Practitioner", "Organization", "Patient", "RelatedPerson"], "label": "Reference", "listPath": "performer", "subPath":"reference"}
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"}
         ]
     },
     {
@@ -81,8 +89,7 @@
                 "path": "status", "default": "in-progress", "view": "master"}
         ],
         "references" : [
-            {"resource": "Patient", "label": "Patient", "path": "patient.reference"},
-            {"resource": "MedicationOrder", "label": "MedicationOrder", "path": "authorizingPrescription.reference"}
+            {"resource": "Patient", "label": "Patient", "path": "patient.reference"}
         ]
     },
     {
@@ -232,16 +239,6 @@
         ],
         "references" : [
             {"resource": "Appointment", "label": "Appointment", "path": "appointment.reference"}
-        ]
-    },
-    {
-        "resource" : "Patient",
-        "showInResourceList": "None",
-        "displayValues" : [
-            {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.0.given.0", "default": "", "view": "master"},
-            {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.0.family.0", "default": "", "view": "master"},
-            {"type": "text", "name": "gender", "label": "Gender" , "required": true, "path": "gender", "default": "", "view": "master"},
-            {"type": "text", "name": "birthDate", "label": "Birth Date" , "required": true, "path": "birthDate", "default": "", "view": "master"}
         ]
     },
     {

@@ -51,14 +51,48 @@ angular.module('pdmApp.filters', []).filter('age', function() {
 			return dateAge + "d";
 		else return "Could not calculate age";
 	};
-}).filter('formatAttribute', function ($filter) {
-        return function (input) {
-            if (Object.prototype.toString.call(input) === '[object Date]') {
-                return $filter('date')(input, 'MM/dd/yyyy HH:mm');
-            } else {
-                return input;
-            }
-        };
+}).filter('nameGivenFamily', function () {
+	return function(p){
+		var isArrayName = p && p.name && p.name[0];
+		var userName;
+
+		if (isArrayName) {
+			userName = p && p.name && p.name[0];
+			if (!userName) return null;
+
+		} else {
+			userName = p && p.name;
+			if (!userName) return null;
+		}
+		var user = userName.given.join(" ") + " " + userName.family.join(" ");
+		if (userName.suffix) {
+			user = user + ", " + userName.suffix.join(", ");
+		}
+
+		return user;
+
+	};
+}).filter('nameFamilyGiven', function () {
+	return function(p){
+		var isArrayName = p && p.name && p.name[0];
+		var userName;
+
+		if (isArrayName) {
+			userName = p && p.name && p.name[0];
+			if (!userName) return null;
+
+		} else {
+			userName = p && p.name;
+			if (!userName) return null;
+		}
+
+		var user =  userName.family.join(" ") + ", " + userName.given.join(" ");
+		if (userName.suffix) {
+			user = user + ", " + userName.suffix.join(", ");
+		}
+
+		return user;
+	};
 }).filter('fhirTypeFilter', function ($filter) {
         return function (name, value) {
 
@@ -73,11 +107,17 @@ angular.module('pdmApp.filters', []).filter('age', function() {
                     return value.value + " " + value.unit;
                     break;
                 case 'CodeableConcept':
-                    if (typeof value.coding === 'undefined' ) {
-                        return value.coding.display + ":" + value.coding.code;
+                    if (typeof value.coding !== 'undefined' ) {
+						return value.coding[0].display + ":" + value.coding[0].code;
                     }
                     return value.text;
                     break;
+				case 'Coding':
+					if (typeof value !== 'undefined' ) {
+						return value.display + ":" + value.code;
+					}
+					return value.text;
+					break;
                 case 'Range':
                     return value.low.value + " " + value.low.unit + " to " + value.high.value + " " + value.high.unit;
                     break;
@@ -86,6 +126,9 @@ angular.module('pdmApp.filters', []).filter('age', function() {
                     break;
                 case 'Period':
                     return $filter('date')(value.start, 'MM/dd/yyyy HH:mm') + " to " + $filter('date')(value.end, 'MM/dd/yyyy HH:mm');
+                    break;
+                case 'Date':
+                    return  $filter('date')(value, 'MM/dd/yyyy');
                     break;
                 case 'DateTime':
                     return  $filter('date')(value, 'MM/dd/yyyy HH:mm');
@@ -98,4 +141,23 @@ angular.module('pdmApp.filters', []).filter('age', function() {
                     return value;
             }
         };
+}).filter('ageFilter', function () {
+	return function(dob) {
+		// var dob = patient.birthDate;
+		if (!dob) return "";
+
+		//fix year or year-month style dates
+		if (/\d{4}$/.test(dob))
+			dob = dob + "-01";
+		if (/\d{4}-d{2}$/.test(dob))
+			dob = dob + "-01";
+
+		return moment(dob).fromNow(true)
+			.replace("a ", "1 ")
+			.replace(/minutes?/, "min");
+	}
+}).filter('capFilter', function () {
+	return function(input) {
+		return (!!input) ? input.charAt(0).toUpperCase() + input.substr(1).toLowerCase() : '';
+	}
 });
