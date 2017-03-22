@@ -33,6 +33,7 @@
             {"type": "text", "name": "value", "label": "Value" , "required": true, "path": "value", "default": ""},
             {"type": "text", "name": "unit", "label": "Units" , "required": true, "path":"unit", "default": ""},
             {"type": "text", "name": "system", "label": "System" , "required": true, "path":"system", "default": ""},
+            {"type": "text", "name": "code", "label": "Code" , "required": true, "path":"code", "default": ""},
             {"type": "select", "name": "comparator", "label": "Comparator" ,
                 "options":["", "<", "<=", ">=", ">"],
                 "path": "comparator", "default": ""}
