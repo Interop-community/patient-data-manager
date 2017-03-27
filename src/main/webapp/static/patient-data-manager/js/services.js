@@ -122,7 +122,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                 }
             }
             return "";
-                
+
         };
 
         function getFhirDatatypeName(resource, attribute) {
@@ -367,7 +367,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
          *      FHIR SERVICE API CALLS
          *
          **/
-        
+
         var fhirClient;
 
         var rbh = $resourceBuilderHelpers;
@@ -381,7 +381,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         fhirServices.fhirClient = function () {
             return smart;
         };
-    
+
         fhirServices.searchResourceInstances = function (smart, enteredSearch, resourceTypeList, resourceTypeConfig, clearSearch, notification){
             var deferred = $.Deferred();
             if (typeof resourceTypeConfig.search !== 'undefined' && clearSearch === undefined) {
@@ -574,10 +574,10 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                 });
             return deferred;
         };
-    
+
         fhirServices.filterResources = function(resource, tokens, sort, sortReverse, count, resourceTypeConfig) {
             var deferred = $.Deferred();
-    
+
             if (count === undefined) {
                 count = 50;
             }
@@ -607,7 +607,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             count.total = lastSearch.data.total;
             var pageSize;
             var hasNext = this.hasNext(lastSearch);
-    
+
             if (this.hasNext(lastSearch)) {
                 lastSearch.data.link.forEach(function (link) {
                     if (link.relation == "next") {
@@ -677,11 +677,11 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                     }
                 });
             }
-    
+
             return count;
         };
-    
-    
+
+
         fhirServices.createBundle = function(smart, bundle, resourceTypeList, resourceTypeConfig, notification) {
             var deferred = $.Deferred();
             smart.api.transaction({data: angular.copy(bundle)})
@@ -733,7 +733,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                 });
             return deferred;
         };
-    
+
         function buildQueryString(search, enteredSearch) {
             var queryTerm = {};
             if (typeof search.searchParams !== 'undefined' && enteredSearch !== undefined && enteredSearch !== "") {
@@ -764,7 +764,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             var queryTerm = {};
 
             if (typeof search.searchFilter !== 'undefined' && tokens !== undefined && tokens !== "" && tokens[0] !== "") {
-               
+
                 var queryItem = search.searchFilter.name;
                 if (search.searchFilter.modifier) {
                     queryItem += ":" + search.searchFilter.modifier;
@@ -795,7 +795,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             }
             return queryTerm;
         }
-    
+
         function calculatePages(searchResult) {
             var pageCnt = Math.floor(searchResult.data.total / 50);
             if ((searchResult.data.total % 50) != 0) {
@@ -803,7 +803,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             }
             return pageCnt;
         }
-    
+
         return fhirServices;
 
     }).factory('$resourceJson', ['$http',function($http) {
