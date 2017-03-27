@@ -667,8 +667,12 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                     if (version === "1.0.2") {
                         $scope.fhirVersion = 1;
                         $scope.showFRED = true;
-                    } else {
+                    } else if (version === "1.6.0")  {
                         $scope.fhirVersion = 2;
+                    } else if (version === "1.8.0")  {
+                        $scope.fhirVersion = 3;
+                    } else {
+                        $scope.fhirVersion = 4;
                     }
                     $resourceJson.getResources($scope.fhirVersion).done(function(resources){
                         $scope.resourceTypeConfigList = resources;

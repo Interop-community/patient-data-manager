@@ -54,41 +54,50 @@ angular.module('pdmApp.filters', []).filter('age', function() {
 }).filter('nameGivenFamily', function () {
 	return function(p){
 		var isArrayName = p && p.name && p.name[0];
-		var userName;
+		var personName;
 
 		if (isArrayName) {
-			userName = p && p.name && p.name[0];
-			if (!userName) return null;
+			personName = p && p.name && p.name[0];
+			if (!personName) return null;
 
 		} else {
-			userName = p && p.name;
-			if (!userName) return null;
-		}
-		var user = userName.given.join(" ") + " " + userName.family.join(" ");
-		if (userName.suffix) {
-			user = user + ", " + userName.suffix.join(", ");
+			personName = p && p.name;
+			if (!personName) return null;
 		}
 
+		var user;
+		if (Object.prototype.toString.call(personName.family) === '[object Array]') {
+			user = personName.given.join(" ") + " " + personName.family.join(" ");
+		} else {
+			user = personName.given.join(" ") + " " + personName.family;
+		}
+		if (personName.suffix) {
+			user = user + ", " + personName.suffix.join(", ");
+		}
 		return user;
-
 	};
 }).filter('nameFamilyGiven', function () {
 	return function(p){
 		var isArrayName = p && p.name && p.name[0];
-		var userName;
+		var personName;
 
 		if (isArrayName) {
-			userName = p && p.name && p.name[0];
-			if (!userName) return null;
+			personName = p && p.name && p.name[0];
+			if (!personName) return null;
 
 		} else {
-			userName = p && p.name;
-			if (!userName) return null;
+			personName = p && p.name;
+			if (!personName) return null;
 		}
 
-		var user =  userName.family.join(" ") + ", " + userName.given.join(" ");
-		if (userName.suffix) {
-			user = user + ", " + userName.suffix.join(", ");
+		var user;
+		if (Object.prototype.toString.call(personName.family) === '[object Array]') {
+			user = personName.family.join(" ") + ", " + personName.given.join(" ");
+		} else {
+			user = personName.family + ", " + personName.given.join(" ");
+		}
+		if (personName.suffix) {
+			user = user + ", " + personName.suffix.join(", ");
 		}
 
 		return user;

@@ -543,6 +543,25 @@ fieldset[disabled] .btn-basic.active {
     outline: none;
 }
 
+.float-right-white-btn:focus {
+    outline: none;
+}
+
+.float-right-white-btn {
+    cursor:pointer;
+    float:right;
+    border: none;
+    color: #fff;
+    outline: none;
+}
+
+.float-right-white-btn:hover{
+    /*font-weight:bold;*/
+    color: #f4f4f4;
+    text-decoration: none;
+    outline: none;
+}
+
 .dynamic-form-header {
     height: 28px;
     width: 100%;
@@ -789,6 +808,10 @@ fieldset[disabled] .btn-basic.active {
     outline: none; !important;
 }
 
+.table-striped tbody tr{
+    height: 33px;
+}
+
 .details-form{
     height: 100%;
     overflow-x: hidden;
@@ -923,6 +946,12 @@ fieldset[disabled] .btn-basic.active {
     padding: 0;
 }
 
+.referenceTable tbody tr.addRow td{
+    background-color: #10759D;
+    color: #fff;
+    border-bottom: 1px #fff solid; !important;
+    outline: none; !important;
+}
 .search-bar {
     border-bottom: 2px solid #f4f4f4;
     min-width:220px;
