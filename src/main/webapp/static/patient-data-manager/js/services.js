@@ -360,7 +360,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         }
 
         return resourceBuilderHelpers;
-    }).factory('$fhirApiServices', function ($resourceBuilderHelpers, errorService) {
+    }).factory('$fhirApiServices', function ($resourceBuilderHelpers, $filter, errorService) {
 
         /**
          *
@@ -509,13 +509,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             var deferred = $.Deferred();
             $.when(smart.patient.read())
                 .done(function(patientResult){
-                    var patient = {name:""};
-                    angular.forEach(patientResult.name[0].given, function (value) {
-                        patient.name = patient.name + ' ' + String(value);
-                    });
-                    angular.forEach(patientResult.name[0].family, function (value) {
-                        patient.name = patient.name + ' ' + value;
-                    });
+                    var patient = {name: $filter('nameGivenFamily')(patientResult)};
                     patient.sex = patientResult.gender;
                     patient.dob = patientResult.birthDate;
                     patient.id  = patientResult.id;
@@ -938,9 +932,9 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
     }
 
     return {
-        getResources: function(fhirVersion) {
+        getResources: function(schemaVersion) {
             var deferred = $.Deferred();
-            $http.get('config/resources_' + fhirVersion +'.json').success(function(resources){
+            $http.get('config/resources_' + schemaVersion +'.json').success(function(resources){
                 // importedResources = JSON.parse(JSON.stringify(resources));
                 importedResources = resources;
                 $http.get('config/fhirDatatypes.json').success(function(fhirDataTypes){

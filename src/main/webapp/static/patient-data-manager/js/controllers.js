@@ -662,15 +662,18 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 .done(function(patient){
                     $scope.patient = patient;
                 });
+            var schemaVersion = 1;
             $fhirApiServices.queryFhirVersion(smart)
                 .done(function(version){
                     if (version === "1.0.2") {
-                        $scope.fhirVersion = 1;
+                        schemaVersion = 1;
                         $scope.showFRED = true;
-                    } else {
-                        $scope.fhirVersion = 2;
+                    } else if (version === "1.6.0")  {
+                        schemaVersion = 2;
+                    } else if (version === "1.8.0")  {
+                        schemaVersion = 3;
                     }
-                    $resourceJson.getResources($scope.fhirVersion).done(function(resources){
+                    $resourceJson.getResources(schemaVersion).done(function(resources){
                         $scope.resourceTypeConfigList = resources;
                         $fhirApiServices.queryResourceInstances(smart, $scope.resourceTypeList, $scope.resourceTypeConfigList[0], $scope.notification)
                             .done(function(resourceTypeList, resourceTypeConfigIndex){

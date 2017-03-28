@@ -10,12 +10,12 @@
             </tr>
             </thead>
             <tbody class="scrollContent">
-            <tr st-select-row="reference" ng-repeat="reference in referenceGroup.referencesList">
+            <tr st-select-row="reference" ng-repeat="reference in referenceGroup.referencesList" ng-class="{addRow : reference.relativeUrl === 'Add'}">
                 <td>{{reference.resource}}</td>
                 <td ng-if="reference.relativeUrl !== 'Add'"><a href='#' class="dynamic-form-hyperlink" ng-click="resourceReferenceSelected(reference)">{{reference.relativeUrl}}</a></td>
                 <td ng-if="reference.relativeUrl === 'Add'"></td>
                 <td ng-if="reference.relativeUrl !== 'Add'" style="padding-top: 0"><a class='dynamic-form-edit float-right-dark-btn' ng-click="removeReference(reference)"><i style="margin-left: -5px" class='fa fa-remove fa-lg'></i></a></td>
-                <td ng-if="reference.relativeUrl === 'Add'" style="padding-top: 0"><a class='dynamic-form-edit float-right-dark-btn' ng-click="resourceChooser(reference)"><i style="margin-left: -5px" class='fa fa-plus fa-lg'></i></a></td>
+                <td ng-if="reference.relativeUrl === 'Add'" style="padding-top: 0"><a class='dynamic-form-edit float-right-white-btn' ng-click="resourceChooser(reference)"><i style="margin-left: -5px" class='fa fa-plus fa-lg'></i></a></td>
             </tr>
             </tbody>
         </table>
