@@ -1,18 +1,19 @@
-# README #
+# HSPC Patient Data Manager
 
-Welcome to the HSPC Patient Data Manager!  
+## Setup
 
-### How do I get set up? ###
+The HSPC Patient Data Manager is hosted as a static web app.
 
-#### Build and Deploy ####
-    mvn clean install
-    copy target/hspc-patient-data-manager.war to a web container
+## Hosting
+````
+npm install
+npm run serve
+````
 
-#### Configuration ####
-HSPC Patient Data Manager is a SMART on FHIR application.  It must be launched from a EHR simulator such as the HSPC Sandbox.  You may launch a local deployment of this application using the [HSPC Sandbox](https://sandbox.hspconsortium.org/hspc-sandbox-manager) "Custom App" Launch Scenario.
+The app contains dynamic registration at:
+* manifest: http://localhost:8096/.well-known/smart/manifest.json
 
-* App API: patient_data_manager
-* Launch URL: http://localhost:8096/static/patient-data-manager/launch.html
-
-### Where to go from here ###
-https://healthservices.atlassian.net/wiki/display/HSPC/Healthcare+Services+Platform+Consortium
+The app is available for SMART Launch at:
+* launch_url: http://localhost:8096/launch.html
+* redirect_url: http://localhost:8096/
+* image_url: https://content.hspconsortium.org/images/hspc-patient-data-manager/logo/pdm.png
