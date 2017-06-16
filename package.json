@@ -2,7 +2,7 @@
   "name": "hspc-patient-data-manager",
   "version": "1.0.1",
   "scripts": {
-    "serve": "./node_modules/http-server/bin/http-server src -p 8096"
+    "serve": "./node_modules/http-server/bin/http-server src -p 8096 --cors"
   },
   "dependencies": {
   },
