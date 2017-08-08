@@ -518,45 +518,84 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return deferred;
         };
 
+        fhirServices.getPatient = function(smart){
+            var deferred = $.Deferred();
+            $.when(smart.patient.read())
+                .done(function(patientResult){
+                    deferred.resolve(patientResult);
+                });
+            return deferred;
+        };
+
         fhirServices.queryResourceInstances = function(smart, resourceTypeList, resourceTypeConfig, notification, searchValue) {
             var deferred = $.Deferred();
 
-            var searchParams = {type: resourceTypeConfig.resource, count: 50};
-            if (searchValue !== undefined) {
-                searchParams.query = searchValue;
-            } else if (typeof resourceTypeConfig.search !== 'undefined' ) {
-                var sortOnly = buildQueryString(resourceTypeConfig.search);
-                if ('$sort' in sortOnly){
-                    searchParams.query = sortOnly;
-                }
-            }
+            if (resourceTypeConfig.resource === "Patient") {
+                this.getPatient(smart)
+                    .done(function(patient){
+                        var resourceResults = [];
+                        if (patient) {
+                            resourceResults.push(rbh.formatAttributesFromFhirForUI(resourceTypeConfig, patient));
+                            var resourceType = {
+                                index: resourceTypeConfig.index,
+                                resourceType: resourceTypeConfig.resource,
+                                count: 1
+                            };
 
-            $.when(smart.patient.api.search(searchParams))
-                .done(function(resourceSearchResult){
-                    var resourceResults = [];
-                    if (resourceSearchResult.data.entry) {
-                        resourceSearchResult.data.entry.forEach(function(entry){
-                            resourceResults.push(rbh.formatAttributesFromFhirForUI(resourceTypeConfig, entry.resource));
-                            // resourceResults.push(rbh.turnStringsIntoDates(entry.resource));
-                        });
-                    } else {
+                            if (resourceTypeList.length === resourceTypeConfig.index) {
+                                resourceTypeList.push(resourceType);
+                            } else {
+                                resourceTypeList[resourceTypeConfig.index].count = 1;
+                            }
+                            resourceTypeList[resourceTypeConfig.index].pageData = angular.copy(resourceResults);
+                            resourceTypeList[resourceTypeConfig.index].pageCount = 1;
+                            resourceTypeList[resourceTypeConfig.index].searchObj = undefined;
+                            deferred.resolve(resourceTypeList, resourceTypeConfig.index);
+                        } else {
 //                        notification({ type:"error", text:"No Results found for the Search"});
-                    }
-                    var resourceType = { index: resourceTypeConfig.index,
-                        resourceType: resourceTypeConfig.resource,
-                        count: resourceSearchResult.data.total };
+                        }
+                    });
+            } else {
 
-                    if (resourceTypeList.length === resourceTypeConfig.index) {
-                        resourceTypeList.push(resourceType);
-                    } else {
-                        resourceTypeList[resourceTypeConfig.index].count = resourceSearchResult.data.total;
+                var searchParams = {type: resourceTypeConfig.resource, count: 50};
+                if (searchValue !== undefined) {
+                    searchParams.query = searchValue;
+                } else if (typeof resourceTypeConfig.search !== 'undefined') {
+                    var sortOnly = buildQueryString(resourceTypeConfig.search);
+                    if ('$sort' in sortOnly) {
+                        searchParams.query = sortOnly;
                     }
-                    resourceTypeList[resourceTypeConfig.index].pageData = angular.copy(resourceResults);
-                    resourceTypeList[resourceTypeConfig.index].pageCount = calculatePages(resourceSearchResult);
-                    resourceTypeList[resourceTypeConfig.index].searchObj = resourceSearchResult;
+                }
 
-                    deferred.resolve(resourceTypeList, resourceTypeConfig.index);
-                });
+                $.when(smart.patient.api.search(searchParams))
+                    .done(function (resourceSearchResult) {
+                        var resourceResults = [];
+                        if (resourceSearchResult.data.entry) {
+                            resourceSearchResult.data.entry.forEach(function (entry) {
+                                resourceResults.push(rbh.formatAttributesFromFhirForUI(resourceTypeConfig, entry.resource));
+                                // resourceResults.push(rbh.turnStringsIntoDates(entry.resource));
+                            });
+                        } else {
+//                        notification({ type:"error", text:"No Results found for the Search"});
+                        }
+                        var resourceType = {
+                            index: resourceTypeConfig.index,
+                            resourceType: resourceTypeConfig.resource,
+                            count: resourceSearchResult.data.total
+                        };
+
+                        if (resourceTypeList.length === resourceTypeConfig.index) {
+                            resourceTypeList.push(resourceType);
+                        } else {
+                            resourceTypeList[resourceTypeConfig.index].count = resourceSearchResult.data.total;
+                        }
+                        resourceTypeList[resourceTypeConfig.index].pageData = angular.copy(resourceResults);
+                        resourceTypeList[resourceTypeConfig.index].pageCount = calculatePages(resourceSearchResult);
+                        resourceTypeList[resourceTypeConfig.index].searchObj = resourceSearchResult;
+
+                        deferred.resolve(resourceTypeList, resourceTypeConfig.index);
+                    });
+            }
             return deferred;
         };
 

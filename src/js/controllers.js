@@ -668,11 +668,11 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                     if (version === "1.0.2") {
                         schemaVersion = 1;
                         $scope.showFRED = true;
-                    } else if (version === "1.6.0")  {
+                    } else if (version === "1.4.0" || version === "1.6.0")  {
                         schemaVersion = 2;
                     } else if (version === "1.8.0")  {
                         schemaVersion = 3;
-                    } else if (version === "1.9.0")  {
+                    } else if (version === "3.0.1")  {
                         schemaVersion = 4;
                     }
                     $resourceJson.getResources(schemaVersion).done(function(resources){

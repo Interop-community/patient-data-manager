@@ -204,6 +204,30 @@
         ]
     },
     {
+        "resource" : "MedicationStatement",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Medication ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
+            {"type": "variable", "name": "variable", "namePrefix": "effective", "label": "Effective", "path":"", "choiceLabel": "Effective Type", "view": "master",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Effective "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Effective "}
+                ]},
+            {"type": "select", "name": "taken", "label": "Taken" ,
+                "options":["y", "n", "unk", "na"],
+                "path": "taken", "default": "y", "view": "master"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["active", "completed", "entered-in-error", "intended", "stopped", "on-hold"],
+                "path": "status", "default": "active", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
+            {"resource": "Encounter", "label": "Context", "path": "context.reference"},
+            {"resources": ["Patient", "Practitioner", "RelatedPerson"], "label": "Information Source", "listPath": "informationSource", "subPath": "reference"},
+            {"resources": ["MedicationDispense"], "label": "Part Of", "listPath": "partOf", "subPath": "reference"}
+        ]
+    },
+    {
         "resource" : "ReferralRequest",
         "showInResourceList": "Patient",
         "displayValues" : [
@@ -701,6 +725,16 @@
             {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "serviceType.0.type.coding.0.system", "default": "http://loinc.org", "view": "detail"},
             {"type": "text", "name": "serviceName", "label": "Service Name" , "required": true, "path": "serviceName", "default": "", "view": "master"},
             {"type": "text", "name": "programName", "label": "Program Name" , "required": true, "path": "programName.0", "default": "", "view": "master"}
+        ]
+    },
+    {
+        "resource" : "Medication",
+        "showInResourceList": "Create",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["active", "inactive", "entered-in-error"],
+                "path": "status", "default": "active", "view": "master"}
         ]
     }
 ]

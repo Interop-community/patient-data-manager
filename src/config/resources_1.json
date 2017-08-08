@@ -93,6 +93,24 @@
         ]
     },
     {
+        "resource" : "MedicationStatement",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Medication ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
+            {"type": "variable", "name": "variable", "namePrefix": "effective", "label": "Effective", "path":"", "choiceLabel": "Effective Type", "view": "master",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Effective "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Effective "}
+                ]},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["active", "completed", "entered-in-error", "intended"],
+                "path": "status", "default": "active", "view": "master"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "patient.reference"}
+        ]
+    },
+    {
         "resource" : "AllergyIntolerance",
         "showInResourceList": "Patient",
         "displayValues" : [

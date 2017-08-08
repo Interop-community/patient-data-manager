@@ -818,6 +818,10 @@ fieldset[disabled] .btn-basic.active {
     overflow-y: auto;
 }
 
+.table-container {
+    overflow-x: hidden;
+}
+
 .scrollableContainer {
     position: relative;
     padding-top: 37px;

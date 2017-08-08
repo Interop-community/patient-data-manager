@@ -2,8 +2,18 @@
 <div ng-if="attribute.type=='text'" class="form-group">
     <label class="dynamic-form-label">{{attribute.label}}</label>
     <div class="dynamic-form-label-input">
-        <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" id="{{attribute.name}}" class="form-control" />
+        <input type="text" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" id="{{attribute.name}}" class="form-control" />
         <!--<span ng-show="{{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>-->
+    </div>
+</div>
+
+<div ng-if="attribute.type=='text-number'" class="form-group">
+    <label class="dynamic-form-label">{{attribute.label}}</label>
+    <div class="dynamic-form-label-input" ng-form name="number">
+        <!--<number-only-input  input-name="attribute.name" input-value="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" class="form-control"/>-->
+        <input type="text" name="input" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]"
+               ng-pattern="/^[-+]?[0-9]*\.?[0-9]+$/" class="form-control"/>
+        <span style="color:red; margin-bottom:-5px" ng-show="number.input.$error.pattern">Not a valid number!</span>
     </div>
 </div>
 
@@ -16,7 +26,7 @@
 </div>
 
 <!-- DATES
-     Not sure if it makes since to use a date control because FHIR dates aren't in alignment
+     Not sure if it makes sense to use a date control because FHIR dates aren't in alignment
      with Javascript dates.  For example, "2010" is a FHIR date -->
 <div ng-if="attribute.type=='datetime'" class="form-group">
     <label class="dynamic-form-label">{{attribute.label}}</label>
@@ -91,7 +101,7 @@
 <div ng-if="attribute.type=='reference'" class="form-group">
     <label class="dynamic-form-label">{{attribute.label}}</label>
     <div class="dynamic-form-label-input">
-        <input type="{{ attribute.type }}" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" class="form-control" />
+        <input type="text" dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" class="form-control" />
         <!--<span ng-show=" {{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>-->
         <!--<span ng-show=" {{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.email'}}">Not email!</span>-->
     </div>
