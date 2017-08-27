@@ -3,6 +3,7 @@
         "resource" : "Patient",
         "showInResourceList": "Patient",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.0.given.0", "default": "", "view": "master"},
             {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.0.family.0", "default": "", "view": "master"},
             {"type": "text", "name": "gender", "label": "Gender" , "required": true, "path": "gender", "default": "", "view": "master"},
@@ -24,6 +25,7 @@
             }]
         },
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Obs ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-codes" },
             {"type": "date", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
             {"type": "variable", "name": "variable", "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type", "view": "master",
@@ -50,6 +52,7 @@
         "resource" : "Encounter",
         "showInResourceList": "Patient",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "text", "name": "class", "label": "Class" , "required": true, "path": "class", "default": "", "view": "master"},
             {"type": "fhirDatatype", "name": "Period", "path":"period"},
             {"type": "select", "name": "status", "label": "Status" ,
@@ -64,6 +67,7 @@
         "resource" : "MedicationOrder",
         "showInResourceList": "Patient",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Med ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
             {"type": "text", "name": "dose", "label": "Dose Text", "path":"dosageInstruction.0.text", "view": "master"},
             {"type": "fhirDatatype", "name": "Timing", "labelPrefix": "Dose ", "path":"dosageInstruction.0.timing"},
@@ -81,6 +85,7 @@
         "resource" : "MedicationDispense",
         "showInResourceList": "Patient",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Med ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
             {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Qnty ", "path":"quantity", "view": "master"},
             {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Sply ", "path":"daysSupply", "view": "master"},
@@ -96,6 +101,7 @@
         "resource" : "MedicationStatement",
         "showInResourceList": "Patient",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Medication ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
             {"type": "variable", "name": "variable", "namePrefix": "effective", "label": "Effective", "path":"", "choiceLabel": "Effective Type", "view": "master",
                 "dataTypes" : [
@@ -114,6 +120,7 @@
         "resource" : "AllergyIntolerance",
         "showInResourceList": "Patient",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Subs ", "path":"substance", "codedUri" : "http://hl7.org/fhir/ValueSet/allergyintolerance-substance-code"},
             {"type": "date", "name": "onset", "label": "Onset" , "required": true, "path":"onset", "default": "", "view": "detail"},
             {"type": "date", "name": "recordedDate", "label": "Recorded Date" , "required": true, "path":"recordedDate", "default": "", "view": "master"},
@@ -138,6 +145,7 @@
         "resource" : "Condition",
         "showInResourceList": "Patient",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Con ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-code"},
             {"type": "date", "name": "onsetDateTime", "label": "Onset Date Time" , "required": true, "path":"onsetDateTime", "default": "", "view": "master"},
             {"type": "select", "name": "category", "label": "Type" ,
@@ -158,6 +166,7 @@
         "resource" : "Procedure",
         "showInResourceList": "Patient",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Pro ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/procedure-code"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["in-progress", "aborted", "completed", "entered-in-error"],
@@ -171,6 +180,7 @@
         "resource" : "DiagnosticReport",
         "showInResourceList": "Patient",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "DR ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/procedure-code"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Cat ", "path":"category", "codedUri" : "http://hl7.org/fhir/ValueSet/report-codes"},
             {"type": "date", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
@@ -187,6 +197,7 @@
         "resource" : "Immunization",
         "showInResourceList": "Patient",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Vac ", "path":"vaccineCode", "codedUri" : "http://hl7.org/fhir/ValueSet/vaccine-code"},
             {"type": "date", "name": "date", "label": "Date" , "required": true, "path":"date", "default": "", "view": "master"},
             {"type": "select", "name": "status", "label": "Status" ,
@@ -210,6 +221,7 @@
             }]
         },
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "view": "master"},
             {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": "", "view": "master"},
             {"type": "text", "name": "description", "label": "Description" , "required": true, "path": "description", "default": "", "view": "master"},
@@ -225,6 +237,7 @@
         "resource" : "Schedule",
         "showInResourceList": "None",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.0.text", "default": "", "view": "master"}
         ],
         "references" : [
@@ -235,6 +248,7 @@
         "resource" : "Slot",
         "showInResourceList": "None",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
             {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
             {"type": "text", "name": "type", "label": "Type" , "required": true, "path": "type.text", "default": "", "view": "master"},
@@ -248,6 +262,7 @@
         "resource" : "AppointmentResponse",
         "showInResourceList": "None",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "date", "name": "start", "label": "Start Time" , "required": true, "path": "start", "default": "", "orderBy": true, "view": "master"},
             {"type": "date", "name": "end", "label": "End Time" , "required": true, "path": "end", "default": "", "view": "master"},
             {"type": "text", "name": "participantType", "label": "Participant Type" , "required": true, "path": "participantType.0.text", "default": "", "view": "master"},
@@ -263,6 +278,7 @@
         "resource" : "Practitioner",
         "showInResourceList": "None",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "text", "name": "given", "label": "First Name" , "required": true, "path": "name.given.0", "default": "", "view": "master"},
             {"type": "text", "name": "family", "label": "Last Name" , "required": true, "path": "name.family.0", "default": "", "view": "master"}
         ]
@@ -271,6 +287,7 @@
         "resource" : "HealthcareService",
         "showInResourceList": "None",
         "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "coded-display-typeahead", "name": "serviceType", "label": "Service Type" , "required": true, "path": "serviceType.0.type.coding.0.display", "default": "", "view": "master"},
             {"type": "coded-code-typeahead", "name": "code", "label": "Type Code" , "required": true, "path": "serviceType.0.type.coding.0.code", "default": "", "view": "detail"},
             {"type": "text", "name": "codeSystem", "label": "Code System" , "required": true, "path": "serviceType.0.type.coding.0.system", "default": "http://loinc.org", "view": "detail"},

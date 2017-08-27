@@ -6,14 +6,14 @@
             <table st-table="resourceInstanceList" class="table table-striped" arrow-selector>
                 <thead class="fixedHeader">
                 <tr>
-                    <th ng-repeat="attribute in selectedResourceTypeConfig.displayValues">
+                    <th ng-repeat="attribute in selectedResourceTypeConfig.displayValues" ng-if="attribute.view === 'master'">
                         <div ng-if="attribute.view === 'master'" class="th-inner" table-header-inner>{{attribute.label}}</div>
                     </th>
                 </tr>
                 </thead>
                 <tbody class="scrollContent">
                 <tr st-select-row="resource" ng-click="selectResourceInstance(resource)" ng-repeat="resource in resourceInstanceList">
-                    <td ng-repeat="attribute in selectedResourceTypeConfig.displayValues">
+                    <td ng-repeat="attribute in selectedResourceTypeConfig.displayValues"  ng-if="attribute.view === 'master'">
                         <!--<div ng-if="attribute.view === 'master' && attribute.type !== 'variable'">-->
                             <!--{{dmh.getDynamicModel(resource, attribute.path) | formatAttribute}}-->
                         <!--</div>-->
