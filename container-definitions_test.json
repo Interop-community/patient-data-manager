@@ -1,11 +1,11 @@
 [
   {
-    "name": "bilirubin-risk-chart",
-    "image": "nexus.hspconsortium.org:18083/hspc/bilirubin-risk-chart:1.2.6",
+    "name": "hspc-patient-data-manager",
+    "image": "nexus.hspconsortium.org:18083/hspc/hspc-patient-data-manager:1.0.3",
     "cpu": 0,
     "portMappings": [
       {
-        "containerPort": 8086,
+        "containerPort": 8096,
         "hostPort": 0,
         "protocol": "tcp"
       }
