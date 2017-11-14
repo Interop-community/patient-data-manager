@@ -2,7 +2,7 @@
 
 angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
-    var terminologyServerEndpoint = '/_services/smart/terminology';
+    var terminologyServerEndpoint = '/terminology/';
     var urlBase = "";
 
     var valueSetCodeEndpointMap = {};
