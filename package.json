@@ -4,8 +4,7 @@
   "scripts": {
     "serve": "./node_modules/http-server/bin/http-server src -p 8096 --cors"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "devDependencies": {
     "http-server": "^0.10.0"
   }
