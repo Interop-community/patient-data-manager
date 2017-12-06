@@ -1,10 +1,5 @@
 #!/usr/bin/env bash
 
-set -e
-
-[[ -z "$IMAGE_NAME" ]] && { echo "Error: IMAGE_NAME is not provided"; exit 1; } || echo "IMAGE_NAME: $IMAGE_NAME"
-[[ -z "$DOCKER_PUSH" ]] && { echo "Warning: DOCKER_PUSH is not provided, defaulting to true..."; DOCKER_PUSH=true; } || echo "DOCKER_PUSH: $DOCKER_PUSH"
-
 echo "starting ci-2-docker-image.sh..."
 
 if [ $DOCKER_PUSH = "true" ]
