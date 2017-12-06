@@ -5,7 +5,9 @@ set -e
 echo "starting prepare_build.sh..."
 
 echo "dynamically fix the container-definitions_prod.json"
-cat container-definitions_prod.json.jq | jq --arg container_name $PROJECT_NAME '.[0].name=$container_name' | jq --arg image_name $IMAGE_NAME '.[0].image=$image_name' | jq --arg container_port $PROJECT_PORT '.[0].portMappings[0].containerPort=($container_port | tonumber)' | tee container-definitions_prod.json
+export CONTAINER_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec)
+sed -i -e "s/{{CONTAINER_NAME}}/$CONTAINER_NAME/g" -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions_prod.json
+export PROJECT_VERSION=$(cat package.json | jq --raw-output '.version')
 
 if ! [ -s container-definitions_prod.json ]
 then
@@ -15,7 +17,9 @@ end
 fi
 
 echo "dynamically fix the container-definitions_test.json"
-cat container-definitions_test.json.jq | jq --arg container_name $PROJECT_NAME '.[0].name=$container_name' | jq --arg image_name $IMAGE_NAME '.[0].image=$image_name' | jq --arg container_port $PROJECT_PORT '.[0].portMappings[0].containerPort=($container_port | tonumber)' | tee container-definitions_test.json
+export CONTAINER_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec)
+sed -i -e "s/{{CONTAINER_NAME}}/$CONTAINER_NAME/g" -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions_test.json
+export PROJECT_VERSION=$(cat package.json | jq --raw-output '.version')
 
 if ! [ -s container-definitions_test.json ]
 then
