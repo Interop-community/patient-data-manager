@@ -20,6 +20,10 @@ pipelines:
 #            - curl -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && chmod +x /usr/local/bin/jq
             # set config file to match current environment
 #            - sed -i -e 's/config.json/config-test.json/g' ./src/js/launch.js
+            - export CONTAINER_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec)
+            - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+            - sed -i -e "s/{{CONTAINER_NAME}}/$CONTAINER_NAME/g" -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions_test.json
+            - export PROJECT_VERSION=$(cat package.json | jq --raw-output '.version')
             # build docker image and push to nexus.interopion.com:18083 (docker-interopion)
             - export IMAGE_NAME=$(cat container-definitions_test.json | jq --raw-output '.[0].image')
             - docker login -u $NEXUS_USR -p $NEXUS_PWD nexus.hspconsortium.org:18083
@@ -59,6 +63,10 @@ pipelines:
 #            - curl -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && chmod +x /usr/local/bin/jq
             # set config file to match current environment
 #            - sed -i -e 's/config.json/config-test.json/g' ./src/js/launch.js
+            - export CONTAINER_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec)
+            - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
+            - sed -i -e "s/{{CONTAINER_NAME}}/$CONTAINER_NAME/g" -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions_prod.json
+            - export PROJECT_VERSION=$(cat package.json | jq --raw-output '.version')
             # build docker image and push to nexus.interopion.com:18083 (docker-interopion)
             - export IMAGE_NAME=$(cat container-definitions_prod.json | jq --raw-output '.[0].image')
             - docker login -u $NEXUS_USR -p $NEXUS_PWD nexus.hspconsortium.org:18083
