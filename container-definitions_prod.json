@@ -1,7 +1,7 @@
 [
   {
-    "name": "{{CONTAINER_NAME}}-prod",
-    "image": "nexus.hspconsortium.org:18083/hspc/{{CONTAINER_NAME}}:{{PROJECT_VERSION}}",
+    "name": "{{PROJECT_VERSION}}-prod",
+    "image": "nexus.hspconsortium.org:18083/hspc/{{PROJECT_VERSION}}:{{PROJECT_VERSION}}",
     "cpu": 0,
     "portMappings": [
       {

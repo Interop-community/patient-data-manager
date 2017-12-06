@@ -5,9 +5,7 @@ set -e
 echo "starting prepare_build.sh..."
 
 echo "dynamically fix the container-definitions_prod.json"
-export CONTAINER_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec)
-sed -i -e "s/{{CONTAINER_NAME}}/$CONTAINER_NAME/g" -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions_prod.json
-export PROJECT_VERSION=$(cat package.json | jq --raw-output '.version')
+sed -i -e "s/{{$PROJECT_NAME}}/$PROJECT_NAME/g" -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions_prod.json
 
 if ! [ -s container-definitions_prod.json ]
 then
@@ -17,9 +15,7 @@ end
 fi
 
 echo "dynamically fix the container-definitions_test.json"
-export CONTAINER_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec)
-sed -i -e "s/{{CONTAINER_NAME}}/$CONTAINER_NAME/g" -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions_test.json
-export PROJECT_VERSION=$(cat package.json | jq --raw-output '.version')
+sed -i -e "s/{{$PROJECT_NAME}}/$PROJECT_NAME/g" -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions_test.json
 
 if ! [ -s container-definitions_test.json ]
 then
