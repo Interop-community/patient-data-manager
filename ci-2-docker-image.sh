@@ -7,21 +7,20 @@ set -e
 
 echo "starting ci-2-docker-image.sh..."
 
-echo "docker build..."
-echo "IMAGE_NAME: $IMAGE_NAME"
-docker build -t "$IMAGE_NAME" .
-
 if [ $DOCKER_PUSH = "true" ]
 then
-    [[ -z "$DOCKER_ID" ]] && { echo "Error: DOCKER_ID is not provided"; exit 1; } || echo "DOCKER_ID: $DOCKER_ID"
-    [[ -z "$DOCKER_PASSWORD" ]] && { echo "Error: DOCKER_PASSWORD is not provided"; exit 1; } || echo "DOCKER_PASSWORD: $DOCKER_PASSWORD"
-    echo "docker login..."
-    docker login -u $DOCKER_ID -p $DOCKER_PASSWORD
+    export IMAGE_NAME=$(cat container-definitions_test.json | jq --raw-output '.[0].image')
+    docker login -u $NEXUS_USR -p $NEXUS_PWD nexus.hspconsortium.org:18083
+    docker build -t $IMAGE_NAME .
 
     echo "docker push..."
     docker push "$IMAGE_NAME"
 else
     echo "docker push skipped"
 fi
+
+
+
+
 
 echo "finished ci-2-docker-image.sh"
