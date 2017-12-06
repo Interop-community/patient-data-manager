@@ -14,7 +14,7 @@ then
     [[ -z "$TARGET_AWS_SERVICE" ]] && { echo "Error: TARGET_AWS_SERVICE is not provided"; exit 1; } || echo "TARGET_AWS_SERVICE: $TARGET_AWS_SERVICE"
 
     echo "updating aws esc service..."
-    aws ecs update-service --cluster $TARGET_AWS_CLUSTER --service $TARGET_AWS_SERVICE --task-definition $1:$TASK_VERSION
+    aws ecs update-service --cluster $TARGET_AWS_CLUSTER --service $TARGET_AWS_SERVICE --task-definition $PROJECT_NAME:$TASK_VERSION
 else
     echo "skipping deployment"
 fi
