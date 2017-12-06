@@ -15,7 +15,7 @@ echo "PROJECT_NAME: $PROJECT_NAME"
 export PROJECT_VERSION=$(cat package.json | jq --raw-output '.version')
 echo "PROJECT_VERSION: $PROJECT_VERSION"
 
-export PROJECT_PORT=$(cat package.json | jq --raw-output '.config.port')
+export PROJECT_PORT=$8096
 echo "PROJECT_PORT: $PROJECT_PORT"
 
 export IMAGE_NAME=$PROJECT_REPO/$PROJECT_NAME:$PROJECT_VERSION
