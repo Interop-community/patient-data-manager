@@ -6,7 +6,7 @@ echo "capture build definitions..."
 export DOCKER_PUSH=true
 echo "DOCKER_PUSH: $DOCKER_PUSH"
 
-export PROJECT_REPO="hspconsortium"
+export PROJECT_REPO="nexus.hspconsortium.org:18083/hspc"
 echo "PROJECT_REPO: $PROJECT_REPO"
 
 export PROJECT_NAME=$(cat package.json | jq --raw-output '.name')
@@ -17,3 +17,6 @@ echo "PROJECT_VERSION: $PROJECT_VERSION"
 
 export PROJECT_PORT=$8096
 echo "PROJECT_PORT: $PROJECT_PORT"
+
+export IMAGE_NAME=$PROJECT_REPO/$PROJECT_NAME:$PROJECT_VERSION
+echo "IMAGE_NAME: $IMAGE_NAME"

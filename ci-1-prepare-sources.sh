@@ -5,7 +5,7 @@ set -e
 echo "starting prepare_build.sh..."
 
 echo "dynamically fix the container-definitions_prod.json"
-sed -i -e "s/{{$PROJECT_NAME}}/$PROJECT_NAME/g" -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions_prod.json
+cat container-definitions_prod.json.jq | jq --arg container_name $PROJECT_NAME '.[0].name=$container_name' | jq --arg image_name $IMAGE_NAME '.[0].image=$image_name' | jq --arg container_port $PROJECT_PORT '.[0].portMappings[0].containerPort=($container_port | tonumber)' | tee container-definitions_prod.json
 
 if ! [ -s container-definitions_prod.json ]
 then
@@ -15,7 +15,7 @@ end
 fi
 
 echo "dynamically fix the container-definitions_test.json"
-sed -i -e "s/{{$PROJECT_NAME}}/$PROJECT_NAME/g" -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions_test.json
+cat container-definitions_prod.json.jq | jq --arg container_name $PROJECT_NAME '.[0].name=$container_name' | jq --arg image_name $IMAGE_NAME '.[0].image=$image_name' | jq --arg container_port $PROJECT_PORT '.[0].portMappings[0].containerPort=($container_port | tonumber)' | tee container-definitions_test.json
 
 if ! [ -s container-definitions_test.json ]
 then
