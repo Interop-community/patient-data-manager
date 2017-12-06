@@ -1,6 +1,6 @@
 [
   {
-    "name": "hspc-patient-data-manager",
+    "name": "hspc-patient-data-manager-prod",
     "image": "nexus.hspconsortium.org:18083/hspc/hspc-patient-data-manager:1.0.3",
     "cpu": 0,
     "portMappings": [

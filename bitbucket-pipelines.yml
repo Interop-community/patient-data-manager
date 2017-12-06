@@ -60,14 +60,14 @@ pipelines:
             # set config file to match current environment
 #            - sed -i -e 's/config.json/config-test.json/g' ./src/js/launch.js
             # build docker image and push to nexus.interopion.com:18083 (docker-interopion)
-            - export IMAGE_NAME=$(cat container-definitions_test.json | jq --raw-output '.[0].image')
+            - export IMAGE_NAME=$(cat container-definitions_prod.json | jq --raw-output '.[0].image')
             - docker login -u $NEXUS_USR -p $NEXUS_PWD nexus.hspconsortium.org:18083
             - docker build -t $IMAGE_NAME .
             - docker push $IMAGE_NAME
             # register the ECS task definition and capture the version
-            - export TASK_VERSION=$(aws ecs register-task-definition --family hspc-patient-data-manager --container-definitions $(cat container-definitions_test.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
+            - export TASK_VERSION=$(aws ecs register-task-definition --family hspc-patient-data-manager-prod --container-definitions $(cat container-definitions_prod.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
             - echo "Registered ECS Task Definition - " $TASK_VERSION
             # update the service to use the latest task definition
-            - aws ecs update-service --cluster $TARGET_AWS_CLUSTER --service $TARGET_AWS_SERVICE --task-definition hspc-patient-data-manager:$TASK_VERSION
+#            - aws ecs update-service --cluster $TARGET_AWS_CLUSTER --service $TARGET_AWS_SERVICE --task-definition hspc-patient-data-manager:$TASK_VERSION
 options:
   docker: true

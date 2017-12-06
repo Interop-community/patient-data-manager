@@ -2,41 +2,36 @@
 
 angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
-    var terminologyServerEndpoint = '/terminology/';
+    var terminologyServerEndpoint = '';
     var urlBase = "";
 
     var valueSetCodeEndpointMap = {};
     var terminologyService = {};
 
     terminologyService.setUrlBase = function(smart) {
-        urlBase = smart.server.serviceUrl;
+        urlBase = "https://api-v5-stu3.hspconsortium.org/stu3/open";
     };
 
     // Any function returning a promise object can be used to load values asynchronously
     terminologyService.getValueSetExpansion = function(val, min, url) {
         var deferred = $.Deferred();
-        terminologyService.getObservationCodesValueSetId(url).done(function(lookupUrl){
-            if (val.length >= min) {
-                var path = encodeURIComponent('/ValueSet/' + lookupUrl + '/$expand?filter=' + val);
-                deferred.resolve($http.get(urlBase  + terminologyServerEndpoint + '?uri=' + path, {
-                    params: {}
-                }).then(function(response){
-                        if (response.data.expansion !== undefined && response.data.expansion.contains !== undefined) {
-                            return response.data.expansion.contains.map(function(item){
-                                return item;
-                            });
-                        }
-                    }, function() {
-                    deferred.reject();
-                    })
-                )
-            }
-        }, function() {
-                deferred.reject();
-            }
-        ).fail(function(){
+        var lookupUrl = url.substr(19)
+        //Example call
+        // https://api-v5-stu3.hspconsortium.org/stu3/open/ValueSet/observation-codes/$expand?filter=100
+        var path = lookupUrl + '/$expand?filter=' + val;
+        deferred.resolve($http.get(urlBase + path, {
+            params: {}
+        }).then(function(response){
+                if (response.data.expansion !== undefined && response.data.expansion.contains !== undefined) {
+                    return response.data.expansion.contains.map(function(item){
+                        return item;
+                    });
+                }
+            }, function() {
             deferred.reject();
-        });
+            })
+        )
+
         return deferred;
     };
 
