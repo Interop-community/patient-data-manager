@@ -635,6 +635,53 @@
         }
     },
     {
+        "resource": "DetectedIssue",
+        "showInResourceList": "Patient",
+        "displayValues": [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
+            {"type": "date", "name": "date", "label": "Status Date" , "required": true, "path":"date", "default": "", "view": "master"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["registered", "preliminary", "final", "amended"],
+                "path": "status", "default": "registered", "view": "master"},
+            {"type": "select", "name": "severity", "label": "Severity",
+                "options":["high", "moderate", "low"],
+                "path":"severity", "default": "moderate", "view": "master"},
+            {"type": "text", "name": "Detail", "label": "Details", "path":"detail", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Category ", "default": "", "path":"category", "codedUri": "http://hl7.org/fhir/ValueSet/detectedissue-category"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Mitigation Action ", "default": "", "path":"mitigation.0.action", "codedUri":"http://hl7.org/fhir/ValueSet/detectedissue-mitigation-action"},
+            {"type": "date", "name": "date", "label": "Mitigation Date ", "default": "", "path":"mitigation.0.date"}
+        ],
+        "references": [
+            {"resource": "Patient", "label": "Patient", "path": "patient.reference"},
+            {"resources": ["Practitioner", "Device"], "label": "Requester", "listPath": "author", "subPath": "reference"},
+            {"resource": "Practitioner", "label": "Mitigation Author ", "path": "mitigation.0.author.reference"}
+        ],
+        "search": {
+            "searchFilter": {
+                "name": "patient",
+                "label": "Patient",
+                "path": "subject.reference",
+                "pathType": "Patient"
+            },
+            "sortFilters": [
+                {
+                    "search": [["date", "desc"]],
+                    "label": "Status Date Time",
+                    "path": "date",
+                    "pathType": "DateTime",
+                    "filter": "fhirTypeFilter"
+                },
+                {
+                    "search": [["category", "asc"]],
+                    "label": "Category",
+                    "path" : "category.0",
+                    "pathType": "CodeableConcept",
+                    "filter": "fhirTypeFilter"
+                }
+            ]
+        }
+    },
+    {
         "resource" : "Appointment",
         "showInResourceList": "None",
         "search" : {
@@ -716,6 +763,26 @@
                 "modifier": "text",
                 "label": "Name",
                 "filter": "nameFamilyGiven"
+            }
+        }
+    },
+    {
+        "resource" : "Device",
+        "showInResourceList": "None",
+        "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Category ", "default": "", "path":"type"}
+        ],
+        "search" : {
+            "searchFilter":
+            {
+                "search": [["type", "desc"]],
+                "label": "Type",
+                "path" : "type",
+                "name": "type",
+                "modifier": "text",
+                "pathType": "CodeableConcept",
+                "filter": "fhirTypeFilter"
             }
         }
     },

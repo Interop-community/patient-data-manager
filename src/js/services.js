@@ -315,7 +315,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                     return;
                 } else if (value.type === "date" || value.type === "datetime" || value.type === "time") {
                     newValue = new Date();
-                    newValue.setSeconds(0,0)
+                    newValue.setSeconds(0,0);
                 }
                 dmh.getModelParent(newResource, value.path)[ dmh.getModelLeaf(value.path) ] = newValue;
             });
