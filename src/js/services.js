@@ -12,8 +12,16 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         urlBase = "https://api-v5-stu3.hspconsortium.org/stu3/open";
     };
 
+    //This list holds value sets that HAPI currently won't allow multiple filtering for the typeahead
+    // functionality. Remove items from this list as they become supported.
+    var expansionNotSupported = [
+      "http://hl7.org/fhir/ValueSet/detectedissue-category",
+      "http://hl7.org/fhir/ValueSet/detectedissue-mitigation-action"
+    ];
+
     // Any function returning a promise object can be used to load values asynchronously
     terminologyService.getValueSetExpansion = function(val, min, url) {
+        if(expansionNotSupported.indexOf(url) !== -1) return;
         var deferred = $.Deferred();
         var lookupUrl = url.substr(19)
         //Example call
