@@ -258,7 +258,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
          *
          **/
         var dmh = $dynamicModelHelpers;
-
+        var writePermission = true;
         var resourceBuilderHelpers = {};
 
         resourceBuilderHelpers.formatAttributesFromUIForFhir = function(selectedResourceTypeConfig, resource) {

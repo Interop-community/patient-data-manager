@@ -3,7 +3,8 @@
 angular.module('pdmApp.controllers', []).controller('pdmCtrl',
     ['$scope', '$rootScope','$filter', "$uibModal", "$fhirApiServices", "$terminology", "$dynamicModelHelpers", "$resourceBuilderHelpers", "$resourceJson",
     function ($scope, $rootScope, $filter, $uibModal, $fhirApiServices, $terminology, $dynamicModelHelpers, $resourceBuilderHelpers, $resourceJson ) {
-
+        console.log($fhirApiServices)
+        $scope.writePermission = true; //Disables all interactions that involve manipulating the resources, if false
         $scope.dmh = $dynamicModelHelpers;
         var rbh = $resourceBuilderHelpers;
 
@@ -700,7 +701,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.isModal = true;
         $scope.isCreate = isCreate;
         $scope.isReadOnly = isReadOnly;
-        $scope.dynamicFormTemplate = 'js/templates/dynamicFormInput.html';
+        $scope.dynamicFormTemplate = 'js/templates/dynamicFormInputModal.html';
 
         if (isReadOnly){
             $scope.dynamicFormTemplate = 'js/templates/dynamicFormReadOnly.html';

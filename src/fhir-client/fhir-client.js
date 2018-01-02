@@ -16793,7 +16793,6 @@ function completeCodeFlow(params){
   if (window.history.replaceState && BBClient.settings.replaceBrowserHistory){
     window.history.replaceState({}, "", window.location.toString().replace(window.location.search, ""));
   }
-
   Adapter.get().http({
     method: 'POST',
     url: state.provider.oauth2.token_uri,
@@ -16803,6 +16802,7 @@ function completeCodeFlow(params){
       redirect_uri: state.client.redirect_uri,
       client_id: state.client.client_id
     },
+
   }).then(function(authz){
        for (var i in params) {
           if (params.hasOwnProperty(i)) {
@@ -17066,7 +17066,7 @@ BBClient.authorize = function(params, errback){
     sessionStorage[state] = JSON.stringify(params);
 
     console.log("sending client reg", params.client);
-
+		alert(client.scope)
     var redirect_to=params.provider.oauth2.authorize_uri + "?" + 
       "client_id="+encodeURIComponent(client.client_id)+"&"+
       "response_type="+encodeURIComponent(params.response_type)+"&"+
