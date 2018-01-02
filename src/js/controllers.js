@@ -3,8 +3,9 @@
 angular.module('pdmApp.controllers', []).controller('pdmCtrl',
     ['$scope', '$rootScope','$filter', "$uibModal", "$fhirApiServices", "$terminology", "$dynamicModelHelpers", "$resourceBuilderHelpers", "$resourceJson",
     function ($scope, $rootScope, $filter, $uibModal, $fhirApiServices, $terminology, $dynamicModelHelpers, $resourceBuilderHelpers, $resourceJson ) {
-        console.log($fhirApiServices)
+
         $scope.writePermission = true; //Disables all interactions that involve manipulating the resources, if false
+
         $scope.dmh = $dynamicModelHelpers;
         var rbh = $resourceBuilderHelpers;
 
@@ -655,6 +656,12 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          *
          **/
         FHIR.oauth2.ready(function(smart){
+            //First check to see if the user has writing privilege, if not, disable those features
+            var scope = smart.tokenResponse.scope;
+            if(!scope.includes(".write")&&!scope.includes(".*")) {
+                $scope.writePermission = false;
+            }
+
             $fhirApiServices.setFhirClient(smart);
             $scope.smart = smart;
             $terminology.setUrlBase(smart);
