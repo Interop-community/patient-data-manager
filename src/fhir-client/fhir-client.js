@@ -17048,7 +17048,6 @@ BBClient.authorize = function(params, errback){
     params.fake_token_response = params.fake_token_response || {};
     params.fake_token_response.patient = urlParam("patientId");
   }
-
   providers(params.server, function(provider){
 
     params.provider = provider;
@@ -17066,7 +17065,6 @@ BBClient.authorize = function(params, errback){
     sessionStorage[state] = JSON.stringify(params);
 
     console.log("sending client reg", params.client);
-		alert(client.scope)
     var redirect_to=params.provider.oauth2.authorize_uri + "?" + 
       "client_id="+encodeURIComponent(client.client_id)+"&"+
       "response_type="+encodeURIComponent(params.response_type)+"&"+

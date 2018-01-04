@@ -32,6 +32,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.searchBar = false;
         $scope.detailView = false;
         $scope.patientInfo = true;
+        $scope.patient = null;
         $scope.showFRED = false;
         $scope.showViewToggle = false;
         $scope.resourceSet = 'Patient';
@@ -332,7 +333,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             var messageQueue = [];
             function beginEdit(){
                 messageQueue.push(initialValue);
-                fredWindow = window.open('fred/index.html?remote=1', 'fredwin');
+                fredWindow = window.open('fred/app.html?remote=1', 'fredwin');
                 console.log();
             }
 
@@ -699,6 +700,11 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 });
         });
 
+      // Redirects the page to a "marketing" page if not launched in an EHR/Sandbox environment
+      if($scope.patient==null) {
+        // window.location.href = '/index.html';
+      }
+
     }]).controller('ModalInstanceCtrl',['$scope', '$uibModalInstance', "$terminology", "$dynamicModelHelpers", "getNewResource", "getSelectedResourceTypeConfig", "isCreate", "isReadOnly",
     function ($scope, $uibModalInstance, $terminology, $dynamicModelHelpers, getNewResource, getSelectedResourceTypeConfig, isCreate, isReadOnly) {
 
@@ -986,4 +992,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
         }
 
+
     });
+
