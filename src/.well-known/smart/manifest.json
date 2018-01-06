@@ -5,7 +5,7 @@
   "logo_uri": "https://content.hspconsortium.org/images/hspc-patient-data-manager/logo/pdm.png",
   "launch_url": "http://localhost:8096/launch.html",
   "redirect_uris": [
-    "http://localhost:8096/ap.html"
+    "http://localhost:8096/app.html"
   ],
   "scope": "launch online_access patient/*.read patient/*.write",
   "token_endpoint_auth_method": "none",
