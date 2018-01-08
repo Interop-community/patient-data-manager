@@ -42,25 +42,10 @@ pipelines:
           caches:
             - node
           script:
-            # install ASW CLI, jq library, node
-#            - npm install
-#            - apk --no-cache update && apk --no-cache add python py-pip py-setuptools ca-certificates curl groff less && pip --no-cache-dir install awscli && rm -rf /var/cache/apk/*
-#            - curl -o /usr/local/bin/jq -L https://github.com/stedolan/jq/releases/download/jq-1.5/jq-linux64 && chmod +x /usr/local/bin/jq
-            # set config file to match current environment
-#            - sed -i -e 's/config.json/config-test.json/g' ./src/js/launch.js
-            - export CONTAINER_NAME=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.artifactId}' --non-recursive exec:exec)
-            - export PROJECT_VERSION=$(mvn -q -Dexec.executable="echo" -Dexec.args='${project.version}' --non-recursive exec:exec)
-            - sed -i -e "s/{{CONTAINER_NAME}}/$CONTAINER_NAME/g" -e "s/{{PROJECT_VERSION}}/$PROJECT_VERSION/g" container-definitions_prod.json
-            - export PROJECT_VERSION=$(cat package.json | jq --raw-output '.version')
-            # build docker image and push to nexus.interopion.com:18083 (docker-interopion)
-            - export IMAGE_NAME=$(cat container-definitions_prod.json | jq --raw-output '.[0].image')
-            - docker login -u $NEXUS_USR -p $NEXUS_PWD nexus.hspconsortium.org:18083
-            - docker build -t $IMAGE_NAME .
-            - docker push $IMAGE_NAME
-            # register the ECS task definition and capture the version
-            - export TASK_VERSION=$(aws ecs register-task-definition --family hspc-patient-data-manager-prod --container-definitions $(cat container-definitions_prod.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
-            - echo "Registered ECS Task Definition - " $TASK_VERSION
-            # update the service to use the latest task definition
-#            - aws ecs update-service --cluster $TARGET_AWS_CLUSTER --service $TARGET_AWS_SERVICE --task-definition hspc-patient-data-manager:$TASK_VERSION
+            - export ACTIVE_ENV=prod
+            - . ci-0-set-properties.sh
+            - . ci-1-prepare-sources.sh
+            - . ci-2-docker-image.sh
+            - . ci-3-aws-update.sh hspc-patient-data-manager
 options:
   docker: true
