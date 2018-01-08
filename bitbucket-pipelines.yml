@@ -14,6 +14,7 @@ pipelines:
           caches:
             - node
           script:
+            - export ACTIVE_ENV=test
             - . ci-0-set-properties.sh
             - . ci-1-prepare-sources.sh
             - . ci-2-docker-image.sh
