@@ -9,4 +9,5 @@ RUN echo $ACTIVE_ENV
 #CMD ["./direct_manifest.sh"]
 RUN if [ "$ACTIVE_ENV" = "prod" ]; then rm /src/.well-known/smart/manifest.json; mv /src/.well-known/smart/manifest.prod.json /src/.well-known/smart/manifest.json; elif [ "$ACTIVE_ENV" = "test" ]; then rm /src/.well-known/smart/manifest.json; mv /src/.well-known/smart/manifest.test.json /src/.well-known/smart/manifest.json; fi
 RUN npm install
+RUN cat /src/.well-known/smart/manifest.json
 CMD [ "npm", "run", "serve" ]
