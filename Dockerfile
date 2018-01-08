@@ -8,3 +8,5 @@ ENV ACTIVE_ENV=$ACTIVE_ENV
 ADD direct_manifest.sh /root/direct_manifest.sh
 RUN chmod +x direct_manifest.sh
 CMD ["./direct_manifest.sh"]
+RUN npm install
+CMD [ "npm", "run", "serve" ]
