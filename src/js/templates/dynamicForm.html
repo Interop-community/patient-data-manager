@@ -1,8 +1,8 @@
 <div class="form-group">
     <div class="dynamic-form-header" ng-hide="isModal">
         <a href='#' class='float-right-dark-btn' ng-click="closeDetailView()"><i class='fa fa-remove fa-lg'></i></a>
-        <a href='#' class='float-right-dark-btn' ng-click="requestUpdateResource()"><i class='fa fa-save fa-lg'></i></a>
-        <a href='#' class='float-right-dark-btn' ng-click="openModalDialog('clone')"><i class='fa fa-copy fa-lg'></i></a>
+        <a href='#' class='float-right-dark-btn' ng-click="requestUpdateResource()" ng-if="writePermission"><i class='fa fa-save fa-lg'></i></a>
+        <a href='#' class='float-right-dark-btn' ng-click="openModalDialog('clone')" ng-if="writePermission"><i class='fa fa-copy fa-lg'></i></a>
         <a href='#' class='float-right-dark-btn' ng-click="json()"><i class='fa fa-file-text-o fa-lg'></i></a>
         <a href='#' tabindex="0" uib-popover-template="'js/templates/detailPopover.html'" popover-trigger="focus" popover-placement="bottom" class='float-right-dark-btn'><i class='fa fa-ellipsis-h fa-lg'></i></a>
     </div>
@@ -15,7 +15,7 @@
                 <label class="dynamic-form-label short">{{reference.label}}</label>
                 <label ng-show="reference.relativeUrl === 'Not Set'" class="dynamic-form-label short">{{reference.relativeUrl}}</label>
                 <a ng-show="reference.relativeUrl !== 'Not Set'" href='#' class="dynamic-form-hyperlink short" ng-click="resourceReferenceSelected(reference)">{{reference.relativeUrl}}</a>
-                <a ng-show="reference.resource !== 'Patient'" class='dynamic-form-edit float-right-dark-btn' ng-click="resourceChooser(reference)"><i class='fa fa-pencil fa-lg'></i></a>
+                <a ng-show="reference.resource !== 'Patient'" ng-if="writePermission" class='dynamic-form-edit float-right-dark-btn' ng-click="resourceChooser(reference)"><i class='fa fa-pencil fa-lg'></i></a>
 
             </div>
 

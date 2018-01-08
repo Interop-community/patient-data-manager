@@ -4,6 +4,8 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
     ['$scope', '$rootScope','$filter', "$uibModal", "$fhirApiServices", "$terminology", "$dynamicModelHelpers", "$resourceBuilderHelpers", "$resourceJson",
     function ($scope, $rootScope, $filter, $uibModal, $fhirApiServices, $terminology, $dynamicModelHelpers, $resourceBuilderHelpers, $resourceJson ) {
 
+        $scope.writePermission = true; //Disables all interactions that involve manipulating the resources, if false
+
         $scope.dmh = $dynamicModelHelpers;
         var rbh = $resourceBuilderHelpers;
 
@@ -30,6 +32,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.searchBar = false;
         $scope.detailView = false;
         $scope.patientInfo = true;
+        $scope.patient = null;
         $scope.showFRED = false;
         $scope.showViewToggle = false;
         $scope.resourceSet = 'Patient';
@@ -330,7 +333,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             var messageQueue = [];
             function beginEdit(){
                 messageQueue.push(initialValue);
-                fredWindow = window.open('fred/index.html?remote=1', 'fredwin');
+                fredWindow = window.open('fred/app.html?remote=1', 'fredwin');
                 console.log();
             }
 
@@ -654,6 +657,12 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          *
          **/
         FHIR.oauth2.ready(function(smart){
+            //First check to see if the user has writing privilege, if not, disable those features
+            var scope = smart.tokenResponse.scope;
+            if(!scope.includes(".write")&&!scope.includes(".*")) {
+                $scope.writePermission = false;
+            }
+
             $fhirApiServices.setFhirClient(smart);
             $scope.smart = smart;
             $terminology.setUrlBase(smart);
@@ -691,6 +700,11 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 });
         });
 
+      // Redirects the page to a "marketing" page if not launched in an EHR/Sandbox environment
+      if($scope.patient==null) {
+        // window.location.href = '/index.html';
+      }
+
     }]).controller('ModalInstanceCtrl',['$scope', '$uibModalInstance', "$terminology", "$dynamicModelHelpers", "getNewResource", "getSelectedResourceTypeConfig", "isCreate", "isReadOnly",
     function ($scope, $uibModalInstance, $terminology, $dynamicModelHelpers, getNewResource, getSelectedResourceTypeConfig, isCreate, isReadOnly) {
 
@@ -700,7 +714,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.isModal = true;
         $scope.isCreate = isCreate;
         $scope.isReadOnly = isReadOnly;
-        $scope.dynamicFormTemplate = 'js/templates/dynamicFormInput.html';
+        $scope.dynamicFormTemplate = 'js/templates/dynamicFormInputModal.html';
 
         if (isReadOnly){
             $scope.dynamicFormTemplate = 'js/templates/dynamicFormReadOnly.html';
@@ -978,4 +992,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
         }
 
+
     });
+

@@ -1,6 +1,6 @@
 [
   {
-    "name": "hspc-patient-data-manager",
+    "name": "{{$PROJECT_NAME}}",
     "image": "nexus.hspconsortium.org:18083/hspc/hspc-patient-data-manager:1.0.4",
     "cpu": 0,
     "portMappings": [

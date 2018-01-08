@@ -1,86 +1,84 @@
 <!DOCTYPE html>
-<html lang="en" ng-app="pdmApp">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<title>Patient Data Manager</title>
-        <link href="images/favicon.ico" rel="icon" type="image/x-icon" />
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Patient Data Manager</title>
+    <link href="images/favicon.ico" rel="icon" type="image/x-icon" />
 
-        <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
-        <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
-        <link rel="stylesheet" href="css/app.css">
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
+    <link rel="stylesheet" href="css/app.css">
+    <script>
+      var config = require('config');
+      //...
+      var dbConfig = config.get('Customer.dbConfig');
+      console.log(dbConfig);
+      // db.connect(dbConfig, ...);
 
-        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-		<!--[if lt IE 9]>
-			<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-			<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-
-		<![endif]-->
-    </head>
-	<body ng-controller="pdmCtrl">
-
-    <div layout="column" class="layout-template">
-        <div class="navbar" ng-cloak>
-            <div><img src="https://content.hspconsortium.org/images/hspc/logo/hspc-logo-main-web-top.png" srcset="https://content.hspconsortium.org/images/hspc/logo/hspc-logo-main-web-top@2x.png 2x"/></div>
-            <div class="navbar-center-title" center ng-style="centerWithOffset(160)">Patient Data Manager</div>
-            <div ng-show=patientInfo class="pull-right" ng-cloak>
-                <div class="navbar-stack-top">
-                    <div class="navbar-brand"><span class="glyphicon glyphicon-user"></span>{{patient.name}}</div>
-                    <div class="navbar-text">gender <span class="title">{{patient.sex}}</span></div>
-                </div>
-                <div class="navbar-stack-bottom">
-                    <div class="navbar-text">dob <span class="title">{{patient.dob | date: 'dd MMM yyyy'}}</span></div>
-                    <div class="navbar-text">age <span class="title">{{patient.dob | age}}</span></div>
-                </div>
-            </div>
+      if (config.has('optionalFeature.detail')) {
+        var detail = config.get('optionalFeature.detail');
+        console.log(detail);
+      }
+    </script>
+</head>
+<body>
+    <div class="navbar">
+        <div><img src="https://content.hspconsortium.org/images/hspc/logo/hspc-logo-main-web-top.png" srcset="https://content.hspconsortium.org/images/hspc/logo/hspc-logo-main-web-top@2x.png 2x"/></div>
+        <!--<div class="gallery_image"><a href="https://gallery.hspconsortium.org/#/app-gallery" target="_blank">-->
+            <!--<img src="https://content.hspconsortium.org/images/hspc-gallery/logo/hspc-gallery-logo@2x.png" height="10px" width="200px">-->
+        <!--</a></div>-->
+        <div class="index_button">
+            <a href="https://gallery.hspconsortium.org/#/app-gallery" target="_blank">
+                <button>Open in the HSPC Gallery</button>
+            </a>
         </div>
+        <div class="index_header">Patient Data Manager</div>
 
-        <div layout="row" class="layout-template" ng-style="resizeWithOffset(80)" ng-cloak>
-            <div class="sidebar" ng-include src="'js/templates/resourceGroupList.html'"></div>
-            <div layout="column" class="layout-template">
-                <div class="search-bar" ng-show="searchBar">
-                    <div class="search-label"><label>Search</label></div>
-                    <div class="search-field typeahead">
-                        <input ng-show="selectedResourceTypeConfig.search.searchParams[0].codedUri" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch"
-                               uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue, 3, selectedResourceTypeConfig.search.searchParams[0].codedUri)"
-                               typeahead-on-select="enteredSearch = $item.display">
-
-                        <input ng-hide="selectedResourceTypeConfig.search.searchParams[0].codedUri" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch">
-                        <a href='#' class='undo-icon' ng-show="enteredSearch != ''" ng-click="requestResourceSearch('clear')"><i class='fa fa-remove fa-lg'></i></a>
-                        <a href='#' class='search-icon' ng-click="requestResourceSearch()"><i class='fa fa-search fa-lg'></i></a>
+        <!--<div class="navbar-stack-sign-in">-->
+            <!--<a id="signin"><i class="fa fa-sign-in"></i> Sign In</a>-->
+        <!--</div>-->
+    </div>
+    <div class="index_outside_navbar">
+        <div class="index_body">
+            <div class="screenshot">
+                <a class="zoombox" href="#image">
+                    <img src="images/interface_example.png">
+                </a>
+            </div>
+            <div class="index_body_side">
+                The Patient Data Manager is a tool used to search, edit, and create FHIR resources tied to a given patient.
+                The interface allows for easy navigation and guided resource creation.
+                Users don’t need to be FHIR standard experts since the tool takes care of the FHIR knowledge for them.
+                The app requires SMART OAuth2 access to patient data through an EHR or test Sandbox.
+                <br />
+                <br />
+                Tasks include:
+                <ul>
+                    <li>Viewing FHIR resources tied to a patient</li>
+                    <li>Creating and removing FHIR resource instances</li>
+                    <li>Exporting FHIR resources in JSON format</li>
+                </ul>
+                <div class="index_body_side_specs">
+                    <div class="specs_instance">
+                        Designed for
+                        <div class="specs_instance_def">Clinicians, Resource Developers, & Patients</div>
+                    </div>
+                    <div class="specs_instance">
+                        FHIR Compatibility
+                        <div class="specs_instance_def">DSTU 3</div>
                     </div>
                 </div>
-                <div ng-include src="'js/templates/dynamicTable.html'"></div>
-            </div>
-            <div class="detail-panel" ng-show="detailView">
-                <div ng-include src="'js/templates/dynamicForm.html'"></div>
             </div>
         </div>
     </div>
-    <div class="message_area" style="top: 5px;">
-        <div notification ng-repeat="message in messages"></div>
+    <div class="zoombox-target" id="image">
+        <img src="images/interface_example.png">
+        <a class="zoombox-close" href=""></a>
     </div>
 
-    <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-animate.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-aria.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-messages.min.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular-sanitize.js"></script>
-    <script src="//ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.js"></script>
 
-    <script src="//angular-ui.github.io/bootstrap/ui-bootstrap-tpls-0.14.3.js"></script>
-    <script src="third-party-libs/moment/moment.min.js"></script>
-    <script src="fhir-client/underscore-min.js"></script>
-    <script src="fhir-client/fhir-client.js"></script>
-    <script src="js/app.js"></script>
-    <script src="js/services.js"></script>
-    <script src="js/controllers.js"></script>
-    <script src="js/filters.js"></script>
-    <script src="js/directives.js"></script>
-    <script src="third-party-libs/smart-table.min.js"></script>
-    </body>
+</body>
 </html>
