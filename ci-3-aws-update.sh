@@ -3,7 +3,6 @@
 set -e
 
 echo "starting ci-3-aws-update.sh..."
-
 export TASK_VERSION=$(aws ecs register-task-definition --family $1 --container-definitions $(cat container-definitions_test.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
 echo "TASK_VERSION: $TASK_VERSION"
 

@@ -11,35 +11,16 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
     <link rel="stylesheet" href="css/app.css">
-    <script>
-      var config = require('config');
-      //...
-      var dbConfig = config.get('Customer.dbConfig');
-      console.log(dbConfig);
-      // db.connect(dbConfig, ...);
-
-      if (config.has('optionalFeature.detail')) {
-        var detail = config.get('optionalFeature.detail');
-        console.log(detail);
-      }
-    </script>
 </head>
 <body>
     <div class="navbar">
-        <div><img src="https://content.hspconsortium.org/images/hspc/logo/hspc-logo-main-web-top.png" srcset="https://content.hspconsortium.org/images/hspc/logo/hspc-logo-main-web-top@2x.png 2x"/></div>
-        <!--<div class="gallery_image"><a href="https://gallery.hspconsortium.org/#/app-gallery" target="_blank">-->
-            <!--<img src="https://content.hspconsortium.org/images/hspc-gallery/logo/hspc-gallery-logo@2x.png" height="10px" width="200px">-->
-        <!--</a></div>-->
+        <img src="./images/company-logo.png">
         <div class="index_button">
             <a href="https://gallery.hspconsortium.org/#/app-gallery" target="_blank">
                 <button>Open in the HSPC Gallery</button>
             </a>
         </div>
         <div class="index_header">Patient Data Manager</div>
-
-        <!--<div class="navbar-stack-sign-in">-->
-            <!--<a id="signin"><i class="fa fa-sign-in"></i> Sign In</a>-->
-        <!--</div>-->
     </div>
     <div class="index_outside_navbar">
         <div class="index_body">
