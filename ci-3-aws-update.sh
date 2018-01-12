@@ -3,7 +3,7 @@
 set -e
 
 echo "starting ci-3-aws-update.sh..."
-
+                       (aws ecs register-task-definition --family bilirubin-risk-chart --container-definitions $(cat container-definitions_prod.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
 export TASK_VERSION=$(aws ecs register-task-definition --family $1 --container-definitions $(cat container-definitions_test.json | jq -c '.')  | jq --raw-output '.taskDefinition.revision')
 echo "TASK_VERSION: $TASK_VERSION"
 
