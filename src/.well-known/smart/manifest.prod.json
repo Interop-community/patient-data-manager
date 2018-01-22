@@ -2,8 +2,8 @@
   "software_id": "org.hspconsortium.sandbox:hspc-patient-data-manager:1.0-SNAPSHOT",
   "client_name": "Patient Data Manager",
   "client_uri": "https://patient-data-manager.hspconsortium.org/index.html",
-  "logo_uri": "https://content.hspconsortium.org/images/hspc-patient-data-manager/logo/pdm.png",
-  "launch_url": "http://patient-data-manager.hspconsortium.org/launch.html",
+  "logo_uri": "https://patient-data-manager.hspconsortium.org/images/interface_example.png",
+  "launch_url": "https://patient-data-manager.hspconsortium.org/launch.html",
   "redirect_uris": [
     "https://patient-data-manager.hspconsortium.org/app.html"
   ],
