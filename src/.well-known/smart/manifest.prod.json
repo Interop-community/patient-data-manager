@@ -1,11 +1,11 @@
 {
   "software_id": "org.hspconsortium.sandbox:hspc-patient-data-manager:1.0-SNAPSHOT",
   "client_name": "Patient Data Manager",
-  "client_uri": "http://patient-data-manager.hspconsortium.org/index.html",
-  "logo_uri": "https://content.hspconsortium.org/images/hspc-patient-data-manager/logo/pdm.png",
-  "launch_url": "http://patient-data-manager.hspconsortium.org/launch.html",
+  "client_uri": "https://patient-data-manager.hspconsortium.org/index.html",
+  "logo_uri": "https://patient-data-manager.hspconsortium.org/images/interface_example.png",
+  "launch_url": "https://patient-data-manager.hspconsortium.org/launch.html",
   "redirect_uris": [
-    "http://patient-data-manager.hspconsortium.org/app.html"
+    "https://patient-data-manager.hspconsortium.org/app.html"
   ],
   "scope": "launch online_access patient/*.read patient/*.write",
   "token_endpoint_auth_method": "none",
@@ -16,3 +16,6 @@
     "1.0.2", "1.4.0", "1.6.0", "1.8.0", "3.0.1"
   ]
 }
+
+
+
