@@ -1,22 +1,22 @@
 {
-  "family": "ehr-app-test",
+  "family": "TBD",
   "containerDefinitions": [
     {
-      "name": "ehr-app-test",
-      "image": "hspconsortium/ehr-app:0.2.0-SNAPSHOT",
+      "name": "TBD",
+      "image": "TBD",
       "cpu": 0,
       "portMappings": [
         {
-          "containerPort": 3000,
+          "containerPort": 0,
           "hostPort": 0,
           "protocol": "tcp"
         }
       ],
-      "memoryReservation": 100,
+      "memoryReservation": 0,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/ehr-app-test",
+          "awslogs-group": "TBD",
           "awslogs-region": "us-west-2",
           "awslogs-stream-prefix": "ecs"
         }

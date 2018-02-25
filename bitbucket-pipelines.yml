@@ -18,7 +18,7 @@ pipelines:
             - node
           script:
             - export ACTIVE_ENV=test
-            - export PROJECT_NAME=ehr-app
+            - export PROJECT_NAME=patient-data-manager
             - cd ci
             - . ci-0-set-properties.sh
             - . ci-1-prepare-sources.sh
@@ -29,7 +29,7 @@ pipelines:
             - node
           script:
             - export ACTIVE_ENV=test
-            - export PROJECT_NAME=ehr-app
+            - export PROJECT_NAME=patient-data-manager
             - cd ci
             - . ci-0-set-properties.sh
             - . ci-3-aws-task-update.sh
@@ -39,7 +39,7 @@ pipelines:
             - node
           script:
             - export ACTIVE_ENV=test
-            - export PROJECT_NAME=ehr-app
+            - export PROJECT_NAME=patient-data-manager
             - . ci/ci-0-set-properties.sh
             - . ci/ci-4-aws-service-update.sh
     master:
@@ -49,7 +49,7 @@ pipelines:
             - node
           script:
             - export ACTIVE_ENV=prod
-            - export PROJECT_NAME=ehr-app
+            - export PROJECT_NAME=patient-data-manager
             - cd ci
             - . ci-0-set-properties.sh
             - . ci-1-prepare-sources.sh
@@ -60,7 +60,7 @@ pipelines:
             - node
           script:
             - export ACTIVE_ENV=prod
-            - export PROJECT_NAME=ehr-app
+            - export PROJECT_NAME=patient-data-manager
             - cd ci
             - . ci-0-set-properties.sh
             - . ci-3-aws-task-update.sh
@@ -71,7 +71,7 @@ pipelines:
           trigger: manual
           script:
             - export ACTIVE_ENV=prod
-            - export PROJECT_NAME=ehr-app
+            - export PROJECT_NAME=patient-data-manager
             - . ci/ci-0-set-properties.sh
             - . ci/ci-4-aws-service-update.sh
     feature/*:
