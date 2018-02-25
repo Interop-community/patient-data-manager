@@ -3,32 +3,22 @@
 echo "running $0..."
 
 if [ $# -eq 6 ]; then
-    echo "usage: $0 {template-file} {project-name} {docker-image-coordinates} {project-port} {aws-container-memory-reserve}";
+    echo "usage: $0 {project-name} {docker-image-coordinates} {project-port} {aws-container-memory-reserve}";
     exit 1;
 fi
 
-if ! [ -s "${1}" ]
-then
-  echo "${1} is empty!"
-  exit 1
-end
-fi
+TEMPLATE_FILE="../aws/task-definition.json"
 
 set -x
 
-echo "dynamically fix ${1}"
-jq ".family=\"${2}\"" ${1} > tmp.json && mv tmp.json ${1}
-jq ".containerDefinitions[0].name=\"${2}\"" ${1} > tmp.json && mv tmp.json ${1}
-jq ".containerDefinitions[0].image=\"${3}\"" ${1} > tmp.json && mv tmp.json ${1}
-jq ".containerDefinitions[0].portMappings[0].containerPort=(${4} | tonumber)" ${1} > tmp.json && mv tmp.json ${1}
-jq ".containerDefinitions[0].memoryReservation=(${5} | tonumber)" ${1} > tmp.json && mv tmp.json ${1}
-jq ".containerDefinitions[0].logConfiguration.options.awslogs-group=\"/ecs/${2}\"" ${1} > tmp.json && mv tmp.json ${1}
+echo "dynamically fix ${TEMPLATE_FILE}"
+jq ".family=\"${1}\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
+jq ".containerDefinitions[0].name=\"${1}\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
+jq ".containerDefinitions[0].image=\"${2}\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
+jq ".containerDefinitions[0].portMappings[0].containerPort=(${3} | tonumber)" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
+jq ".containerDefinitions[0].memoryReservation=(${4} | tonumber)" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
+jq ".containerDefinitions[0].logConfiguration.options.awslogs-group=\"/ecs/${1}\"" ${TEMPLATE_FILE} > tmp.json && mv tmp.json ${TEMPLATE_FILE}
 
-if ! [ -s "${1}" ]
-then
-  echo "${1} is empty!"
-  exit 1
-end
-fi
+cat ${TEMPLATE_FILE}
 
 echo "finished $0"

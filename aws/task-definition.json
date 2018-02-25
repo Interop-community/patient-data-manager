@@ -1,23 +1,23 @@
 {
-  "family": "patient-data-manager-prod",
+  "family": "TBD",
   "containerDefinitions": [
     {
-      "name": "patient-data-manager-prod",
-      "image": "hspconsortium/patient-data-manager:1.2.0-SNAPSHOT",
+      "name": "TBD",
+      "image": "TBD",
       "cpu": 0,
       "portMappings": [
         {
-          "containerPort": 8096,
+          "containerPort": 0,
           "hostPort": 0,
           "protocol": "tcp"
         }
       ],
-      "memoryReservation": 100,
+      "memoryReservation": 0,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "/ecs/patient-data-manager-prod",
-          "awslogs-region": "us-west-2",
+          "awslogs-group": "TBD",
+          "awslogs-region": "TBD",
           "awslogs-stream-prefix": "ecs"
         }
       },
