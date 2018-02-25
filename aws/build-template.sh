@@ -22,6 +22,7 @@ jq ".containerDefinitions[0].name=\"${2}\"" ${1} > tmp.json && mv tmp.json ${1}
 jq ".containerDefinitions[0].image=\"${3}\"" ${1} > tmp.json && mv tmp.json ${1}
 jq ".containerDefinitions[0].portMappings[0].containerPort=(${4} | tonumber)" ${1} > tmp.json && mv tmp.json ${1}
 jq ".containerDefinitions[0].memoryReservation=(${5} | tonumber)" ${1} > tmp.json && mv tmp.json ${1}
+jq ".containerDefinitions[0].logConfiguration.options.awslogs-group=\"/ecs/${2}\"" ${1} > tmp.json && mv tmp.json ${1}
 
 if ! [ -s "${1}" ]
 then

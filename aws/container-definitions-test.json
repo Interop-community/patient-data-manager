@@ -1,4 +1,5 @@
 {
+  "executionRoleArn": "arn:aws:iam::657600230790:role/ecsServiceRole",
   "family": "patient-data-manager-test",
   "containerDefinitions": [
     {
@@ -13,6 +14,14 @@
         }
       ],
       "memoryReservation": 100,
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/patient-data-manager-test",
+          "awslogs-region": "us-west-2",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
       "essential": true
     }
   ]
