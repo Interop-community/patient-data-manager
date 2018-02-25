@@ -1,6 +1,11 @@
 {
   "name": "hspc-patient-data-manager",
   "version": "1.2.0-SNAPSHOT",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://bitbucket.org/hspconsortium/patient-data-manager.git"
+  },
   "scripts": {
     "serve": "./node_modules/http-server/bin/http-server src -p 8096 --cors"
   },
@@ -9,5 +14,9 @@
   },
   "devDependencies": {
     "http-server": "^0.10.0"
+  },
+  "config": {
+    "port": "8096",
+    "memory": "100"
   }
 }

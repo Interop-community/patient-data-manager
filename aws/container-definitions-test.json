@@ -1,0 +1,19 @@
+{
+  "family": "patient-data-manager-test",
+  "containerDefinitions": [
+    {
+      "name": "patient-data-manager-test",
+      "image": "hspconsortium/patient-data-manager:1.2.0-SNAPSHOT",
+      "cpu": 0,
+      "portMappings": [
+        {
+          "containerPort": 8096,
+          "hostPort": 0,
+          "protocol": "tcp"
+        }
+      ],
+      "memoryReservation": 100,
+      "essential": true
+    }
+  ]
+}
