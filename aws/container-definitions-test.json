@@ -1,5 +1,4 @@
 {
-  "executionRoleArn": "arn:aws:iam::657600230790:role/ecsServiceRole",
   "family": "patient-data-manager-test",
   "containerDefinitions": [
     {
