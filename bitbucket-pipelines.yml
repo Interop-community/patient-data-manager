@@ -17,82 +17,80 @@ pipelines:
           caches:
             - node
           script:
-            - export ACTIVE_ENV=test
-            - export PROJECT_NAME=patient-data-manager
+            - export TARGET_ENV=test
             - cd ci
             - . ci-0-set-properties.sh
             - . ci-1-prepare-sources.sh
-            - . ci-2-docker-image.sh
+            - . ci-2-build-project.sh
+            - . ci-3-docker-image.sh
+          artifacts:
+            - aws/task-definition.json
       - step:
           name: update the aws task definition
           caches:
             - node
           script:
-            - export ACTIVE_ENV=test
-            - export PROJECT_NAME=patient-data-manager
+            - export TARGET_ENV=test
             - cd ci
             - . ci-0-set-properties.sh
-            - . ci-3-aws-task-update.sh
+            - . ci-4-aws-task-update.sh
       - step:
           name: update the aws service
+          deployment: test
           caches:
             - node
           script:
-            - export ACTIVE_ENV=test
-            - export PROJECT_NAME=patient-data-manager
-            - . ci/ci-0-set-properties.sh
-            - . ci/ci-4-aws-service-update.sh
+            - export TARGET_ENV=test
+            - cd ci
+            - . ci-0-set-properties.sh
+            - . ci-5-aws-service-update.sh
     master:
       - step:
           name: build docker and upload to docker hub
           caches:
             - node
           script:
-            - export ACTIVE_ENV=prod
-            - export PROJECT_NAME=patient-data-manager
+            - export TARGET_ENV=prod
             - cd ci
             - . ci-0-set-properties.sh
             - . ci-1-prepare-sources.sh
-            - . ci-2-docker-image.sh
+            - . ci-2-build-project.sh
+            - . ci-3-docker-image.sh
+          artifacts:
+            - aws/task-definition.json
       - step:
           name: update the aws task definition
           caches:
             - node
           script:
-            - export ACTIVE_ENV=prod
-            - export PROJECT_NAME=patient-data-manager
+            - export TARGET_ENV=prod
             - cd ci
             - . ci-0-set-properties.sh
-            - . ci-3-aws-task-update.sh
+            - . ci-4-aws-task-update.sh
       - step:
           name: update the aws service
+          deployment: production
+          trigger: manual
           caches:
             - node
-          trigger: manual
           script:
-            - export ACTIVE_ENV=prod
-            - export PROJECT_NAME=patient-data-manager
-            - . ci/ci-0-set-properties.sh
-            - . ci/ci-4-aws-service-update.sh
+            - export TARGET_ENV=prod
+            - cd ci
+            - . ci-0-set-properties.sh
+            - . ci-5-aws-service-update.sh
     feature/*:
       - step:
           name: build the source code
-          caches:
-            - node
           script:
             - echo "success"
     release/*:
       - step:
           name: build the source code
-          caches:
-            - node
           script:
             - echo "success"
     hotfix/*:
       - step:
           name: build the source code
-          caches:
-            - node
           script:
             - echo "success"
 options:

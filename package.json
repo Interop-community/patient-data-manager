@@ -7,7 +7,7 @@
     "url": "https://bitbucket.org/hspconsortium/patient-data-manager.git"
   },
   "scripts": {
-    "serve": "./node_modules/http-server/bin/http-server src -p 8096 --cors"
+    "serve": "./node_modules/http-server/bin/http-server src -p $npm_package_config_port --cors"
   },
   "dependencies": {
     "config": "^1.29.0"
