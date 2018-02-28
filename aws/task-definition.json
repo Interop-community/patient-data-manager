@@ -3,7 +3,7 @@
   "containerDefinitions": [
     {
       "name": "patient-data-manager-test",
-      "image": "hspconsortium/patient-data-manager:1.3.0-SNAPSHOT",
+      "image": "hspconsortium/patient-data-manager:1.3.0",
       "cpu": 0,
       "portMappings": [
         {
