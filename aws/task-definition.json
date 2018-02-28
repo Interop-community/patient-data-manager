@@ -1,27 +1,41 @@
 {
-  "family": "TBD",
+  "family": "patient-data-manager-test",
   "containerDefinitions": [
     {
-      "name": "TBD",
-      "image": "TBD",
+      "name": "patient-data-manager-test",
+      "image": "hspconsortium/patient-data-manager:1.3.0",
       "cpu": 0,
       "portMappings": [
         {
-          "containerPort": 0,
+          "containerPort": 8096,
           "hostPort": 0,
           "protocol": "tcp"
         }
       ],
-      "memoryReservation": 0,
+      "memoryReservation": 100,
       "logConfiguration": {
         "logDriver": "awslogs",
         "options": {
-          "awslogs-group": "TBD",
+          "awslogs-group": "/ecs/patient-data-manager-test",
           "awslogs-region": "us-west-2",
           "awslogs-stream-prefix": "ecs"
         }
       },
-      "essential": true
+      "essential": true,
+      "environment": [
+        {
+          "name": "JASYPT_ENCRYPTOR_PASSWORD",
+          "value": ""
+        },
+        {
+          "name": "SPRING_PROFILES_ACTIVE",
+          "value": ""
+        },
+        {
+          "name": "TARGET_ENV",
+          "value": "test"
+        }
+      ]
     }
   ]
 }
