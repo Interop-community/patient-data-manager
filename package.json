@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "config": "^1.29.0"
-  },  
+  },
   "devDependencies": {
     "http-server": "^0.10.0"
   },

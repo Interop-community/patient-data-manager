@@ -333,7 +333,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             var messageQueue = [];
             function beginEdit(){
                 messageQueue.push(initialValue);
-                fredWindow = window.open('fred/app.html?remote=1', 'fredwin');
+                fredWindow = window.open('fred?remote=1', 'fredwin');
                 console.log();
             }
 
