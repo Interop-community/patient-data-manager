@@ -683,6 +683,8 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                         schemaVersion = 3;
                     } else if (version === "3.0.1")  {
                         schemaVersion = 4;
+                    } else if (version === "3.2.0")  {
+                        schemaVersion = 5;
                     }
                     $resourceJson.getResources(schemaVersion).done(function(resources){
                         $scope.resourceTypeConfigList = resources;
