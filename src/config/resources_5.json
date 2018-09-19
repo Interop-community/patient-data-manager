@@ -42,7 +42,12 @@
         "displayValues" : [
             {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Observation ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-codes" },
-            {"type": "datetime", "name": "effectiveDate", "label": "Effective Date" , "required": true, "path": "effectiveDateTime", "default": "", "view": "master"},
+            {"type": "variable", "name": "variable", "namePrefix": "effective", "label": "Effective Date(s)", "path":"", "choiceLabel": "Effective Date(s)", "view": "master",
+                "dataTypes" : [
+                    {"type": "datetime", "name": "DateTime", "labelPrefix": "Effective Date "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Effective Date "}
+                ]
+            },
             {"type": "variable", "name": "variable", "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type", "view": "master",
                 "dataTypes" : [
                     {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Value "},
@@ -55,9 +60,13 @@
                     {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Value "}
                 ]},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Category ", "path":"category.0", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-category" },
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Interpretation ", "path":"interpretation", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-interpretation" },
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["final", "registered", "preliminary", "amended","cancelled", "entered-in-error", "unknown"],
                 "path": "status", "default": "final", "view": "detail"}
+        ],
+        "backboneElements" : [
+            {"type": "referenceRange", "name": "BackboneElementParticipant", "labelPrefix": "Reference Range ", "path":"referenceRange", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
@@ -224,7 +233,8 @@
                 "path": "taken", "default": "y", "view": "master"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["active", "completed", "entered-in-error", "intended", "stopped", "on-hold"],
-                "path": "status", "default": "active", "view": "master"}
+                "path": "status", "default": "active", "view": "master"},
+            {"type": "fhirDatatype", "name": "DateTime", "label": "Date Asserted" , "path": "dateAsserted", "default": "", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
@@ -322,7 +332,12 @@
             {"type": "select", "name": "status", "label": "Status",
                 "options": ["preparation", "in-progress", "suspended", "aborted", "completed", "entered-in-error", "unknown"],
                 "path": "status", "default": "in-progress", "view": "master"
-            }
+            },
+            {"type": "variable", "name": "variable", "namePrefix": "born", "label": "Performed", "path":"", "choiceLabel": "Born Type", "view": "detail",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Performed "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Performed "}
+                ]}
         ],
         "references": [
             {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
@@ -385,11 +400,12 @@
         "displayValues" : [
             {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Vaccine Code ", "path":"vaccineCode", "codedUri" : "http://hl7.org/fhir/ValueSet/vaccine-code"},
-            {"type": "datetime", "name": "date", "label": "Date" , "required": true, "path":"date", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "DateTime", "label": "Date" , "required": true, "path":"date", "default": "", "view": "master"},
             {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "Dose Quantity ", "path":"doseQuantity", "view": "detail"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["completed", "entered-in-error"],
-                "path": "status", "default": "completed", "view": "master"}
+                "path": "status", "default": "completed", "view": "master"},
+            {"type": "checkbox", "name": "wasNotGiven", "label": "Was Not Given", "path": "wasNotGiven", "default": "false", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "patient.reference"},
@@ -584,6 +600,49 @@
                 }
             ]
         }
+    },
+    {
+        "resource": "FamilyMemberHistory",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
+            {"type": "date", "name": "date", "label": "Date" , "required": true, "path":"date", "default": "", "view": "master"},
+            {"type": "text", "name": "name", "label": "Name" , "required": true, "path": "name", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Relationship ", "path":"relationship", "codedUri" : "http://hl7.org/fhir/ValueSet/v3-FamilyMember"},
+            {"type": "select", "name": "gender", "label": "Gender" ,
+                "options":["male", "female", "other", "unknown"],
+                "path": "gender", "default": "", "view": "detail"},
+            {"type": "text", "name": "note", "label": "Note" , "path": "name", "default": "", "view": "detail"},
+            {"type": "variable", "name": "variable", "namePrefix": "born", "label": "Born", "path":"", "choiceLabel": "Born Type", "view": "detail",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Born "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Born "},
+                    {"type": "text", "name": "String", "labelPrefix": "Born "}
+                ]},
+            {"type": "variable", "name": "variable", "namePrefix": "age", "label": "Age", "path":"", "choiceLabel": "Age Type", "view": "detail",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "Age", "labelPrefix": "Age "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Age "},
+                    {"type": "text", "name": "String", "labelPrefix": "Age "}
+                ]},
+            {"type": "variable", "name": "variable", "namePrefix": "deceased", "label": "Deceased", "path":"", "choiceLabel": "Deceased Type", "view": "detail",
+                "dataTypes" : [
+                    {"type": "select", "name": "Boolean", "labelPrefix": "Deceased ", "options":["true", "false"]},
+                    {"type": "fhirDatatype", "name": "Age", "labelPrefix": "Deceased "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Deceased "},
+                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Deceased "},
+                    {"type": "text", "name": "String", "labelPrefix": "Deceased "}
+                ]},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["partial", "completed", "entered-in-error", "health-unknown"],
+                "path": "status", "default": "completed", "view": "detail"}
+        ],
+        "backboneElements" : [
+            {"type": "Condition", "name": "BackboneElementParticipant", "labelPrefix": "Condition ", "path":"condition", "view": "detail"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "patient.reference"}
+        ]
     },
     {
         "resource" : "Medication",
