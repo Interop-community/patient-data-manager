@@ -134,13 +134,25 @@ angular.module('pdmApp.filters', []).filter('age', function() {
                     return value.numerator.value + "/" + value.denominator.value + " " + value.numerator.unit;
                     break;
                 case 'Period':
-                    return $filter('date')(value.start, 'MM/dd/yyyy HH:mm') + " to " + $filter('date')(value.end, 'MM/dd/yyyy HH:mm');
+                	if (value.start.length > 10 && value.end.length > 10) {
+                        return $filter('date')(value.start, 'yyyy-MM-dd HH:mm') + " to " + $filter('date')(value.end, 'yyyy-MM-dd HH:mm')
+					} else {
+                		return value.start + " to " + value.end;
+					}
                     break;
                 case 'Date':
-                    return  $filter('date')(value, 'MM/dd/yyyy');
+                    if (value.length > 10) {
+                        return $filter('date')(value, 'yyyy-MM-dd HH:mm');
+                    } else {
+                        return $filter('date')(value, 'yyyy-MM-dd');
+                    }
                     break;
                 case 'DateTime':
-                    return  $filter('date')(value, 'MM/dd/yyyy HH:mm');
+                    if (value.length > 10) {
+                        return $filter('date')(value, 'yyyy-MM-dd HH:mm');
+                    } else {
+                        return $filter('date')(value, 'yyyy-MM-dd');
+                    }
                     break;
                 case 'Time':
                     return  $filter('date')(value, 'HH:mm');

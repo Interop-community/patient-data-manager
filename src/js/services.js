@@ -93,19 +93,26 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         dynamicModelHelpers.getDynamicModelByName = function(resource, attribute) {
 
             if (attribute.type !== 'variable') {
+
                 var model = dynamicModelHelpers.getDynamicModel(resource, attribute.path);
+                if (model === undefined) {
+                    return '';
+                }
 
                 if (attribute.type === "datetime") {
-                    return $filter('date')(model, 'MM/dd/yyyy HH:mm');
+                    if (model.length > 10) {
+                        return $filter('date')(model, 'yyyy-MM-dd HH:mm');
+                    } else {
+                        return $filter('date')(model, 'yyyy-MM-dd');
+                    }
                 } else if (attribute.type === "date") {
-                    return $filter('date')(model, 'MM/dd/yyyy');
+                    return $filter('date')(model, 'yyyy-MM-dd');
                 } else if (attribute.type === "time") {
                     return $filter('date')(model, 'HH:mm');
                 } else {
                     return model;
                 }
             } else {
-
                 var parent;
                 if (stringIsEmpty(attribute.path)) {
                     parent = resource;
@@ -176,9 +183,11 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         };
 
         dynamicModelHelpers.dataTypeChoiceChange = function(selectedDataType, previousSelectedDataType, selectedResourceInstance) {
+            var deferred = $.Deferred();
             if (selectedDataType !== previousSelectedDataType) {
                 if (previousSelectedDataType !== undefined && previousSelectedDataType !== "") {
                     delete selectedResourceInstance[previousSelectedDataType];
+                    deferred.resolve(selectedResourceInstance);
                 }
             }
         };
@@ -194,6 +203,11 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         };
 
         dynamicModelHelpers.getModelParent = function(obj,path) {
+            // Removes period at end when dealing with 'variable' types
+            if (path.slice(-1) === '.') {
+                path = path.slice(0, -1);
+            }
+
             var segs = path.split('.');
             var rootParent = obj;
             var parentStep = "";
@@ -217,6 +231,10 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         };
 
         dynamicModelHelpers.getModelLeaf = function(path) {
+            // Removes period at end when dealing with 'variable' types
+            if (path.slice(-1) === '.') {
+                path = path.slice(0, -1);
+            }
             var segs = path.split('.');
             return segs[segs.length-1];
         };
@@ -265,9 +283,9 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             angular.forEach(selectedResourceTypeConfig.displayValues, function (value) {
                 var newValue = dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)];
                 if (value.type === "datetime" && newValue !== undefined && newValue !== "") {
-                    dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)] = new Date($filter('date')(new Date(newValue), 'MM/dd/yyyy HH:mm')).toISOString();
+                    // dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)] = new Date($filter('date')(new Date(newValue), 'MM/dd/yyyy HH:mm')).toISOString();
                 } else if (value.type === "date" && newValue !== undefined && newValue !== "") {
-                    dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)] = new Date($filter('date')(new Date(newValue), 'MM/dd/yyyy')).toISOString();
+                    // dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)] = new Date($filter('date')(new Date(newValue), 'MM/dd/yyyy')).toISOString();
                 } else if (value.type === "time" && newValue !== undefined && newValue !== "") {
                     dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)] = new Date($filter('date')(new Date(newValue), 'HH:mm')).toISOString();
                 }
@@ -285,11 +303,11 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
                 }
                 if ((value.type === "datetime" || value.type === "date" || value.type === "time") && typeof newValue !== 'undefined') {
-                    var newDate = new Date(newValue);
-                    if (newValue.lastIndexOf("T00:00:00.000Z") != -1) {
-                        newDate.setHours(0,0,0,0);
-                    }
-                    dmh.getModelParent(resource, value.path)[ dmh.getModelLeaf(value.path) ] = newDate;
+                    // var newDate = new Date(newValue);
+                    // if (newValue.lastIndexOf("T00:00:00.000Z") != -1) {
+                    //     newDate.setHours(0,0,0,0);
+                    // }
+                    // dmh.getModelParent(resource, value.path)[ dmh.getModelLeaf(value.path) ] = newDate;
                 }
             });
             return resource;
@@ -304,7 +322,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                         // if there is a time component, then convert it to a date
                         // YYYY-MM-DDTHH:mm:ss.sssZ
                         if (resource[property].length > 10) {
-                            resource[property] = new Date(resource[property]);
+                            // resource[property] = new Date(resource[property]);
                         }
                         // otherwise leave it as a string
                         // ex: birthDate = "2015-10-20" not "2015-10-19T16:00:00.000-6000"
@@ -322,8 +340,8 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                 if (value.type === "variable") {
                     return;
                 } else if (value.type === "date" || value.type === "datetime" || value.type === "time") {
-                    newValue = new Date();
-                    newValue.setSeconds(0,0);
+                    // newValue = new Date();
+                    // newValue.setSeconds(0,0);
                 }
                 dmh.getModelParent(newResource, value.path)[ dmh.getModelLeaf(value.path) ] = newValue;
             });
