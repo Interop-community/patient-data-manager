@@ -234,7 +234,7 @@
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["active", "completed", "entered-in-error", "intended", "stopped", "on-hold"],
                 "path": "status", "default": "active", "view": "master"},
-            {"type": "fhirDatatype", "name": "DateTime", "label": "Date Asserted" , "path": "dateAsserted", "default": "", "view": "detail"}
+            {"type": "datetime", "name": "dateTime", "label": "Date Asserted" , "path": "dateAsserted", "default": "", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
