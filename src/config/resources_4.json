@@ -223,7 +223,7 @@
         "displayValues" : [
             {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Medication ", "path":"medicationCodeableConcept", "codedUri" : "http://hl7.org/fhir/ValueSet/medication-codes"},
-            {"type": "variable", "name": "variable", "namePrefix": "effective", "label": "Effective", "path":"", "choiceLabel": "Effective Type", "view": "master",
+            {"type": "variable", "name": "variable", "namePrefix": "effective", "label": "Effective", "path":"", "choiceLabel": "Effective Date(s)", "view": "master",
                 "dataTypes" : [
                     {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Effective "},
                     {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Effective "}
@@ -234,7 +234,7 @@
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["active", "completed", "entered-in-error", "intended", "stopped", "on-hold"],
                 "path": "status", "default": "active", "view": "master"},
-            {"type": "fhirDatatype", "name": "DateTime", "label": "Date Asserted" , "path": "dateAsserted", "default": "", "view": "detail"}
+            {"type": "datetime", "name": "dateTime", "label": "Date Asserted" , "path": "dateAsserted", "default": "", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
@@ -380,9 +380,9 @@
                 "options": ["preparation", "in-progress", "suspended", "aborted", "completed", "entered-in-error", "unknown"],
                 "path": "status", "default": "in-progress", "view": "master"
             },
-            {"type": "variable", "name": "variable", "namePrefix": "born", "label": "Performed", "path":"", "choiceLabel": "Born Type", "view": "detail",
+            {"type": "variable", "name": "variable", "namePrefix": "performed", "label": "Performed", "path":"", "choiceLabel": "Performed Dates(s)", "view": "detail",
                 "dataTypes" : [
-                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Performed "},
+                    {"type": "datetime", "name": "DateTime", "labelPrefix": "Performed "},
                     {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Performed "}
                 ]}
         ],
