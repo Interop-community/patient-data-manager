@@ -185,9 +185,9 @@
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["in-progress", "aborted", "completed", "entered-in-error"],
                 "path": "status", "default": "in-progress", "view": "master"},
-            {"type": "variable", "name": "variable", "namePrefix": "born", "label": "Performed", "path":"", "choiceLabel": "Born Type", "view": "detail",
+            {"type": "variable", "name": "variable", "namePrefix": "performed", "label": "Performed", "path":"", "choiceLabel": "Performed Dates(s)", "view": "detail",
                 "dataTypes" : [
-                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Performed "},
+                    {"type": "datetime", "name": "DateTime", "labelPrefix": "Performed "},
                     {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Performed "}
                 ]}
         ],
