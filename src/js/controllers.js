@@ -674,6 +674,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             var schemaVersion = 1;
             $fhirApiServices.queryFhirVersion(smart)
                 .done(function(version){
+                    debugger
                     if (version === "1.0.2") {
                         schemaVersion = 1;
                         $scope.showFRED = true;
@@ -683,7 +684,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                         schemaVersion = 3;
                     } else if (version === "3.0.1")  {
                         schemaVersion = 4;
-                    } else if (version === "3.2.0")  {
+                    } else if (version === "3.2.0" || version === "3.4.0")  {
                         schemaVersion = 5;
                     }
                     $resourceJson.getResources(schemaVersion).done(function(resources){
