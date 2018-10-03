@@ -674,7 +674,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             var schemaVersion = 1;
             $fhirApiServices.queryFhirVersion(smart)
                 .done(function(version){
-                    debugger
                     if (version === "1.0.2") {
                         schemaVersion = 1;
                         $scope.showFRED = true;
