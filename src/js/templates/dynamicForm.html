@@ -1,10 +1,7 @@
 <div class="form-group">
     <div class="dynamic-form-header" ng-hide="isModal">
         <a href='#' class='float-right-dark-btn' ng-click="closeDetailView()"><i class='fa fa-remove fa-lg'></i></a>
-        <a href='#' class='float-right-dark-btn' ng-click="requestUpdateResource()" ng-if="writePermission"><i class='fa fa-save fa-lg'></i></a>
-        <a href='#' class='float-right-dark-btn' ng-click="openModalDialog('clone')" ng-if="writePermission"><i class='fa fa-copy fa-lg'></i></a>
-        <a href='#' class='float-right-dark-btn' ng-click="json()"><i class='fa fa-file-text-o fa-lg'></i></a>
-        <a href='#' tabindex="0" uib-popover-template="'js/templates/detailPopover.html'" popover-trigger="focus" popover-placement="bottom" class='float-right-dark-btn'><i class='fa fa-ellipsis-h fa-lg'></i></a>
+        <a href='#' tabindex="0" uib-popover-template="'js/templates/detailPopover.html'" popover-trigger="focus" popover-placement="bottom" class='float-left-dark-btn'><i class='fa fa-bars fa-lg'></i></a>
     </div>
     <div class="details-form" ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)">
         <div ng-repeat="attribute in selectedResourceTypeConfig.displayValues" ng-class="{modalForm: isModal}">

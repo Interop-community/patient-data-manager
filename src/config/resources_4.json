@@ -79,10 +79,6 @@
                 "modifier": "text",
                 "codedUri" : "http://hl7.org/fhir/ValueSet/observation-codes"
             }],
-            "sortParams": [{
-                "name": "date",
-                "modifier": "asc"
-            }],
             "searchFilter":
             {
                 "name": "patient",

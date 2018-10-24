@@ -533,10 +533,22 @@ fieldset[disabled] .btn-basic.active {
     outline: none;
 }
 
-.float-right-dark-btn:hover{
+.float-left-dark-btn {
+    cursor:pointer;
+    float:left;
+    border: none;
+    outline: none;
+    padding-left: 8px;
+}
+
+.float-right-dark-btn:hover .float-left-dark-btn:hover {
     /*font-weight:bold;*/
     color: #a9a9a9;
     text-decoration: none;
+    outline: none;
+}
+
+.float-left-dark-btn:focus {
     outline: none;
 }
 

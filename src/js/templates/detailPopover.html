@@ -1,5 +1,5 @@
 <div><a href='#' class='popover-btn' ng-click="requestUpdateResource()" ng-if="writePermission"><i class='fa fa-save' ></i>Update</a></div>
-<div><a href='#' class='popover-btn' ng-click="openModalDialog('clone')" ng-if="writePermission"><i class='fa fa-copy'></i>Clone</a></div>
+<div><a href='#' class='popover-btn' ng-click="openModalDialog('clone')" ng-if="writePermission && selectedResourceType.resourceType !== 'Patient'"><i class='fa fa-copy'></i>Clone</a></div>
 <div><a href='#' class='popover-btn' ng-click="json()"><i class='fa fa-file-text-o'></i>JSON</a></div>
 <div><a href='#' ng-show="showFRED" class='popover-btn' ng-click="fred()"><i class='fa fa-file-text-o'></i>FRED</a></div>
 <div><a href='#' class='popover-btn' ng-click="export()"><i class='fa fa-download'></i>Export</a></div>
