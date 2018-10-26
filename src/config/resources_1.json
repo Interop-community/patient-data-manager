@@ -155,7 +155,14 @@
         "displayValues" : [
             {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Con ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-code"},
-            {"type": "dateTime", "name": "onsetDateTime", "label": "Onset Date Time" , "required": true, "path":"onsetDateTime", "default": "", "view": "master"},
+            {"type": "variable", "name": "variable", "namePrefix": "onset", "label": "Onset", "path":"", "choiceLabel": "Onset Date(s)", "view": "master",
+                "dataTypes" : [
+                    {"type": "datetime", "name": "DateTime", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Age", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "String", "labelPrefix": "Onset "}
+                ]},
             {"type": "date", "name": "dateRecorded", "label": "Date Recorded" , "path":"dateRecorded", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Severity ", "path":"severity", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-severity"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "label": "Category" , "labelPrefix": "Category ", "path": "category", "view": "detail"},

@@ -213,6 +213,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         $scope.json = function (){
             $scope.modalOpen = true;
+            $scope.selectedResourceInstance = rbh.formatAttributesFromUIForFhir($scope.selectedResourceTypeConfig, angular.copy($scope.selectedResourceInstance));
             $uibModal.open({
                 animation: true,
                 templateUrl: 'js/templates/jsonModal.html',
@@ -220,7 +221,8 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 resolve: {
                     getSettings: function () {
                         return {
-                            title:"JSON -" + $scope.selectedResourceInstance.resourceType,
+                            title:"JSON - " + $scope.selectedResourceInstance.resourceType,
+                            resourceTypeConfig:$scope.selectedResourceTypeConfig,
                             ok:"Close",
                             json:$scope.selectedResourceInstance,
                             callback:function(){ //setting callback
@@ -274,6 +276,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                                 title:"JSON",
                                 ok:"Close",
                                 json:exportedBundle,
+                                resourceTypeConfig:$scope.selectedResourceTypeConfig,
                                 callback:function(){ //setting callback
                                     $scope.modalOpen = false;
                                 }
@@ -752,12 +755,13 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 $uibModalInstance.close(result);
                 callback(result);
             };
-    }]).controller('JsonModalInstanceCtrl',['$scope', '$uibModalInstance', 'getSettings',
-    function ($scope, $uibModalInstance, getSettings) {
-
+    }]).controller('JsonModalInstanceCtrl',['$scope', '$uibModalInstance', '$resourceBuilderHelpers', 'getSettings',
+    function ($scope, $uibModalInstance, $resourceBuilderHelpers, getSettings) {
         $scope.title = (getSettings.title !== undefined) ? getSettings.title : "";
         $scope.json = (getSettings.json !== undefined) ? getSettings.json : "";
         $scope.ok = (getSettings.ok !== undefined) ? getSettings.ok : "Close";
+        $scope.resourceTypeConfig = (getSettings.resourceTypeConfig !== undefined) ? getSettings.json : "";
+        $scope.rbh = $resourceBuilderHelpers;
         var callback = (getSettings.callback !== undefined) ? getSettings.callback : null;
 
         $scope.close = function () {

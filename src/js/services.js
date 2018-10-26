@@ -114,7 +114,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                 }
             } else {
                 var parent;
-                if (stringIsEmpty(attribute.path)) {
+                if (isEmpty(attribute.path)) {
                     parent = resource;
                 } else {
                     parent = dynamicModelHelpers.getDynamicModel(resource, attribute.path);
@@ -138,7 +138,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         function getFhirDatatypeName(resource, attribute) {
 
             var parent;
-            if (stringIsEmpty(attribute.path)) {
+            if (isEmpty(attribute.path)) {
                 parent = resource;
             } else {
                 parent = dynamicModelHelpers.getModelParent(resource, attribute.path);
@@ -262,7 +262,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return string.slice(0, prefix.length) === prefix;
         }
 
-        function stringIsEmpty (string) {
+        function isEmpty (string) {
             return (typeof string === 'undefined' || string === "");
         }
 
@@ -289,11 +289,12 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                 } else if (value.type === "time" && newValue !== undefined && newValue !== "") {
                     dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)] = new Date($filter('date')(new Date(newValue), 'HH:mm')).toISOString();
                 }
-                if (stringIsEmpty(newValue)) {
+                if (isEmpty(newValue)) {
                     delete dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)];
                 }
             });
-            return resource;
+            debugger
+            return removeEmptyElements(resource);
         };
 
         resourceBuilderHelpers.formatAttributesFromFhirForUI = function(selectedResourceTypeConfig, resource) {
@@ -376,8 +377,43 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return resource;
         }
 
-        function stringIsEmpty (string) {
+        function isEmpty (string) {
             return (typeof string === 'undefined' || string === "");
+        }
+
+        function removeEmptyElements(resource) {
+            debugger
+            if (resource.resourceType == 'Bundle') {
+                for (var key1 in resource.entry) {
+                    for (var key2 in resource.entry[key1].resource) {
+                        var obj = resource[key2];
+                        for (var prop in obj) {
+                            if (obj[prop] instanceof Array) {
+                                if (_.isEmpty(obj[prop][0])) {
+                                    delete resource[key2];
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                for (var key in resource) {
+                    var obj = resource[key];
+                    for (var prop in obj) {
+                        if (obj[prop] instanceof Array) {
+                            if (_.isEmpty(obj[prop][0])) {
+                                delete resource[key];
+                            }
+                        }
+                        if ( typeof obj[prop] === "object") {
+                            if (Object.keys(obj[prop]).length === 0) {
+                                delete resource[key];
+                            }
+                        }
+                    }
+                }
+            }
+            return resource
         }
 
         return resourceBuilderHelpers;
