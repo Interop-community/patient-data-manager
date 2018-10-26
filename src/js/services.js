@@ -293,8 +293,23 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                     delete dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)];
                 }
             });
-            debugger
-            return removeEmptyElements(resource);
+            var empty = true;
+            while (empty) {
+                var emptyPaths = [];
+                if (resource['resourceType'] === 'Bundle') {
+                    emptyPaths = findEmptyElementsInBundle(resource);
+                } else {
+                    emptyPaths = findEmptyElements(resource, "", []);
+                }
+                if (emptyPaths.length === 0) {
+                    empty = false;
+                } else {
+                    for (var i = 0; i < emptyPaths.length; i++) {
+                        resource = removeEmptyElements(resource, emptyPaths[i]);
+                    }
+                }
+            }
+            return resource;
         };
 
         resourceBuilderHelpers.formatAttributesFromFhirForUI = function(selectedResourceTypeConfig, resource) {
@@ -381,39 +396,68 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return (typeof string === 'undefined' || string === "");
         }
 
-        function removeEmptyElements(resource) {
-            debugger
-            if (resource.resourceType == 'Bundle') {
-                for (var key1 in resource.entry) {
-                    for (var key2 in resource.entry[key1].resource) {
-                        var obj = resource[key2];
-                        for (var prop in obj) {
-                            if (obj[prop] instanceof Array) {
-                                if (_.isEmpty(obj[prop][0])) {
-                                    delete resource[key2];
+        function findEmptyElements(resource, currPath, allPaths) {
+            for (var key in resource) {
+                if (typeof resource['resourceType'] !== 'undefined') {
+                    currPath = "";
+                }
+                if (resource[key] instanceof Array) {
+                    if (resource[key].length === 0) {
+                        if (currPath === "") currPath = "." + key;
+                        allPaths.push(currPath);
+                    } else if (typeof resource[key][0] === 'undefined') {
+                        if (currPath === "") currPath = "." + key;
+                        allPaths.push(currPath);
+                    } else {
+                        for (var i = 0; i < resource[key].length; i++) {
+                            if (typeof resource[key][i] === "object") {
+                                currPath += "." + key + "." + i;
+                                if (Object.keys(resource[key][i]).length === 0) {
+                                    allPaths.push(currPath);
+                                } else {
+                                    for (var key2 in resource[key][i]) {
+                                        if (typeof resource[key][i][key2] === "object") {
+                                            if (Object.keys(resource[key][i][key2]).length === 0) {
+                                                allPaths.push(currPath + "." + key2);
+                                            } else {
+                                                allPaths.concat(findEmptyElements(resource[key][i][key2], currPath + "." + key2, allPaths));
+                                            }
+                                        } else {
+                                            allPaths.concat(findEmptyElements(resource[key][i][key2], currPath  + "." + key2, allPaths));
+                                        }
+                                    }
                                 }
                             }
                         }
+
                     }
-                }
-            } else {
-                for (var key in resource) {
-                    var obj = resource[key];
-                    for (var prop in obj) {
-                        if (obj[prop] instanceof Array) {
-                            if (_.isEmpty(obj[prop][0])) {
-                                delete resource[key];
-                            }
-                        }
-                        if ( typeof obj[prop] === "object") {
-                            if (Object.keys(obj[prop]).length === 0) {
-                                delete resource[key];
-                            }
-                        }
+                } else if (typeof resource[key] === "object") {
+                    if (Object.keys(resource[key]).length === 0) {
+                        allPaths.push(currPath + "." + key);
+                    } else {
+                        currPath += "." + key;
+                        allPaths.concat(findEmptyElements(resource[key], currPath, allPaths));
                     }
                 }
             }
-            return resource
+            return allPaths;
+        }
+
+        function findEmptyElementsInBundle(resource) {
+            var newResults = [];
+            for (var i = 0; i< resource['entry'].length; i++) {
+                var results = findEmptyElements(resource['entry'][i]['resource'], "", []);
+                for (var j = 0; j< results.length; j++) {
+                    newResults.push('.entry.' + i + '.resource' + results[j]);
+                }
+            }
+            return newResults;
+        }
+
+        function removeEmptyElements(resource, path) {
+            path = path.substr(1);
+            _.unset(resource, path);
+            return resource;
         }
 
         return resourceBuilderHelpers;
