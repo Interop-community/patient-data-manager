@@ -2,7 +2,7 @@
 
 angular.module('pdmApp.controllers', []).controller('pdmCtrl',
     ['$scope', '$rootScope','$filter', "$uibModal", "$fhirApiServices", "$terminology", "$dynamicModelHelpers", "$resourceBuilderHelpers", "$resourceJson",
-    function ($scope, $rootScope, $filter, $uibModal, $fhirApiServices, $terminology, $dynamicModelHelpers, $resourceBuilderHelpers, $resourceJson ) {
+    function ($scope, $rootScope, $filter, $uibModal, $fhirApiServices, $terminology, $dynamicModelHelpers, $resourceBuilderHelpers, $resourceJson) {
 
         $scope.writePermission = true; //Disables all interactions that involve manipulating the resources, if false
 
@@ -115,7 +115,9 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          *      SELECTION AND NAVIGATION
          *
          **/
+        $scope.resourceSelected = false;
         $scope.selectResourceInstance = function(resource) {
+            $scope.resourceSelected = false;
             $scope.resourceInstanceList = $scope.resourceInstanceList.filter(function( obj ) {
 //                if (resource.isSelected) {
                     obj.isSelected = (obj === resource);
@@ -125,6 +127,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
             if (resource !== undefined && resource.isSelected) {
                 $scope.selectedResourceInstance = angular.copy(resource);
+                $scope.resourceSelected = true;
                 $scope.detailView = true;
 //            } else {
 //                $scope.selectedResourceInstance = {};

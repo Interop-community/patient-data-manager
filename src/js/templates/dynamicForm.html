@@ -3,7 +3,7 @@
         <a href='#' class='float-right-dark-btn' ng-click="closeDetailView()"><i class='fa fa-remove fa-lg'></i></a>
         <a href='#' tabindex="0" uib-popover-template="'js/templates/detailPopover.html'" popover-trigger="focus" popover-placement="bottom" class='float-left-dark-btn'><i class='fa fa-bars fa-lg'></i></a>
     </div>
-    <div class="details-form" ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)">
+    <div class="details-form" ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)" ng-if="resourceSelected">
         <div ng-repeat="attribute in selectedResourceTypeConfig.displayValues" ng-class="{modalForm: isModal}">
             <div ng-include src="dynamicFormTemplate"></div>
         </div>
