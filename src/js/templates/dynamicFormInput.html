@@ -171,9 +171,9 @@
         <div class="dynamic-form-label-input" >
             <select ng-model="selectedDataType" ng-change="dmh.dataTypeChoiceChange(selectedDataType, '{{selectedDataType}}', selectedResourceInstance)"
                     ng-options="option for option in dmh.getFhirDatatypeChoices(attribute)"
-                    placeholder="Select a Value Type" class="form-control">
+                    placeholder="Select a Value Type" class="form-control" ng-init="selectedDataType=dmh.getFhirDatatypeOnResource(selectedResourceInstance, attribute)[0]['path'].split('.')[0]">
                 <!-- ng-init is rendered too early and is unable to catch the resource -->
-                <option value="" selected ng-init="selectedDataType=dmh.getFhirDatatypeOnResource(selectedResourceInstance, attribute)[0]['path'].split('.')[0]"></option>
+                <option value="" ></option>
             </select>
         </div>
         <div style="padding-left: 20px" ng-if="selectedDataType !== ''" ng-init="attributeOuter = attribute">

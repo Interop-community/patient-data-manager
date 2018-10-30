@@ -533,10 +533,22 @@ fieldset[disabled] .btn-basic.active {
     outline: none;
 }
 
-.float-right-dark-btn:hover{
+.float-left-dark-btn {
+    cursor:pointer;
+    float:left;
+    border: none;
+    outline: none;
+    padding-left: 8px;
+}
+
+.float-right-dark-btn:hover .float-left-dark-btn:hover {
     /*font-weight:bold;*/
     color: #a9a9a9;
     text-decoration: none;
+    outline: none;
+}
+
+.float-left-dark-btn:focus {
     outline: none;
 }
 
@@ -648,7 +660,7 @@ fieldset[disabled] .btn-basic.active {
     float: left;
     position: relative;
     display: inline-block;
-    width: 48%;
+    width: 49%;
 }
 .modalForm .dynamic-form-label {
     width: 98%;
@@ -672,11 +684,9 @@ fieldset[disabled] .btn-basic.active {
 .variable-type-box {
     display: block;
     padding: 0;
-    margin: 0 2px 10px 0px;
+    margin: 0 2px 2px 0px;
     line-height: 1.42857143;
     background-color: #fff;
-    border: 1px solid #e6e6e6;
-    border-radius: 4px;
     -webkit-transition: all .2s ease-in-out;
     transition: all .2s ease-in-out;
 }

@@ -37,22 +37,23 @@
      Not sure if it makes sense to use a date control because FHIR dates aren't in alignment
      with Javascript dates.  For example, "2010" is a FHIR date -->
 <div ng-if="attribute.type=='datetime'" class="form-group">
-    <label class="dynamic-form-label">{{attribute.label}}</label>
+    <label class="dynamic-form-label">{{attribute.label}} <a href="https://www.hl7.org/fhir/datatypes.html#dateTime" target="_blank"><img src="../../images/infobutton.png" style="width:12px; height:14px; padding-bottom:2px;"/></a></label>
     <div class="dynamic-form-label-input">
-        <input type="datetime-local" class="form-control"
+        <!--<input type="datetime-local" class="form-control" ng-disabled="!writePermission"-->
+        <input class="form-control" ng-required="attribute.required"
                ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]"
-               aria-describedby="dateErrorStatus" >
-        <!--<span id="dateIcon" class="glyphicon form-control-feedback" aria-hidden="true"></span>-->
-        <!--<span id="dateErrorStatus" class="sr-only">(success)</span>-->
+               aria-describedby="dateErrorStatus" placeholder="yyyy-mm-ddThh:mm:ss&plusmn;hh:00">
+        <!--aria-describedby="dateErrorStatus">-->
+
     </div>
 </div>
-
 <div ng-if="attribute.type=='date'" class="form-group">
     <label class="dynamic-form-label">{{attribute.label}}</label>
     <div class="dynamic-form-label-input">
-        <input type="date" class="form-control"
+        <!--<input type="date" class="form-control" ng-disabled="!writePermission"-->
+        <input class="form-control"
                ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]"
-               aria-describedby="dateErrorStatus" >
+               aria-describedby="dateErrorStatus" placeholder="yyyy-mm-dd">
         <!--<span id="dateIcon" class="glyphicon form-control-feedback" aria-hidden="true"></span>-->
         <!--<span id="dateErrorStatus" class="sr-only">(success)</span>-->
     </div>
@@ -152,15 +153,10 @@
 
 <!-- CHECKBOX FIELDS -->
 <div ng-if="attribute.type=='checkbox'" class="form-group" >
-    <label class="dynamic-form-label">{{attribute.label}}</label>
-    <div class="dynamic-form-label-input">
-        <div class="checkbox" ng-repeat="option in attribute.options" >
-            <label>
-                <input type="checkbox" ng-model="option.data"  name="taskGroup"  id="{{option.name}}" value="{{option.id}}" >{{option.name}}
-            </label>
-        </div>
-
-    </div>
+    <label class="dynamic-form-label">
+        <span style="padding-right: 10px">{{attribute.label}} </span>
+        <input type="checkbox" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]"  name="taskGroup" >
+    </label>
 </div>
 
 <div ng-if="attribute.type==='variable'">

@@ -108,5 +108,14 @@
             {"type": "fhirDatatype", "name": "Reference ", "labelPrefix": "Member ", "path":"member"},
             {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Period ", "path":"period"}
         ]
+    },
+    {
+        "dataType": "Age",
+        "displayValues": [
+            {"type": "text", "name": "string", "label": "Value" , "path":"value", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Text" , "path":"unit", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Text" , "path":"system", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Text" , "path":"code", "default": "", "view": "detail"}
+        ]
     }
 ]

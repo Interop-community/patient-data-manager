@@ -18,10 +18,6 @@
                 "name" :"code",
                 "modifier": "text",
                 "codedUri" : "http://hl7.org/fhir/ValueSet/observation-codes"
-            }],
-            "sortParams": [{
-                "name": "date",
-                "modifier": "asc"
             }]
         },
         "displayValues" : [
@@ -159,12 +155,17 @@
         "displayValues" : [
             {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Con ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-code"},
-            {"type": "dateTime", "name": "onsetDateTime", "label": "Onset Date Time" , "required": true, "path":"onsetDateTime", "default": "", "view": "master"},
+            {"type": "variable", "name": "variable", "namePrefix": "onset", "label": "Onset", "path":"", "choiceLabel": "Onset Date(s)", "view": "master",
+                "dataTypes" : [
+                    {"type": "datetime", "name": "DateTime", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Age", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "String", "labelPrefix": "Onset "}
+                ]},
             {"type": "date", "name": "dateRecorded", "label": "Date Recorded" , "path":"dateRecorded", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Severity ", "path":"severity", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-severity"},
-            {"type": "select", "name": "category", "label": "Category" ,
-                "options":["complaint", "symptom", "finding", "diagnosis"],
-                "path": "category", "default": "complaint", "view": "detail"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "label": "Category" , "labelPrefix": "Category ", "path": "category", "view": "detail"},
             {"type": "select", "name": "verificationStatus", "label": "Verification Status" ,
                 "options":["provisional", "differential", "confirmed", "refuted", "entered-in-error", "unknown"],
                 "path": "verificationStatus", "default": "confirmed", "view": "detail"},
@@ -185,7 +186,7 @@
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["in-progress", "aborted", "completed", "entered-in-error"],
                 "path": "status", "default": "in-progress", "view": "master"},
-            {"type": "variable", "name": "variable", "namePrefix": "performed", "label": "Performed", "path":"", "choiceLabel": "Performed Dates(s)", "view": "detail",
+            {"type": "variable", "name": "variable", "namePrefix": "performed", "label": "Performed", "path":"", "choiceLabel": "Performed Date(s)", "view": "detail",
                 "dataTypes" : [
                     {"type": "datetime", "name": "DateTime", "labelPrefix": "Performed "},
                     {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Performed "}
