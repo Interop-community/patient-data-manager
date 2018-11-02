@@ -20,6 +20,17 @@
                 <div style="padding-left: 10px"><label style="margin-bottom: -5px" class="dynamic-form-section-label">{{referenceGroup.groupName}}</label></div>
                 <div style="padding-left: 15px" ng-include src="'js/templates/dynamicReferenceTable.html'"></div>
             </div>
+
+            <div ng-if="selectedResourceBackboneElements.length > 0" ng-repeat="backboneElement in selectedResourceBackboneElements">
+                <div ng-if="selectedResourceBackboneElements.length > 0" style="padding-left: 10px">
+                    <label style="margin-bottom: -5px" class="dynamic-form-section-label">
+                        <span tooltip="See JSON">{{backboneElement.name}}</span>
+                        <a href='#' class='float-right-btn' ng-if="writePermission" ng-click="openBackboneElementModalDialog(backboneElement, true)"><i class='fa fa-plus-square-o fa-lg'></i></a>
+                    </label>
+                </div>
+
+            </div>
+
         </div>
     </div>
 </div>

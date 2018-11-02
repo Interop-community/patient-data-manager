@@ -1,0 +1,19 @@
+<div class="modal-header">
+    <div ng-switch on="isReadOnly">
+        <div ng-switch-when="true">
+            <h3 class="modal-title">{{selectedBackBoneElement.name}}</h3>
+        </div>
+        <div ng-switch-default>
+            <h3 class="modal-title">New {{selectedBackBoneElement.name}}</h3>
+        </div>
+    </div>
+</div>
+<div ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)" class="details-form modalForm">
+    <div ng-repeat="attribute in selectedBackBoneElement.elements" ng-class="form-group">
+        <div ng-include src="'js/templates/dynamicFormInputBackboneElement.html'" ></div>
+    </div>
+</div>
+<div class="modal-footer">
+    <button ng-show="!isReadOnly" class="form-btn btn btn-basic" type="button" ng-click="addBackboneElement(createdBackBoneElement)">Save</button>
+    <button class="form-btn btn btn-basic" type="button" ng-click="cancel()">Cancel</button>
+</div>

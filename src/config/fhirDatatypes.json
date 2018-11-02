@@ -117,5 +117,93 @@
             {"type": "text", "name": "string", "label": "Text" , "path":"system", "default": "", "view": "detail"},
             {"type": "text", "name": "string", "label": "Text" , "path":"code", "default": "", "view": "detail"}
         ]
+    },
+    {
+        "dataType": "BackboneElementComponentDstu2",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
+            {"type": "variable", "name": "variable", "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "String", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Ratio", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Time", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Value "}
+                ]},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Date Absent Reason ", "path":"dateAbsentReason"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementComponentStu3_R4",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
+            {"type": "variable", "name": "variable", "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "String", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Ratio", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Time", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Value "}
+                ]},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Date Absent Reason ", "path":"dateAbsentReason"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Interpretation ", "path":"interpretation"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementReferenceRangeDstu2",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "Low ", "path":"low"},
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "High ", "path":"high"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Meaning ", "path":"meaning"},
+            {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Age ", "path":"age"},
+            {"type": "fhirDatatype", "name": "String", "labelPrefix": "Text ", "path":"text"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementReferenceRangeStu3_R4",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "Low ", "path":"low"},
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "High ", "path":"high"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Type ", "path":"type"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Applies To ", "path":"appliesTo"},
+            {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Age ", "path":"age"},
+            {"type": "fhirDatatype", "name": "String", "labelPrefix": "Text ", "path":"text"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementConditionDstu2",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Outcome ", "path":"outcome"},
+            {"type": "variable", "name": "variable", "namePrefix": "onset", "labelPrefix": "Onset ", "path":"",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "Age", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Onset "},
+                    {"type": "text", "name": "String", "labelPrefix": "Onset "}
+                ]},
+            {"type": "text", "name": "note", "labelPrefix": "Note " , "path": "note", "view": "detail"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementConditionStu3_R4",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Outcome ", "path":"outcome"},
+            {"type": "variable", "name": "variable", "namePrefix": "onset", "labelPrefix": "Onset ", "path":"",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "Age", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Onset "},
+                    {"type": "text", "name": "String", "labelPrefix": "Onset "}
+                ]},
+            {"type": "text", "name": "note", "labelPrefix": "Note " , "path": "note", "view": "detail"}
+        ]
     }
 ]

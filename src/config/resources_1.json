@@ -47,9 +47,8 @@
                 "path": "status", "default": "final", "view": "detail"}
         ],
         "backboneElements" : [
-            {"type": "referenceRange", "name": "BackboneElementParticipant", "labelPrefix": "Reference Range ", "path":"referenceRange", "view": "detail"},
-            {"type": "related", "name": "BackboneElementParticipant", "labelPrefix": "Related ", "path":"related", "view": "detail"},
-            {"type": "component", "name": "BackboneElementParticipant", "labelPrefix": "Component ", "path":"component", "view": "detail"}
+            {"type": "fhirDatatype", "name": "BackboneElementComponentDstu2", "elementName": "Component",  "labelPrefix": "", "path":"component", "view": "detail"},
+            {"type": "fhirDatatype", "name": "BackboneElementReferenceRangeDstu2", "elementName": "Reference Range",  "labelPrefix": "", "path":"referenceRange", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "subject.reference"}
@@ -271,7 +270,7 @@
                 "path": "status", "default": "completed", "view": "detail"}
         ],
         "backboneElements" : [
-            {"type": "Condition", "name": "BackboneElementParticipant", "labelPrefix": "Condition ", "path":"condition", "view": "detail"}
+            {"type": "Condition", "name": "BackboneElementConditionDstu2", "labelPrefix": "Condition ", "path":"condition", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "patient.reference"}

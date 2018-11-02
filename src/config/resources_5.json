@@ -66,7 +66,8 @@
                 "path": "status", "default": "final", "view": "detail"}
         ],
         "backboneElements" : [
-            {"type": "referenceRange", "name": "BackboneElementParticipant", "labelPrefix": "Reference Range ", "path":"referenceRange", "view": "detail"}
+            {"type": "fhirDatatype", "name": "BackboneElementComponentStu3_R4", "elementName": "Component",  "labelPrefix": "", "path":"component", "view": "detail"},
+            {"type": "fhirDatatype", "name": "BackboneElementReferenceRangeStu3_R4", "elementName": "Reference Range",  "labelPrefix": "", "path":"referenceRange", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
@@ -473,7 +474,6 @@
                 "path": "status", "default": "active", "view": "detail"}
         ],
         "backboneElements" : [
-            {"type": "Participant", "name": "BackboneElementParticipant", "labelPrefix": "Participant ", "path":"participant", "view": "master"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
@@ -641,7 +641,7 @@
                 "path": "status", "default": "completed", "view": "detail"}
         ],
         "backboneElements" : [
-            {"type": "Condition", "name": "BackboneElementParticipant", "labelPrefix": "Condition ", "path":"condition", "view": "detail"}
+            {"type": "Condition", "name": "BackboneElementConditionStu3_R4", "labelPrefix": "Condition ", "path":"condition", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "patient.reference"}
