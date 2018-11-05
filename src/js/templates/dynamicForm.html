@@ -24,11 +24,10 @@
             <div ng-if="selectedResourceBackboneElements.length > 0" ng-repeat="backboneElement in selectedResourceBackboneElements">
                 <div ng-if="selectedResourceBackboneElements.length > 0" style="padding-left: 10px">
                     <label style="margin-bottom: -5px" class="dynamic-form-section-label">
-                        <span tooltip="See JSON">{{backboneElement.name}}</span>
+                        <span tooltip="Open JSON to see {{backboneElement.name.toLowerCase()}}s. You can add elements but not remove them." tooltip-placement="right">{{backboneElement.name}}</span>
                         <a href='#' class='float-right-btn' ng-if="writePermission" ng-click="openBackboneElementModalDialog(backboneElement, true)"><i class='fa fa-plus-square-o fa-lg'></i></a>
                     </label>
                 </div>
-
             </div>
 
         </div>

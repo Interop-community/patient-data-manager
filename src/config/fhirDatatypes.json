@@ -91,7 +91,7 @@
     {
         "dataType" : "Annotation",
         "displayValues" : [
-            {"type": "text", "name": "string", "label": "Text" , "required": true, "path":"text", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Text" , "path":"text", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Time ", "path":"time", "view": "detail"},
             {"type": "text", "name": "string ", "label": "Author", "path":"authorString", "view": "detail"}
         ]
@@ -113,9 +113,9 @@
         "dataType": "Age",
         "displayValues": [
             {"type": "text", "name": "string", "label": "Value" , "path":"value", "default": "", "view": "detail"},
-            {"type": "text", "name": "string", "label": "Text" , "path":"unit", "default": "", "view": "detail"},
-            {"type": "text", "name": "string", "label": "Text" , "path":"system", "default": "", "view": "detail"},
-            {"type": "text", "name": "string", "label": "Text" , "path":"code", "default": "", "view": "detail"}
+            {"type": "text", "name": "string", "label": "Unit" , "path":"unit", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "System" , "path":"system", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Code" , "path":"code", "default": "", "view": "detail"}
         ]
     },
     {
@@ -181,14 +181,14 @@
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Outcome ", "path":"outcome"},
-            {"type": "variable", "name": "variable", "namePrefix": "onset", "labelPrefix": "Onset ", "path":"",
+            {"type": "variable", "name": "variable", "namePrefix": "onset", "label": "Onset ", "path":"", "choiceLabel": "Onset ",
                 "dataTypes" : [
                     {"type": "fhirDatatype", "name": "Age", "labelPrefix": "Onset "},
                     {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Onset "},
                     {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Onset "},
                     {"type": "text", "name": "String", "labelPrefix": "Onset "}
                 ]},
-            {"type": "text", "name": "note", "labelPrefix": "Note " , "path": "note", "view": "detail"}
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"}
         ]
     },
     {
@@ -196,14 +196,14 @@
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Outcome ", "path":"outcome"},
-            {"type": "variable", "name": "variable", "namePrefix": "onset", "labelPrefix": "Onset ", "path":"",
+            {"type": "variable", "name": "variable", "namePrefix": "onset", "label": "Onset ", "path":"", "choiceLabel": "Onset ",
                 "dataTypes" : [
                     {"type": "fhirDatatype", "name": "Age", "labelPrefix": "Onset "},
                     {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Onset "},
                     {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Onset "},
                     {"type": "text", "name": "String", "labelPrefix": "Onset "}
                 ]},
-            {"type": "text", "name": "note", "labelPrefix": "Note " , "path": "note", "view": "detail"}
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"}
         ]
     }
 ]

@@ -526,11 +526,15 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.getAvailableBackboneElements = function() {
             $scope.selectedResourceBackboneElements = [];
             $scope.selectedResourceBackboneElementsList = [];
-            debugger
             angular.forEach($scope.selectedResourceTypeConfig.backboneElements, function (backboneElement) {
-                backboneElement.variableChoices = [];
-                angular.forEach(backboneElement.dataTypes, function (subDataType) {
-                    backboneElement.variableChoices.push($resourceJson.subsumeVariableDataType(backboneElement.namePrefix, subDataType, backboneElement));
+                angular.forEach(backboneElement.elements, function (element) {
+                    if (element.type === 'variable') {
+                        element.variableChoices = [];
+                        angular.forEach(element.dataTypes, function (subDataType) {
+                            element.variableChoices.push($resourceJson.subsumeVariableDataType(element.namePrefix, subDataType, element));
+                        });
+
+                    }
                 });
                 $scope.selectedResourceBackboneElements.push(backboneElement);
             });
@@ -591,6 +595,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         $scope.openBackboneElementModalDialog = function (backboneElement, create) {
+            debugger
             $scope.selectedBackBoneElement = backboneElement;
             $scope.modalOpen = true;
             var modalInstance;
@@ -879,12 +884,24 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.dmh = $dynamicModelHelpers;
 
         $scope.addBackboneElement = function(createdBackBoneElement) {
-            for(var key in createdBackBoneElement){
-                if ($scope.selectedResourceInstance[key] === undefined) {
-                    $scope.selectedResourceInstance[key] = [];
+            var elementKey;
+            for (var i = 0; i < $scope.selectedResourceTypeConfig.backboneElements.length; i++) {
+                var element = $scope.createdBackBoneElement[$scope.selectedResourceTypeConfig.backboneElements[i].name.toLowerCase()];
+                if (element !== undefined) {
+                    elementKey = $scope.selectedResourceTypeConfig.backboneElements[i].name.toLowerCase();
                 }
-                $scope.selectedResourceInstance[key].push(createdBackBoneElement[key]);
             }
+            //pick up variable items
+            for (var key in createdBackBoneElement) {
+                if (key !== elementKey) {
+                    createdBackBoneElement[elementKey][key] = createdBackBoneElement[key];
+                    delete createdBackBoneElement[key];
+                }
+            }
+            if ($scope.selectedResourceInstance[elementKey] === undefined) {
+                $scope.selectedResourceInstance[elementKey] = [];
+            }
+            $scope.selectedResourceInstance[elementKey].push(createdBackBoneElement[elementKey]);
             $scope.requestUpdateResource();
             $uibModalInstance.close($scope.selectedResourceInstance);
         };

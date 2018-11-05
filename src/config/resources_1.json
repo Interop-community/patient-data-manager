@@ -270,7 +270,7 @@
                 "path": "status", "default": "completed", "view": "detail"}
         ],
         "backboneElements" : [
-            {"type": "Condition", "name": "BackboneElementConditionDstu2", "labelPrefix": "Condition ", "path":"condition", "view": "detail"}
+            {"type": "fhirDatatype", "name": "BackboneElementConditionDstu2", "elementName": "Condition", "labelPrefix": "", "path":"condition", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "patient.reference"}

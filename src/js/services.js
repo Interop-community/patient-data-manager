@@ -176,7 +176,6 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
         dynamicModelHelpers.getFhirDatatypeChoices = function(attribute) {
             var result = [];
-            debugger
             angular.forEach(attribute.variableChoices, function (choice) {
                 result.push(choice.dataType);
             });
@@ -206,7 +205,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         dynamicModelHelpers.getModelParent = function(obj,path) {
 
             // Removes period at end when dealing with 'variable' types
-            // if(path.indexOf("component") !== -1) debugger;
+            if(path.indexOf("condition.note") !== -1) debugger;
 
             if (path.slice(-1) === '.') {
                 path = path.slice(0, -1);

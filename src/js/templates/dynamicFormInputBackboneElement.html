@@ -164,13 +164,13 @@
     <div class="form-group variable-type-box">
         <label class="dynamic-form-label">{{attribute.choiceLabel}}</label>
         <div class="dynamic-form-label-input" >
-            <select ng-model="selectedDataType" ng-change="dmh.dataTypeChoiceChange(selectedDataType, '{{selectedDataType}}', selectedResourceInstance)"
+            <select ng-model="selectedDataType" ng-change="dmh.dataTypeChoiceChange(selectedDataType, '{{selectedDataType}}', createdBackBoneElement)"
                     ng-options="option for option in dmh.getFhirDatatypeChoices(attribute)"
                     placeholder="Select a Value Type" class="form-control"/>
         </div>
         <div ng-if="selectedDataType !== ''" ng-init="attributeOuter = attribute">
             <div ng-repeat="attribute in dmh.getFhirDatatypeByName(selectedDataType, attributeOuter)">
-                <div ng-include src="dynamicFormTemplate"></div>
+                <div ng-include src="'js/templates/dynamicFormInputBackboneElement.html'"></div>
             </div>
         </div>
     </div>
