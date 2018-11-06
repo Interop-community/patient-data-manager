@@ -595,7 +595,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         $scope.openBackboneElementModalDialog = function (backboneElement, create) {
-            debugger
             $scope.selectedBackBoneElement = backboneElement;
             $scope.modalOpen = true;
             var modalInstance;
@@ -886,9 +885,9 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.addBackboneElement = function(createdBackBoneElement) {
             var elementKey;
             for (var i = 0; i < $scope.selectedResourceTypeConfig.backboneElements.length; i++) {
-                var element = $scope.createdBackBoneElement[$scope.selectedResourceTypeConfig.backboneElements[i].name.toLowerCase()];
+                var element = $scope.createdBackBoneElement[_.camelCase($scope.selectedResourceTypeConfig.backboneElements[i].name)];
                 if (element !== undefined) {
-                    elementKey = $scope.selectedResourceTypeConfig.backboneElements[i].name.toLowerCase();
+                    elementKey = _.camelCase($scope.selectedResourceTypeConfig.backboneElements[i].name);
                 }
             }
             //pick up variable items

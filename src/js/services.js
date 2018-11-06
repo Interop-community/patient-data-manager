@@ -205,8 +205,6 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         dynamicModelHelpers.getModelParent = function(obj,path) {
 
             // Removes period at end when dealing with 'variable' types
-            if(path.indexOf("condition.note") !== -1) debugger;
-
             if (path.slice(-1) === '.') {
                 path = path.slice(0, -1);
             }
@@ -1088,6 +1086,11 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         if (resource.backboneElements !== undefined) {
             for (var i = 0; i < resource.backboneElements.length; i++) {
                 var object = {"name": resource.backboneElements[i].elementName, "elements": buildResourceDataType(resource.backboneElements[i])};
+                for (var j = 0; j < object.elements.length; j++) {
+                    if (object.elements[j].path.indexOf(resource.backboneElements[i].path) !== 0) {
+                        object.elements[j].path = resource.backboneElements[i].path + '.' + object.elements[j].path;
+                    }
+                }
                 newBackboneElementValues = newBackboneElementValues.concat(object);
             }
             delete resource.backboneElements;
