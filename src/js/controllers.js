@@ -178,6 +178,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         $scope.selectResourceType = function(resourceType) {
+            debugger
             if (resourceType !== $scope.selectedResourceType) {
                 unselectResource();
             }

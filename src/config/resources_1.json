@@ -218,6 +218,28 @@
         ]
     },
     {
+        "resource": "DiagnosticOrder",
+        "showInResourceList": "Patient",
+        "displayValues": [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Reason ", "path":"reason.0", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-code"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["proposed", "draft", "planned", "requested", "received", "accepted", "in-progress", "review", "completed", "cancelled", "suspended", "rejected", "failed"],
+                "path": "status", "default": "proposed", "view": "detail"},
+            {"type": "select", "name": "priority", "label": "Priority" ,
+                "options":["routine", "urgent", "stat", "asap"],
+                "path": "priority", "default": "routine", "view": "detail"},
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"}
+        ],
+        "backboneElements" : [
+            {"type": "fhirDatatype", "name": "BackboneElementEvent", "elementName": "Event", "labelPrefix": "", "path":"event", "view": "detail"},
+            {"type": "fhirDatatype", "name": "BackboneElementItem", "elementName": "Item", "labelPrefix": "", "path":"item", "view": "detail"}
+        ],
+        "references" : [
+            {"resource": "Patient",  "label": "Subject", "path": "subject.reference"}
+        ]
+    },
+    {
         "resource" : "Immunization",
         "showInResourceList": "Patient",
         "displayValues" : [

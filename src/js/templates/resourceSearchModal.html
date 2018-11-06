@@ -33,7 +33,7 @@
                             <div class="dynamic-form-label-input">
                                 <!--<input type="text" class="form-control" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" placeholder="Enter the Code Value"> &lt;!&ndash;typeahead-editable="false"&ndash;&gt;-->
                                 <!--TODO: Fix terminology Look up-->
-                                <input type="text" class="form-control" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" placeholder="Enter the Code Value"
+                                <input type="text" class="form-control" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]"
                                 uib-typeahead="coding.code for coding in getValueSetExpansion($viewValue, 1, attribute.codedUri)" typeahead-loading="loadingValueSetDisplay"
                                 typeahead-no-results="noResultsDisplay" typeahead-on-select="typeAheadSelected($item, attribute)"> <!--typeahead-editable="false"-->
                             </div>
@@ -47,7 +47,7 @@
                             <div class="dynamic-form-label-input">
                                 <!--<input type="text" class="form-control" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" placeholder="Enter the Display Value"> &lt;!&ndash;typeahead-editable="false"&ndash;&gt;-->
                                 <!--TODO: Fix terminology Look up-->
-                                <input type="text" class="form-control" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" placeholder="Enter the Display Value"
+                                <input type="text" class="form-control" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]"
                                 uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue, 3, attribute.codedUri)" typeahead-loading="loadingValueSetDisplay"
                                 typeahead-no-results="noResultsDisplay" typeahead-on-select="typeAheadSelected($item, attribute)"> <!--typeahead-editable="false"-->
                             </div>

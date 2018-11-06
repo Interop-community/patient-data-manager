@@ -281,6 +281,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         var resourceBuilderHelpers = {};
 
         resourceBuilderHelpers.formatAttributesFromUIForFhir = function(selectedResourceTypeConfig, resource) {
+            debugger
             angular.forEach(selectedResourceTypeConfig.displayValues, function (value) {
                 var newValue = dmh.getModelParent(resource, value.path)[dmh.getModelLeaf(value.path)];
                 if (value.type === "datetime" && newValue !== undefined && newValue !== "") {

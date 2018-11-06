@@ -93,7 +93,7 @@
         "displayValues" : [
             {"type": "text", "name": "string", "label": "Text" , "path":"text", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Time ", "path":"time", "view": "detail"},
-            {"type": "text", "name": "string ", "label": "Author", "path":"authorString", "view": "detail"}
+            {"type": "text", "name": "string ", "label": "Author", "default": "", "path":"authorString", "view": "detail"}
         ]
     },
     {
@@ -205,5 +205,26 @@
                 ]},
             {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"}
         ]
+    },
+    {
+        "dataType": "BackboneElementEvent",
+        "displayValues" : [
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["proposed", "draft", "planned", "requested", "received", "accepted", "in-progress", "review", "completed", "cancelled", "suspended", "rejected", "failed"],
+                "path": "status", "default": "proposed", "view": "detail"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Description ", "path":"description"},
+            {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "DateTime ", "path":"dateTime"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementItem",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Body Site ", "path":"bodySite"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["proposed", "draft", "planned", "requested", "received", "accepted", "in-progress", "review", "completed", "cancelled", "suspended", "rejected", "failed"],
+                "path": "status", "default": "proposed", "view": "detail"}
+        ]
     }
+
 ]
