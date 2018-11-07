@@ -178,7 +178,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         $scope.selectResourceType = function(resourceType) {
-            debugger
             if (resourceType !== $scope.selectedResourceType) {
                 unselectResource();
             }
@@ -541,6 +540,10 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
         };
 
+        $scope.removeBackboneElement = function(index, elementName) {
+            $scope.selectedResourceInstance[elementName].splice(index, 1);
+        };
+
         $scope.openModalDialog = function (operation, resource) {
             var newResource;
             var resourceTypeConfig = $scope.selectedResourceTypeConfig;
@@ -650,8 +653,25 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
         };
 
-        $scope.openExistingBackboneElement = function(element) {
+        $scope.openAttachmentContentModal = function(element) {
+            $scope.modalOpen = true;
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'js/templates/detailAttachmentContent.html',
+                controller: 'DetailAttachmentContentModalCtrl',
+                size:'lg',
+                resolve: {
+                    getElement: function () {
+                        return element;
+                    }
+                }
+            });
 
+            modalInstance.result.then(function () {
+                $scope.modalOpen = false;
+            }, function () {
+                $scope.modalOpen = false;
+            });
         };
 
         $scope.pageResourceInstanceList = function(lastResult, direction) {
@@ -928,6 +948,35 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.cancel = function () {
             $uibModalInstance.dismiss('cancel');
         };
+    }]).controller("DetailAttachmentContentModalCtrl",
+    function($scope, $uibModalInstance, $sce, getElement) {
+        $scope.element = getElement;
+        $scope.hasAttachment = false;
+        $scope.hasUrl = false;
+        $scope.errorText = "";
+        if ($scope.element.attachment !== undefined) {
+            $scope.hasAttachment = true;
+            if ($scope.element.attachment.url !== undefined) {
+                $scope.hasUrl = true;
+                $scope.contentUrl = $sce.trustAsResourceUrl($scope.element.attachment.url);
+            } else if ($scope.element.attachment.contentType !== undefined) {
+                let pdf = $scope.element.attachment.data;
+
+                fetch(`data:${$scope.element.attachment.contentType};base64,${pdf}`)
+                    .then(response => response.blob())
+                    .then(blob => document.querySelector("iframe").src = URL.createObjectURL(blob));
+            } else {
+                $scope.errorText = "Please include either a url or data and contentType."
+            }
+        }
+        $scope.close = function () {
+            $uibModalInstance.close();
+        };
+    }).controller('ProgressModalCtrl',['$scope', '$uibModalInstance', "getTitle",
+    function ($scope, $uibModalInstance, getTitle) {
+
+        $scope.title = getTitle;
+
     }]).controller("ResourceSearchController",
     function($rootScope, $scope, $fhirApiServices, $filter, $dynamicModelHelpers, $uibModalInstance, $uibModal, getSettings){
 

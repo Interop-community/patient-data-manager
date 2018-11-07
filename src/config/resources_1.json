@@ -299,6 +299,30 @@
         ]
     },
     {
+        "resource": "DocumentReference",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Type ", "required": true, "path":"type", "codedUri" : "http://hl7.org/fhir/ValueSet/c80-doc-typecodes"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Class ", "path":"class", "codedUri" : "http://hl7.org/fhir/ValueSet/c80-doc-classcodes"},
+            {"type": "datetime", "name": "DateTime", "label": "Created", "path":"created", "default": "", "view": "detail"},
+            {"type": "datetime", "name": "DateTime", "label": "Indexed" , "required": true, "path":"indexed", "default": "", "view": "detail"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["current", "superseded", "entered-in-error"],
+                "path": "status", "default": "current", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "DocStatus ", "path":"docStatus", "codedUri" : "http://hl7.org/fhir/ValueSet/composition-status"},
+            {"type": "text", "name": "description", "label": "Description", "path": "description", "default": "", "view": "detail"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Security Label ", "path":"securityLabel.0", "codedUri" : "http://hl7.org/fhir/ValueSet/security-labels"}
+
+        ],
+        "backboneElements" : [
+            {"type": "fhirDatatype", "name": "BackboneElementContext", "elementName": "Context", "labelPrefix": "", "path":"context", "view": "detail"},
+            {"type": "fhirDatatype", "name": "BackboneElementContent", "elementName": "Content", "labelPrefix": "", "path":"content", "view": "detail"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"}
+        ]
+    },
+    {
         "resource" : "Appointment",
         "showInResourceList": "None",
         "search" : {

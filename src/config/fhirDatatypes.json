@@ -119,6 +119,18 @@
         ]
     },
     {
+        "dataType": "Attachment",
+        "displayValues": [
+            {"type": "text", "name": "code", "label": "Content Type", "path": "contentType", "default": ""},
+            {"type": "text", "name": "code", "label": "Language" , "path": "language", "default": ""},
+            {"type": "text", "name": "string", "label": "Data" , "path":"data", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Url" , "path":"url", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Hash" , "path":"hash", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Title" , "path":"title", "default": "", "view": "detail"},
+            {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Creation ", "path":"creation", "view": "detail"}
+        ]
+    },
+    {
         "dataType": "BackboneElementComponentDstu2",
         "displayValues" : [
             {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
@@ -224,6 +236,22 @@
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["proposed", "draft", "planned", "requested", "received", "accepted", "in-progress", "review", "completed", "cancelled", "suspended", "rejected", "failed"],
                 "path": "status", "default": "proposed", "view": "detail"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementContext",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Event ", "path":"event"},
+            {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Period ", "path":"period"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Facility Type ", "path":"facilityType"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Practice Setting ", "path":"practiceSetting"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementContent",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "Attachment", "labelPrefix": "Attachment ", "path":"attachment"},
+            {"type": "fhirDatatype", "name": "Coding", "labelPrefix": "Format ", "path":"format"}
         ]
     }
 
