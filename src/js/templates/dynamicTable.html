@@ -7,13 +7,13 @@
                 <thead class="fixedHeader">
                 <tr>
                     <th ng-repeat="attribute in selectedResourceTypeConfig.displayValues" ng-if="attribute.view === 'master'">
-                        <div ng-if="attribute.view === 'master'" class="th-inner" table-header-inner>{{attribute.label}}</div>
+                        <div ng-if="attribute.view === 'master'" class="th-inner" ng-style="{'width': '{{100/selectedResourceActiveMaster}}%'}">{{attribute.label}}</div>
                     </th>
                 </tr>
                 </thead>
                 <tbody class="scrollContent">
                 <tr st-select-row="resource" ng-click="selectResourceInstance(resource)" ng-repeat="resource in resourceInstanceList">
-                    <td ng-repeat="attribute in selectedResourceTypeConfig.displayValues"  ng-if="attribute.view === 'master'">
+                    <td ng-repeat="attribute in selectedResourceTypeConfig.displayValues"  ng-if="attribute.view === 'master'"  ng-style="{'width': '{{100/selectedResourceActiveMaster}}%'}">
                         <!--<div ng-if="attribute.view === 'master' && attribute.type !== 'variable'">-->
                             <!--{{dmh.getDynamicModel(resource, attribute.path) | formatAttribute}}-->
                         <!--</div>-->
@@ -27,10 +27,10 @@
                 <tr>
                     <td colspan="10">
                         <div id="pageButtons" height=28>
-                            <div class="pager_item" ng-show="hasLink(selectedResourceType.searchObj, 'previous')"
+                            <div class="pure-material-button-contained" ng-show="hasLink(selectedResourceType.searchObj, 'previous')"
                                  ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'prevPage')">&lt; Prev</div>
                             <div class="pager_text" ng-model=resourcePages> Page {{resourcePages.currentPage}} of {{resourcePages.pageCount}} </div>
-                            <div class="pager_item" ng-show="hasLink(selectedResourceType.searchObj, 'next')"
+                            <div class="pure-material-button-contained" ng-show="hasLink(selectedResourceType.searchObj, 'next')"
                                  ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'nextPage')">Next &gt;</div>
                         </div>
                     </td>

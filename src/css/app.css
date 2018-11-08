@@ -2,13 +2,14 @@ body, html {
     margin: 0;
     padding: 0;
     overflow: hidden;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: normal;
     color: #58585A;
     cursor: default;
     white-space: normal;
     -webkit-appearance: none;
     -webkit-font-smoothing: inherit;
+    font-family: "Roboto", sans-serif;
 }
 
 body.modal-open {
@@ -22,6 +23,14 @@ body.modal-open {
     border-radius: 4px;
     margin-right: 2px;
     margin-left: 2px;
+}
+
+.layout-column {
+    height: 100%;
+}
+
+.layout-template {
+    height: 100%;
 }
 
 .layout-template.layout-column > .column-wrapper{
@@ -51,7 +60,7 @@ body.modal-open {
     background-color: #fafafa;
     border-bottom: 2px solid #f4f4f4;
     border-radius: 0;
-    height: 80px;
+    height: 90px;
     position: relative;
     margin-bottom: 0;
     overflow: hidden;
@@ -150,9 +159,10 @@ span.title,
 
 .navbar-center-title {
     position: absolute;
-    font-weight: lighter;
-    top: 15px;
-    font-size: 38px;
+    font-weight: 300;
+    top: 16px;
+    font-size: 36px;
+    font-family: "Roboto", sans-serif;
 }
 
 .navbar .navbar-text {
@@ -185,8 +195,7 @@ span.title,
 
 .box {
     display: block;
-    padding: 4px;
-    margin-bottom: 20px;
+    box-shadow: 0 1px 1px rgba(0,0,0,.05);
     line-height: 1.42857143;
     background-color: #fff;
     border: 1px solid #e6e6e6;
@@ -197,7 +206,7 @@ span.title,
 
 .title-box .title {
     position: relative;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 400;
     top: -16px;
     margin-left: 15px;
@@ -209,7 +218,7 @@ span.title,
 .title-box .content {
     margin-top: -15px;
     padding-bottom: 5px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 300;
     width: 100%;
 }
@@ -242,7 +251,7 @@ span.title,
 
 a {
     color: #00AEEF;
-    font-size: 12px;
+    font-size: 13px;
     text-decoration: none;
     outline: none;
 }
@@ -290,14 +299,14 @@ tr {
     width: 100%;
     height: 30px;
     padding: 2px 4px;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 300;
     line-height: 1.428571429;
     color: #58585A;
     background-color: #fff;
     background-image: none;
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 2px;
     -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
     box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
     -webkit-transition: border-color ease-in-out .15s, box-shadow ease-in-out .15s;
@@ -365,7 +374,7 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
     background: #00AEEF;
     color: #fff;
     font-size: 15px;
-    font-family: 'PT Sans',Tahoma;
+    font-family: 'Roboto',Tahoma;
     outline: 0;
     border: 0;
 }
@@ -432,7 +441,7 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
     -moz-box-sizing: border-box;
     -webkit-box-sizing: border-box;
     box-sizing: border-box;
-    font-family: 'PT Sans',Tahoma;
+    font-family: 'Roboto',Tahoma;
     font-size: 15px;
     -webkit-border-radius: 6px;
     -moz-border-radius: 6px;
@@ -442,7 +451,7 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
 .pager_item_selected {
     font-size: 15px;
     padding: auto 6px;
-    font-family: 'PT Sans',Tahoma;
+    font-family: 'Roboto',Tahoma;
     border: 1px solid #00AEEF;
     outline: 0;
     background: #8b8b8e;
@@ -454,7 +463,7 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
 }
 .pager_item {
     padding: auto 6px;
-    font-family: 'PT Sans',Tahoma;
+    font-family: 'Roboto',Tahoma;
     border: 1px solid #00AEEF;
     width:auto;
     outline: 0;
@@ -468,7 +477,7 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
 
 .pager_text {
     padding: auto 6px;
-    font-family: 'PT Sans',Tahoma;
+    font-family: 'Roboto',Tahoma;
     float:left;
     margin: 6px;
 }
@@ -478,7 +487,7 @@ input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
     background-color: #00AEEF;
     border-color: #00AEEF;
     font-weight: 300;
-    font-size: 12px;
+    font-size: 13px;
     padding: 3px 6px 3px 6px;
 }
 
@@ -698,7 +707,7 @@ fieldset[disabled] .btn-basic.active {
 }
 
 .basic-text {
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 300;
 }
 
@@ -836,7 +845,7 @@ fieldset[disabled] .btn-basic.active {
 .scrollableContainer {
     position: relative;
     padding-top: 37px;
-    margin-bottom: 30px;
+    overflow-y: auto;
 }
 .scrollableContainer .headerSpacer {
     border-bottom: 1px solid #bbb;
@@ -904,9 +913,6 @@ fieldset[disabled] .btn-basic.active {
 .scrollArea table tbody tr:first-child td {
     border-top: none;
 }
-.scrollArea table tbody tr:last-child td {
-    border-bottom: 1px solid #ddd;
-}
 .scrollArea table>thead>tr>th {
     border-bottom: 0px solid #ddd;
     padding: 0px;
@@ -953,7 +959,7 @@ fieldset[disabled] .btn-basic.active {
 .referenceTable .table>tbody>tr>td,
 .referenceTable .table>tfoot>tr>td {
     line-height: 10px;
-    font-size: 12px;
+    font-size: 13px;
     border: none;
 }
 
@@ -968,7 +974,6 @@ fieldset[disabled] .btn-basic.active {
     outline: none; !important;
 }
 .search-bar {
-    border-bottom: 2px solid #f4f4f4;
     min-width:220px;
     padding-top: 6px;
     position:relative;
@@ -983,8 +988,7 @@ fieldset[disabled] .btn-basic.active {
 }
 
 .search-bar .search-field {
-    margin-left:60px;
-    margin-right:0px;
+    margin: 8px 0 0 16px;
     max-width: 500px;
     position: relative;
 }
@@ -1058,7 +1062,7 @@ fieldset[disabled] .btn-basic.active {
 }
 .message_error, .message_info {
     min-width: 120px;
-    font-family: Tahoma,Arial;
+    font-family: "Roboto",Tahoma,Arial;
     z-index: 10000;
     overflow: hidden;
     margin: 5px 5px 10px;
@@ -1097,7 +1101,7 @@ div.modal_cover {
     text-align: center;
     padding: 22px 0 10px 0;
     font-size: 25px;
-    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+    font-family: "Roboto", Helvetica, Arial, sans-serif;
     font-weight: bold;
 }
 
@@ -1285,4 +1289,109 @@ a.zoombox-close:after {
 
 .zoombox-target:target a.zoombox-close {
     top: 0px;
+}
+
+.pure-material-button-contained {
+    position: relative;
+    display: inline-block;
+    box-sizing: border-box;
+    border: none;
+    border-radius: 4px;
+    padding: 0 12px;
+    min-width: 64px;
+    height: 30px;
+    vertical-align: middle;
+    text-align: center;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+    background-color: rgb(var(--pure-material-primary-rgb, 33, 150, 243));
+    box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2), 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12);
+    font-family: var(--pure-material-font, "Roboto", "Segoe UI", BlinkMacSystemFont, system-ui, -apple-system);
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 32px;
+    overflow: hidden;
+    outline: none;
+    cursor: pointer;
+    transition: box-shadow 0.2s;
+    float:left;
+}
+
+.pure-material-button-contained::-moz-focus-inner {
+    border: none;
+}
+
+/* Overlay */
+.pure-material-button-contained::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+/* Ripple */
+.pure-material-button-contained::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    border-radius: 50%;
+    padding: 50%;
+    width: 32px; /* Safari */
+    height: 32px; /* Safari */
+    background-color: rgb(var(--pure-material-onprimary-rgb, 255, 255, 255));
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1);
+    transition: opacity 1s, transform 0.5s;
+}
+
+/* Hover, Focus */
+.pure-material-button-contained:hover,
+.pure-material-button-contained:focus {
+    box-shadow: 0 2px 4px -1px rgba(0, 0, 0, 0.2), 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12);
+}
+
+.pure-material-button-contained:hover::before {
+    opacity: 0.08;
+}
+
+.pure-material-button-contained:focus::before {
+    opacity: 0.24;
+}
+
+.pure-material-button-contained:hover:focus::before {
+    opacity: 0.3;
+}
+
+/* Active */
+.pure-material-button-contained:active {
+    box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2), 0 8px 10px 1px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.pure-material-button-contained:active::after {
+    opacity: 0.32;
+    transform: translate(-50%, -50%) scale(0);
+    transition: transform 0s;
+}
+
+/* Disabled */
+.pure-material-button-contained:disabled {
+    color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.38);
+    background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.12);
+    box-shadow: none;
+    cursor: initial;
+}
+
+.pure-material-button-contained:disabled::before {
+    opacity: 0;
+}
+
+.pure-material-button-contained:disabled::after {
+    opacity: 0;
 }

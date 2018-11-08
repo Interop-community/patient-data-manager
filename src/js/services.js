@@ -1085,7 +1085,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         }
         if (resource.backboneElements !== undefined) {
             for (var i = 0; i < resource.backboneElements.length; i++) {
-                var object = {"name": resource.backboneElements[i].elementName, "elements": buildResourceDataType(resource.backboneElements[i])};
+                var object = {"name": resource.backboneElements[i].elementName, "type": resource.backboneElements[i].path, "elements": buildResourceDataType(resource.backboneElements[i])};
                 for (var j = 0; j < object.elements.length; j++) {
                     if (object.elements[j].path.indexOf(resource.backboneElements[i].path) !== 0) {
                         object.elements[j].path = resource.backboneElements[i].path + '.' + object.elements[j].path;

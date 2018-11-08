@@ -11,6 +11,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         $scope.resourceTypeConfigList = [];
         $scope.selectedResourceTypeConfig = {};
+        $scope.selectedResourceActiveMaster = 0;
         $scope.selectedBackBoneElement = {};
 
         $scope.resourceTypeList = [];
@@ -23,7 +24,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         $scope.enteredSearch = '';
         $scope.resourcePages = {};
-        $scope.tableOffset = 215;
+        $scope.tableOffset = 10;
         $scope.tableOffsetWidth = 220;
         $scope.detailOffset = 130;
         $scope.getValueSetExpansion = $terminology.getValueSetExpansion;
@@ -77,8 +78,8 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         $scope.setTableOffset = function(){
-            $scope.tableOffset = 215 +
-                ($scope.searchBar  ? 0 : -65);
+            $scope.tableOffset = 140 +
+                ($scope.searchBar  ? 50 : 0);
             $scope.tableOffsetWidth = 220 +
                 ($scope.detailView  ? 375 : 0);
         };
@@ -116,11 +117,12 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          *      SELECTION AND NAVIGATION
          *
          **/
+        $scope.selected = false;
+
         $scope.selectResourceInstance = function(resource) {
+            $scope.selected = false;
             $scope.resourceInstanceList = $scope.resourceInstanceList.filter(function( obj ) {
-//                if (resource.isSelected) {
-                    obj.isSelected = (obj === resource);
-//                }
+                obj.isSelected = (obj === resource);
                 return true;
             });
 
@@ -134,6 +136,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             $scope.setTableOffset();
             $scope.getAvailableReferences();
             $scope.getAvailableBackboneElements();
+            $scope.selected = true;
         };
 
         $scope.typeAheadSelected = function(item, attribute) {
@@ -181,8 +184,15 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             if (resourceType !== $scope.selectedResourceType) {
                 unselectResource();
             }
+            $scope.selectedResourceActiveMaster = 0;
             $scope.selectedResourceType = $scope.resourceTypeList[resourceType.index];
             $scope.selectedResourceTypeConfig = $scope.resourceTypeConfigList[resourceType.index];
+            for (var i = 0; i < $scope.selectedResourceTypeConfig.displayValues.length; i++) {
+                if ($scope.selectedResourceTypeConfig.displayValues[i].view === 'master') {
+                    $scope.selectedResourceActiveMaster++;
+                }
+            }
+
             rebuildResourceTable($scope.selectedResourceType.pageData);
             $scope.resourcePages.pageCount = $scope.selectedResourceType.pageCount;
             $scope.showPageButtons();
@@ -602,6 +612,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             $scope.selectedBackBoneElement = backboneElement;
             $scope.modalOpen = true;
             var modalInstance;
+
             if (create) {
                 modalInstance = $uibModal.open({
                     animation: true,
@@ -906,9 +917,9 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.addBackboneElement = function(createdBackBoneElement) {
             var elementKey;
             for (var i = 0; i < $scope.selectedResourceTypeConfig.backboneElements.length; i++) {
-                var element = $scope.createdBackBoneElement[_.camelCase($scope.selectedResourceTypeConfig.backboneElements[i].name)];
+                var element = $scope.createdBackBoneElement[$scope.selectedResourceTypeConfig.backboneElements[i].type];
                 if (element !== undefined) {
-                    elementKey = _.camelCase($scope.selectedResourceTypeConfig.backboneElements[i].name);
+                    elementKey = $scope.selectedResourceTypeConfig.backboneElements[i].type;
                 }
             }
             //pick up variable items

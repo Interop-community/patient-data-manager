@@ -27,9 +27,8 @@ angular.module('pdmApp.directives', []).directive("dynamicName",function($compil
                 scope.$parent.resizeWithOffset = function (offsetH, offsetW) {
 
                     scope.$parent.$eval(attr.notifier);
-
                     var newSize = {
-                        'height': (newValue.h - offsetH) + 'px'
+                        'max-height': (newValue.h - offsetH) + 'px'
                     };
 
                     if (offsetW !== undefined) {
