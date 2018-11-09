@@ -66,7 +66,8 @@
                 "path": "status", "default": "final", "view": "detail"}
         ],
         "backboneElements" : [
-            {"type": "referenceRange", "name": "BackboneElementParticipant", "labelPrefix": "Reference Range ", "path":"referenceRange", "view": "detail"}
+            {"type": "fhirDatatype", "name": "BackboneElementComponentStu3_R4", "elementName": "Component",  "labelPrefix": "", "path":"component", "view": "detail"},
+            {"type": "fhirDatatype", "name": "BackboneElementReferenceRangeStu3_R4", "elementName": "Reference Range",  "labelPrefix": "", "path":"referenceRange", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
@@ -473,7 +474,6 @@
                 "path": "status", "default": "active", "view": "detail"}
         ],
         "backboneElements" : [
-            {"type": "Participant", "name": "BackboneElementParticipant", "labelPrefix": "Participant ", "path":"participant", "view": "master"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
@@ -641,10 +641,34 @@
                 "path": "status", "default": "completed", "view": "detail"}
         ],
         "backboneElements" : [
-            {"type": "Condition", "name": "BackboneElementParticipant", "labelPrefix": "Condition ", "path":"condition", "view": "detail"}
+            {"type": "Condition", "name": "BackboneElementConditionStu3_R4", "labelPrefix": "Condition ", "path":"condition", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "patient.reference"}
+        ]
+    },
+    {
+        "resource": "DocumentReference",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Type ", "required": true, "path":"type", "codedUri" : "http://hl7.org/fhir/ValueSet/c80-doc-typecodes"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Class ", "path":"class", "codedUri" : "http://hl7.org/fhir/ValueSet/c80-doc-classcodes"},
+            {"type": "datetime", "name": "DateTime", "label": "Created", "path":"created", "default": "", "view": "detail"},
+            {"type": "datetime", "name": "DateTime", "label": "Date" , "required": true, "path":"date", "default": "", "view": "detail"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["current", "superseded", "entered-in-error"],
+                "path": "status", "default": "current", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "DocStatus ", "path":"docStatus", "codedUri" : "http://hl7.org/fhir/ValueSet/composition-status"},
+            {"type": "text", "name": "description", "label": "Description", "path": "description", "default": "", "view": "detail"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Security Label ", "path":"securityLabel.0", "codedUri" : "http://hl7.org/fhir/ValueSet/security-labels"}
+
+        ],
+        "backboneElements" : [
+            {"type": "fhirDatatype", "name": "BackboneElementContext", "elementName": "Context", "labelPrefix": "", "path":"context", "view": "detail"},
+            {"type": "fhirDatatype", "name": "BackboneElementContent", "elementName": "Content", "labelPrefix": "", "path":"content", "view": "detail"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"}
         ]
     },
     {

@@ -11,6 +11,7 @@
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://ajax.googleapis.com/ajax/libs/angular_material/1.0.0/angular-material.min.css">
         <link rel="stylesheet" href="css/app.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700,400italic">
 
         <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 		<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -39,11 +40,11 @@
             </div>
         </div>
 
-        <div layout="row" class="layout-template" ng-style="resizeWithOffset(80)" ng-cloak>
+        <div layout="row" class="layout-template" ng-cloak>
             <div class="sidebar" ng-include src="'js/templates/resourceGroupList.html'"></div>
             <div layout="column" class="layout-template">
                 <div class="search-bar" ng-show="searchBar">
-                    <div class="search-label"><label>Search</label></div>
+                    <!--<div class="search-label"><label>Search</label></div>-->
                     <div class="search-field typeahead">
                         <input ng-show="selectedResourceTypeConfig.search.searchParams[0].codedUri" enter-key="requestResourceSearch()" type="text" class="input-box form-control" ng-model="enteredSearch"
                                uib-typeahead="coding.display for coding in getValueSetExpansion($viewValue, 3, selectedResourceTypeConfig.search.searchParams[0].codedUri)"

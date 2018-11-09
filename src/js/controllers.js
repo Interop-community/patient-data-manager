@@ -11,6 +11,8 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         $scope.resourceTypeConfigList = [];
         $scope.selectedResourceTypeConfig = {};
+        $scope.selectedResourceActiveMaster = 0;
+        $scope.selectedBackBoneElement = {};
 
         $scope.resourceTypeList = [];
         $scope.selectedResourceType = {};
@@ -22,7 +24,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         $scope.enteredSearch = '';
         $scope.resourcePages = {};
-        $scope.tableOffset = 215;
+        $scope.tableOffset = 10;
         $scope.tableOffsetWidth = 220;
         $scope.detailOffset = 130;
         $scope.getValueSetExpansion = $terminology.getValueSetExpansion;
@@ -76,8 +78,8 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         $scope.setTableOffset = function(){
-            $scope.tableOffset = 215 +
-                ($scope.searchBar  ? 0 : -65);
+            $scope.tableOffset = 140 +
+                ($scope.searchBar  ? 50 : 0);
             $scope.tableOffsetWidth = 220 +
                 ($scope.detailView  ? 375 : 0);
         };
@@ -115,11 +117,12 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
          *      SELECTION AND NAVIGATION
          *
          **/
+        $scope.selected = false;
+
         $scope.selectResourceInstance = function(resource) {
+            $scope.selected = false;
             $scope.resourceInstanceList = $scope.resourceInstanceList.filter(function( obj ) {
-//                if (resource.isSelected) {
-                    obj.isSelected = (obj === resource);
-//                }
+                obj.isSelected = (obj === resource);
                 return true;
             });
 
@@ -132,6 +135,8 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             }
             $scope.setTableOffset();
             $scope.getAvailableReferences();
+            $scope.getAvailableBackboneElements();
+            $scope.selected = true;
         };
 
         $scope.typeAheadSelected = function(item, attribute) {
@@ -179,8 +184,15 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             if (resourceType !== $scope.selectedResourceType) {
                 unselectResource();
             }
+            $scope.selectedResourceActiveMaster = 0;
             $scope.selectedResourceType = $scope.resourceTypeList[resourceType.index];
             $scope.selectedResourceTypeConfig = $scope.resourceTypeConfigList[resourceType.index];
+            for (var i = 0; i < $scope.selectedResourceTypeConfig.displayValues.length; i++) {
+                if ($scope.selectedResourceTypeConfig.displayValues[i].view === 'master') {
+                    $scope.selectedResourceActiveMaster++;
+                }
+            }
+
             rebuildResourceTable($scope.selectedResourceType.pageData);
             $scope.resourcePages.pageCount = $scope.selectedResourceType.pageCount;
             $scope.showPageButtons();
@@ -521,6 +533,27 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
         };
 
+        $scope.getAvailableBackboneElements = function() {
+            $scope.selectedResourceBackboneElements = [];
+            $scope.selectedResourceBackboneElementsList = [];
+            angular.forEach($scope.selectedResourceTypeConfig.backboneElements, function (backboneElement) {
+                angular.forEach(backboneElement.elements, function (element) {
+                    if (element.type === 'variable') {
+                        element.variableChoices = [];
+                        angular.forEach(element.dataTypes, function (subDataType) {
+                            element.variableChoices.push($resourceJson.subsumeVariableDataType(element.namePrefix, subDataType, element));
+                        });
+
+                    }
+                });
+                $scope.selectedResourceBackboneElements.push(backboneElement);
+            });
+        };
+
+        $scope.removeBackboneElement = function(index, elementName) {
+            $scope.selectedResourceInstance[elementName].splice(index, 1);
+        };
+
         $scope.openModalDialog = function (operation, resource) {
             var newResource;
             var resourceTypeConfig = $scope.selectedResourceTypeConfig;
@@ -570,6 +603,83 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                     }, function() {
                         modalProgress.dismiss();
                     });
+            }, function () {
+                $scope.modalOpen = false;
+            });
+        };
+
+        $scope.openBackboneElementModalDialog = function (backboneElement, create) {
+            $scope.selectedBackBoneElement = backboneElement;
+            $scope.modalOpen = true;
+            var modalInstance;
+
+            if (create) {
+                modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: 'js/templates/createBackboneElementModal.html',
+                    controller: 'BackboneElementModalCtrl',
+                    size:'lg',
+                    resolve: {
+                        getBackboneElement: function () {
+                            return backboneElement;
+                        },
+                        getSelectedResourceInstance: function () {
+                            return $scope.selectedResourceInstance;
+                        },
+                        getSelectedResourceTypeConfig: function () {
+                            return $scope.selectedResourceTypeConfig;
+                        },
+                        getRequestUpdateResource: function () {
+                            return $scope.requestUpdateResource;
+                        }
+                    }
+                });
+            } else {
+                modalInstance = $uibModal.open({
+                    animation: true,
+                    templateUrl: 'js/templates/detailBackboneElementModal.html',
+                    controller: 'BackboneElementModalDetailCtrl',
+                    size:'lg',
+                    resolve: {
+                        getBackboneElement: function () {
+                            return backboneElement;
+                        },
+                        getSelectedResourceInstance: function () {
+                            return $scope.selectedResourceInstance;
+                        },
+                        getSelectedResourceTypeConfig: function () {
+                            return $scope.selectedResourceTypeConfig;
+                        },
+                        getRequestUpdateResource: function () {
+                            return $scope.requestUpdateResource;
+                        }
+                    }
+                });
+            }
+
+            modalInstance.result.then(function () {
+                $scope.modalOpen = false;
+            }, function () {
+                $scope.modalOpen = false;
+            });
+        };
+
+        $scope.openAttachmentContentModal = function(element) {
+            $scope.modalOpen = true;
+            var modalInstance = $uibModal.open({
+                animation: true,
+                templateUrl: 'js/templates/detailAttachmentContent.html',
+                controller: 'DetailAttachmentContentModalCtrl',
+                size:'lg',
+                resolve: {
+                    getElement: function () {
+                        return element;
+                    }
+                }
+            });
+
+            modalInstance.result.then(function () {
+                $scope.modalOpen = false;
             }, function () {
                 $scope.modalOpen = false;
             });
@@ -712,7 +822,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
     }]).controller('ModalInstanceCtrl',['$scope', '$uibModalInstance', "$terminology", "$dynamicModelHelpers", "getNewResource", "getSelectedResourceTypeConfig", "isCreate", "isReadOnly",
     function ($scope, $uibModalInstance, $terminology, $dynamicModelHelpers, getNewResource, getSelectedResourceTypeConfig, isCreate, isReadOnly) {
-
         $scope.selectedResourceInstance = getNewResource;
         $scope.selectedResourceTypeConfig = getSelectedResourceTypeConfig;
         $scope.dmh = $dynamicModelHelpers;
@@ -788,6 +897,89 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.errorMessage = errorService.getErrorMessage();
         $scope.isFormatted = errorService.messageIsFormatted();
 
+        $scope.close = function () {
+            $uibModalInstance.close();
+        };
+    }).controller('ProgressModalCtrl',['$scope', '$uibModalInstance', "getTitle",
+    function ($scope, $uibModalInstance, getTitle) {
+
+        $scope.title = getTitle;
+
+    }]).controller('BackboneElementModalCtrl', ['$scope', '$uibModalInstance', "$dynamicModelHelpers", 'getBackboneElement', 'getSelectedResourceTypeConfig', 'getSelectedResourceInstance', 'getRequestUpdateResource',
+    function($scope, $uibModalInstance, $dynamicModelHelpers, getBackboneElement, getSelectedResourceTypeConfig, getSelectedResourceInstance, getRequestUpdateResource) {
+        $scope.selectedBackBoneElement = getBackboneElement;
+        $scope.createdBackBoneElement = {};
+        $scope.selectedResourceTypeConfig = getSelectedResourceTypeConfig;
+        $scope.selectedResourceInstance = getSelectedResourceInstance;
+        $scope.requestUpdateResource = getRequestUpdateResource;
+        $scope.dmh = $dynamicModelHelpers;
+
+        $scope.addBackboneElement = function(createdBackBoneElement) {
+            var elementKey;
+            for (var i = 0; i < $scope.selectedResourceTypeConfig.backboneElements.length; i++) {
+                var element = $scope.createdBackBoneElement[$scope.selectedResourceTypeConfig.backboneElements[i].type];
+                if (element !== undefined) {
+                    elementKey = $scope.selectedResourceTypeConfig.backboneElements[i].type;
+                }
+            }
+            //pick up variable items
+            for (var key in createdBackBoneElement) {
+                if (key !== elementKey) {
+                    createdBackBoneElement[elementKey][key] = createdBackBoneElement[key];
+                    delete createdBackBoneElement[key];
+                }
+            }
+            if ($scope.selectedResourceInstance[elementKey] === undefined) {
+                $scope.selectedResourceInstance[elementKey] = [];
+            }
+            $scope.selectedResourceInstance[elementKey].push(createdBackBoneElement[elementKey]);
+            $scope.requestUpdateResource();
+            $uibModalInstance.close($scope.selectedResourceInstance);
+        };
+
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    }]).controller('BackboneElementModalDetailCtrl', ['$scope', '$uibModalInstance', "$dynamicModelHelpers", 'getBackboneElement', 'getSelectedResourceTypeConfig', 'getSelectedResourceInstance', 'getRequestUpdateResource',
+    function($scope, $uibModalInstance, $dynamicModelHelpers, getBackboneElement, getSelectedResourceTypeConfig, getSelectedResourceInstance, getRequestUpdateResource) {
+        $scope.selectedBackBoneElement = getBackboneElement;
+        $scope.createdBackBoneElement = {};
+        $scope.selectedResourceTypeConfig = getSelectedResourceTypeConfig;
+        $scope.selectedResourceInstance = getSelectedResourceInstance;
+        $scope.requestUpdateResource = getRequestUpdateResource;
+        $scope.dmh = $dynamicModelHelpers;
+
+        $scope.addBackboneElement = function(createdBackBoneElement) {
+            for(var key in createdBackBoneElement){
+                $scope.selectedResourceInstance[key].push(createdBackBoneElement[key]);
+            }
+            $scope.requestUpdateResource();
+            $uibModalInstance.close($scope.selectedResourceInstance);
+        };
+        $scope.cancel = function () {
+            $uibModalInstance.dismiss('cancel');
+        };
+    }]).controller("DetailAttachmentContentModalCtrl",
+    function($scope, $uibModalInstance, $sce, getElement) {
+        $scope.element = getElement;
+        $scope.hasAttachment = false;
+        $scope.hasUrl = false;
+        $scope.errorText = "";
+        if ($scope.element.attachment !== undefined) {
+            $scope.hasAttachment = true;
+            if ($scope.element.attachment.url !== undefined) {
+                $scope.hasUrl = true;
+                $scope.contentUrl = $sce.trustAsResourceUrl($scope.element.attachment.url);
+            } else if ($scope.element.attachment.contentType !== undefined) {
+                let pdf = $scope.element.attachment.data;
+
+                fetch(`data:${$scope.element.attachment.contentType};base64,${pdf}`)
+                    .then(response => response.blob())
+                    .then(blob => document.querySelector("iframe").src = URL.createObjectURL(blob));
+            } else {
+                $scope.errorText = "Please include either a url or data and contentType."
+            }
+        }
         $scope.close = function () {
             $uibModalInstance.close();
         };

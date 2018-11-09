@@ -91,9 +91,9 @@
     {
         "dataType" : "Annotation",
         "displayValues" : [
-            {"type": "text", "name": "string", "label": "Text" , "required": true, "path":"text", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Text" , "path":"text", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Time ", "path":"time", "view": "detail"},
-            {"type": "text", "name": "string ", "label": "Author", "path":"authorString", "view": "detail"}
+            {"type": "text", "name": "string ", "label": "Author", "default": "", "path":"authorString", "view": "detail"}
         ]
     },
     {
@@ -113,9 +113,146 @@
         "dataType": "Age",
         "displayValues": [
             {"type": "text", "name": "string", "label": "Value" , "path":"value", "default": "", "view": "detail"},
-            {"type": "text", "name": "string", "label": "Text" , "path":"unit", "default": "", "view": "detail"},
-            {"type": "text", "name": "string", "label": "Text" , "path":"system", "default": "", "view": "detail"},
-            {"type": "text", "name": "string", "label": "Text" , "path":"code", "default": "", "view": "detail"}
+            {"type": "text", "name": "string", "label": "Unit" , "path":"unit", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "System" , "path":"system", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Code" , "path":"code", "default": "", "view": "detail"}
+        ]
+    },
+    {
+        "dataType": "Attachment",
+        "displayValues": [
+            {"type": "text", "name": "code", "label": "Content Type", "path": "contentType", "default": ""},
+            {"type": "text", "name": "code", "label": "Language" , "path": "language", "default": ""},
+            {"type": "text", "name": "string", "label": "Data" , "path":"data", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Url" , "path":"url", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Hash" , "path":"hash", "default": "", "view": "detail"},
+            {"type": "text", "name": "string", "label": "Title" , "path":"title", "default": "", "view": "detail"},
+            {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Creation ", "path":"creation", "view": "detail"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementComponentDstu2",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
+            {"type": "variable", "name": "variable", "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "String", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Ratio", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Time", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Value "}
+                ]},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Date Absent Reason ", "path":"dateAbsentReason"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementComponentStu3_R4",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
+            {"type": "variable", "name": "variable", "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "String", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Ratio", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Time", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Value "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Value "}
+                ]},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Date Absent Reason ", "path":"dateAbsentReason"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Interpretation ", "path":"interpretation"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementReferenceRangeDstu2",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "Low ", "path":"low"},
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "High ", "path":"high"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Meaning ", "path":"meaning"},
+            {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Age ", "path":"age"},
+            {"type": "fhirDatatype", "name": "String", "labelPrefix": "Text ", "path":"text"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementReferenceRangeStu3_R4",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "Low ", "path":"low"},
+            {"type": "fhirDatatype", "name": "SimpleQuantity", "labelPrefix": "High ", "path":"high"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Type ", "path":"type"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Applies To ", "path":"appliesTo"},
+            {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Age ", "path":"age"},
+            {"type": "fhirDatatype", "name": "String", "labelPrefix": "Text ", "path":"text"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementConditionDstu2",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Outcome ", "path":"outcome"},
+            {"type": "variable", "name": "variable", "namePrefix": "onset", "label": "Onset ", "path":"", "choiceLabel": "Onset ",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "Age", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Onset "},
+                    {"type": "text", "name": "String", "labelPrefix": "Onset "}
+                ]},
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementConditionStu3_R4",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Outcome ", "path":"outcome"},
+            {"type": "variable", "name": "variable", "namePrefix": "onset", "label": "Onset ", "path":"", "choiceLabel": "Onset ",
+                "dataTypes" : [
+                    {"type": "fhirDatatype", "name": "Age", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Range", "labelPrefix": "Onset "},
+                    {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Onset "},
+                    {"type": "text", "name": "String", "labelPrefix": "Onset "}
+                ]},
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementEvent",
+        "displayValues" : [
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["proposed", "draft", "planned", "requested", "received", "accepted", "in-progress", "review", "completed", "cancelled", "suspended", "rejected", "failed"],
+                "path": "status", "default": "proposed", "view": "detail"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Description ", "path":"description"},
+            {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "DateTime ", "path":"dateTime"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementItem",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Body Site ", "path":"bodySite"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["proposed", "draft", "planned", "requested", "received", "accepted", "in-progress", "review", "completed", "cancelled", "suspended", "rejected", "failed"],
+                "path": "status", "default": "proposed", "view": "detail"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementContext",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Event ", "path":"event"},
+            {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Period ", "path":"period"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Facility Type ", "path":"facilityType"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Practice Setting ", "path":"practiceSetting"}
+        ]
+    },
+    {
+        "dataType": "BackboneElementContent",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "Attachment", "labelPrefix": "Attachment ", "path":"attachment"},
+            {"type": "fhirDatatype", "name": "Coding", "labelPrefix": "Format ", "path":"format"}
         ]
     }
+
 ]

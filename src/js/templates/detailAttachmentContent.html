@@ -1,0 +1,6 @@
+<div ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)" class="details-form modalForm">
+    <div style="height: 100%">
+        <div ng-if="errorText !== ''" style="height: 100px; padding: 40px 0px 0px 20px; font-size: 20px">{{errorText}}</div>
+        <iframe ng-if="errorText === ''" style="width: 900px; height: 700px" src="{{contentUrl}}"></iframe>
+    </div>
+</div>

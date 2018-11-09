@@ -47,9 +47,8 @@
                 "path": "status", "default": "final", "view": "detail"}
         ],
         "backboneElements" : [
-            {"type": "referenceRange", "name": "BackboneElementParticipant", "labelPrefix": "Reference Range ", "path":"referenceRange", "view": "detail"},
-            {"type": "related", "name": "BackboneElementParticipant", "labelPrefix": "Related ", "path":"related", "view": "detail"},
-            {"type": "component", "name": "BackboneElementParticipant", "labelPrefix": "Component ", "path":"component", "view": "detail"}
+            {"type": "fhirDatatype", "name": "BackboneElementComponentDstu2", "elementName": "Component",  "labelPrefix": "", "path":"component", "view": "detail"},
+            {"type": "fhirDatatype", "name": "BackboneElementReferenceRangeDstu2", "elementName": "Reference Range",  "labelPrefix": "", "path":"referenceRange", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "subject.reference"}
@@ -219,6 +218,28 @@
         ]
     },
     {
+        "resource": "DiagnosticOrder",
+        "showInResourceList": "Patient",
+        "displayValues": [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Reason ", "path":"reason.0", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-code"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["proposed", "draft", "planned", "requested", "received", "accepted", "in-progress", "review", "completed", "cancelled", "suspended", "rejected", "failed"],
+                "path": "status", "default": "proposed", "view": "detail"},
+            {"type": "select", "name": "priority", "label": "Priority" ,
+                "options":["routine", "urgent", "stat", "asap"],
+                "path": "priority", "default": "routine", "view": "detail"},
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"}
+        ],
+        "backboneElements" : [
+            {"type": "fhirDatatype", "name": "BackboneElementEvent", "elementName": "Event", "labelPrefix": "", "path":"event", "view": "detail"},
+            {"type": "fhirDatatype", "name": "BackboneElementItem", "elementName": "Item", "labelPrefix": "", "path":"item", "view": "detail"}
+        ],
+        "references" : [
+            {"resource": "Patient",  "label": "Subject", "path": "subject.reference"}
+        ]
+    },
+    {
         "resource" : "Immunization",
         "showInResourceList": "Patient",
         "displayValues" : [
@@ -271,10 +292,34 @@
                 "path": "status", "default": "completed", "view": "detail"}
         ],
         "backboneElements" : [
-            {"type": "Condition", "name": "BackboneElementParticipant", "labelPrefix": "Condition ", "path":"condition", "view": "detail"}
+            {"type": "fhirDatatype", "name": "BackboneElementConditionDstu2", "elementName": "Condition", "labelPrefix": "", "path":"condition", "view": "detail"}
         ],
         "references" : [
             {"resource": "Patient", "label": "Patient", "path": "patient.reference"}
+        ]
+    },
+    {
+        "resource": "DocumentReference",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Type ", "required": true, "path":"type", "codedUri" : "http://hl7.org/fhir/ValueSet/c80-doc-typecodes"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Class ", "path":"class", "codedUri" : "http://hl7.org/fhir/ValueSet/c80-doc-classcodes"},
+            {"type": "datetime", "name": "DateTime", "label": "Created", "path":"created", "default": "", "view": "detail"},
+            {"type": "datetime", "name": "DateTime", "label": "Indexed" , "required": true, "path":"indexed", "default": "", "view": "detail"},
+            {"type": "select", "name": "status", "label": "Status" ,
+                "options":["current", "superseded", "entered-in-error"],
+                "path": "status", "default": "current", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "DocStatus ", "path":"docStatus", "codedUri" : "http://hl7.org/fhir/ValueSet/composition-status"},
+            {"type": "text", "name": "description", "label": "Description", "path": "description", "default": "", "view": "detail"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Security Label ", "path":"securityLabel.0", "codedUri" : "http://hl7.org/fhir/ValueSet/security-labels"}
+
+        ],
+        "backboneElements" : [
+            {"type": "fhirDatatype", "name": "BackboneElementContext", "elementName": "Context", "labelPrefix": "", "path":"context", "view": "detail"},
+            {"type": "fhirDatatype", "name": "BackboneElementContent", "elementName": "Content", "labelPrefix": "", "path":"content", "view": "detail"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"}
         ]
     },
     {

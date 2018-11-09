@@ -203,6 +203,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         };
 
         dynamicModelHelpers.getModelParent = function(obj,path) {
+
             // Removes period at end when dealing with 'variable' types
             if (path.slice(-1) === '.') {
                 path = path.slice(0, -1);
@@ -300,6 +301,9 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                     emptyPaths = findEmptyElementsInBundle(resource);
                 } else {
                     emptyPaths = findEmptyElements(resource, "", []);
+                    if (resource.isSelected !== undefined) {
+                        emptyPaths.push('.isSelected');
+                    }
                 }
                 if (emptyPaths.length === 0) {
                     empty = false;
@@ -410,6 +414,9 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                         allPaths.push(currPath);
                     } else {
                         for (var i = 0; i < resource[key].length; i++) {
+                            if (i > 0) {
+                                currPath = currPath.substring(currPath.length, key.length + 3);
+                            }
                             if (typeof resource[key][i] === "object") {
                                 currPath += "." + key + "." + i;
                                 if (Object.keys(resource[key][i]).length === 0) {
@@ -427,6 +434,8 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                                         }
                                     }
                                 }
+                            } else if (resource[key][i] == undefined) {
+                                resource[key].splice(i, 1);
                             }
                         }
 
@@ -951,6 +960,8 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
     var importedFhirDataTypes;
     var importedResources;
 
+    var resourceJson = {}
+
     function getFhirTypeByName(name) {
         var type;
         angular.forEach(importedFhirDataTypes, function (fhirDataType) {
@@ -981,7 +992,12 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                 }
                 if (value.path !== "" && value.path !== undefined) {
                     if (parentType !== "" && parentType !== undefined) {
-                        dataTypeValue.path = parentType.path + "." +  value.path;
+                        var tempPath = parentType.path + "." +  value.path;
+                        if (dataTypeValue.path !== "") {
+                            dataTypeValue.path = tempPath + "." + dataTypeValue.path;
+                        } else {
+                            dataTypeValue.path = tempPath;
+                        }
                     } else {
                         dataTypeValue.path = value.path + "." +  dataTypeValue.path;
                     }
@@ -991,7 +1007,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 //        return {};
     }
 
-    function subsumeVariableDataType(variableDatatypeName, dataType, parentType) {
+    resourceJson.subsumeVariableDataType = function(variableDatatypeName, dataType, parentType) {
 
         var fhirDatatypePrefix = variableDatatypeName + dataType.name;
         var fhirDataType = getFhirTypeByName(dataType.name);
@@ -1034,14 +1050,14 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
                 var fhirDataType = getFhirTypeByName(dataType.name);
                 if (fhirDataType.displayValues !== undefined) {
                     angular.forEach(fhirDataType.displayValues, function (dataTypeValue) {
-                        if (dataTypeValue.type === 'fhirDatatype') {
+                        if (dataTypeValue.type === 'fhirDatatype' || fhirDataType.type === 'variable') {
                             newDisplayValues = newDisplayValues.concat(buildResourceDataType(dataTypeValue, dataType));
                         } else {
                             newDisplayValues.push(subsumeDataType(dataType, dataTypeValue, parentType));
                         }
                     });
                 } else if (fhirDataType.displayValue !== undefined) {
-                    if (fhirDataType.displayValue.type === 'fhirDatatype') {
+                    if (fhirDataType.displayValue.type === 'fhirDatatype' || fhirDataType.displayValue.type === 'variable') {
                         newDisplayValues = newDisplayValues.concat(buildResourceDataType(fhirDataType.displayValue, dataType));
                     } else {
                         newDisplayValues.push(subsumeDataType(dataType, fhirDataType.displayValue, parentType));
@@ -1051,7 +1067,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             case 'variable':
                 dataType.variableChoices = [];
                 angular.forEach(dataType.dataTypes, function (subDataType) {
-                    dataType.variableChoices.push(subsumeVariableDataType(dataType.namePrefix, subDataType, parentType));
+                    dataType.variableChoices.push(resourceJson.subsumeVariableDataType(dataType.namePrefix, subDataType, parentType));
                 });
                 newDisplayValues.push(dataType);
                 break;
@@ -1063,33 +1079,51 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
     function buildResourceList(resource) {
         var newDisplayValues = [];
+        var newBackboneElementValues = [];
         for (var i = 0; i < resource.displayValues.length; i++) {
             newDisplayValues = newDisplayValues.concat(buildResourceDataType(resource.displayValues[i]));
         }
+        if (resource.backboneElements !== undefined) {
+            for (var i = 0; i < resource.backboneElements.length; i++) {
+                var object = {"name": resource.backboneElements[i].elementName, "type": resource.backboneElements[i].path, "elements": buildResourceDataType(resource.backboneElements[i])};
+                for (var j = 0; j < object.elements.length; j++) {
+                    if (object.elements[j].path.indexOf(resource.backboneElements[i].path) !== 0) {
+                        object.elements[j].path = resource.backboneElements[i].path + '.' + object.elements[j].path;
+                    }
+                }
+                newBackboneElementValues = newBackboneElementValues.concat(object);
+            }
+            delete resource.backboneElements;
+            resource.backboneElements = newBackboneElementValues;
+        }
+
         delete resource.displayValues;
         resource.displayValues = newDisplayValues;
         return resource;
     }
 
-    return {
-        getResources: function(schemaVersion) {
-            var deferred = $.Deferred();
-            $http.get('config/resources_' + schemaVersion +'.json').success(function(resources){
-                // importedResources = JSON.parse(JSON.stringify(resources));
-                importedResources = resources;
-                $http.get('config/fhirDatatypes.json').success(function(fhirDataTypes){
-                    importedFhirDataTypes = fhirDataTypes;
-                    var finalResources = [];
-                    var index = 0;
-                    angular.forEach(importedResources, function (resource) {
-                        resource.index = index++;
-                        finalResources.push(buildResourceList(resource));
-                    });
-                    deferred.resolve(resources);
-                });
-            });
 
-            return deferred;
-        }
-    }
+    resourceJson.getResources = function(schemaVersion) {
+        var deferred = $.Deferred();
+        $http.get('config/resources_' + schemaVersion +'.json').success(function(resources){
+
+            // importedResources = JSON.parse(JSON.stringify(resources));
+            importedResources = resources;
+            $http.get('config/fhirDatatypes.json').success(function(fhirDataTypes){
+                importedFhirDataTypes = fhirDataTypes;
+                var finalResources = [];
+                var index = 0;
+                angular.forEach(importedResources, function (resource) {
+                    resource.index = index++;
+                    finalResources.push(buildResourceList(resource));
+                });
+                deferred.resolve(resources);
+            });
+        });
+
+        return deferred;
+    };
+
+    return resourceJson;
+
 }]);
