@@ -147,15 +147,23 @@ angular.module('pdmApp.filters', []).filter('age', function() {
                 case 'Date':
                     if (value.length > 10) {
                         return $filter('date')(value, 'yyyy-MM-dd HH:mm');
-                    } else {
+                    } else if (value.length > 7){
                         return $filter('date')(value, 'yyyy-MM-dd');
+                    } else if (value.length > 4) {
+                        return $filter('date')(value, 'yyyy-MM');
+					} else {
+                        return value;
                     }
                     break;
                 case 'DateTime':
                     if (value.length > 10) {
                         return $filter('date')(value, 'yyyy-MM-dd HH:mm');
-                    } else {
+                    } else if (value.length > 7){
                         return $filter('date')(value, 'yyyy-MM-dd');
+                    } else if (value.length > 4) {
+                        return $filter('date')(value, 'yyyy-MM');
+                    } else {
+                        return value;
                     }
                     break;
                 case 'Time':
