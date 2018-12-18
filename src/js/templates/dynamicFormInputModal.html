@@ -38,6 +38,7 @@
      with Javascript dates.  For example, "2010" is a FHIR date -->
 <div ng-if="attribute.type=='datetime'" class="form-group">
     <label class="dynamic-form-label">{{attribute.label}} <a href="https://www.hl7.org/fhir/datatypes.html#dateTime" target="_blank"><img src="../../images/infobutton.png" style="width:12px; height:14px; padding-bottom:2px;"/></a></label>
+    <label class="dynamic-form-label-gray">Ex: 2001-01-31T23:59:59+06:00 </label>
     <div class="dynamic-form-label-input">
         <!--<input type="datetime-local" class="form-control" ng-disabled="!writePermission"-->
         <input class="form-control" ng-required="attribute.required"
