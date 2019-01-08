@@ -87,21 +87,21 @@
                                           ng-class="sortReverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes'"></span>
                                     </a>
                                 </td>
-                                <td ng-show="tableView[0] !== undefined">
+                                <td ng-show="tableView[0] !== undefined && tableView[0].label!=='Patient'">
                                     <a href="#" ng-click="toggleSort(tableView[0].label)">
                                         {{tableView[0].label}}
                                     <span ng-show="sortSelected === tableView[0].label" class="glyphicon"
                                           ng-class="sortReverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes'"></span>
                                     </a>
                                 </td>
-                                <td ng-show="tableView[1] !== undefined">
+                                <td ng-show="tableView[1] !== undefined && tableView[1].label!=='Patient'">
                                     <a href="#" ng-click="toggleSort(tableView[1].label)">
                                         {{tableView[1].label}}
                                     <span ng-show="sortSelected === tableView[1].label" class="glyphicon"
                                           ng-class="sortReverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes'"></span>
                                     </a>
                                 </td>
-                                <td ng-show="tableView[2] !== undefined">
+                                <td ng-show="tableView[2] !== undefined && tableView[2].label!=='Patient'">
                                     <a href="#" ng-click="toggleSort(tableView[2].label)">
                                         {{tableView[2].label}}
                                     <span ng-show="sortSelected === tableView[2].label" class="glyphicon"
@@ -114,7 +114,7 @@
                                 <td >
                                     {{resource.id}}
                                 </td>
-                                <td ng-show="tableView[0] !== undefined">
+                                <td ng-if="getColumn('searchField', resource).indexOf('Patient')===-1" ng-show="tableView[0] !== undefined">
                                     {{getColumn('searchField', resource)}}
                                 </td>
                                 <td ng-show="tableView[1] !== undefined">
@@ -127,7 +127,7 @@
                         </table>
 
                         <div ng-show="!showing.searchloading && (resources.length==0)">
-                            <p>No matches, try broadening your search.</p>
+                            <p style="margin-left:10px">No matches, try broadening your search.</p>
                         </div>
                     </div>
 

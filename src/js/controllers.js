@@ -701,7 +701,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         function setOrUpdateReference(reference, typeConfig, isParticipant) {
-
             if (typeConfig.listPath) {
                 var collection = $scope.dmh.getModelParent($scope.selectedResourceInstance, typeConfig.listPath)[ $scope.dmh.getModelLeaf(typeConfig.listPath)];
                 if (collection === undefined) {
@@ -711,10 +710,15 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 }
                 var item = {};
                 if (isParticipant) {
-                    collection.push(reference);
+                    if (collection.filter(function(e) { return e.member.reference === reference.member.reference; }).length === 0) {
+                        collection.push(reference);
+                    }
                 } else {
                     item[typeConfig.subPath] = reference.resourceType + "/" + reference.id;
-                    collection.push(item);
+                    if (collection.filter(function(e) { return e.reference === reference.resourceType + "/" + reference.id; }).length === 0) {
+                        collection.push(item);
+                    }
+
                 }
             } else {
                 $scope.dmh.getModelParent($scope.selectedResourceInstance, typeConfig.linkBack)[ $scope.dmh.getModelLeaf(typeConfig.linkBack) ] = reference.resourceType + "/" + reference.id;
@@ -1072,7 +1076,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         $scope.getColumn = function (index, resource) {
             var result;
-            
             if (index === 'searchField') {
                 var value;
                 if (getSettings.resourceTypeConfig.search.searchFilter.name === "patient") {

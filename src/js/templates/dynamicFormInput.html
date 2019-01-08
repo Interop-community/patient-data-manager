@@ -40,7 +40,7 @@
     <label class="dynamic-form-label">{{attribute.label}} <a href="https://www.hl7.org/fhir/datatypes.html#dateTime" target="_blank"><img src="../../images/infobutton.png" style="width:12px; height:14px; padding-bottom:2px;"/></a></label>
     <div class="dynamic-form-label-input">
         <!--<input type="datetime-local" class="form-control" ng-disabled="!writePermission"-->
-        <input class="form-control" ng-disabled="!writePermission"
+        <input class="form-control" ng-disabled="!writePermission" style="font-size: 12px !important;"
                ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]"
                aria-describedby="dateErrorStatus" placeholder="yyyy-mm-ddThh:mm:ss+hh:00">
                <!--aria-describedby="dateErrorStatus">-->

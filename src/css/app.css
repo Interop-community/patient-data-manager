@@ -628,7 +628,7 @@ fieldset[disabled] .btn-basic.active {
     position: relative;
     /*text-align: right;*/
     min-height: 1px;
-    padding: 0px 1px 5px 15px;
+    padding: 2px 1px 5px 2px;
     display: inline-block;
     margin-bottom: 0;
     font-size: small;
@@ -923,6 +923,7 @@ fieldset[disabled] .btn-basic.active {
 }
 .scrollArea table tbody tr td:last-child {
     border-right: none;
+    padding-right: 15px;
 }
 .scrollArea table tbody tr:first-child td {
     border-top: none;

@@ -110,7 +110,7 @@ angular.module('pdmApp.filters', []).filter('age', function() {
                 	if (typeof value.value == 'undefined') var result = "";
                     else if (typeof value.unit == 'undefined') var result = value.value;
                     else var result = value.value + " " + value.unit;
-                    if (typeof value.comparator !== 'undefined' && value.comparator !== "")
+                    if (typeof value.comparator !== 'undefined' && value.comparator !== "" && result !== "")
                         result = value.comparator + "" + result;
                     return result;
                     break;
@@ -121,7 +121,7 @@ angular.module('pdmApp.filters', []).filter('age', function() {
                     if (typeof value.coding !== 'undefined' ) {
                     	if (typeof value.coding[0].display !== 'undefined') return "";
                     	else if (typeof value.coding[0].code !== 'undefined') return value.coding[0].display;
-						else return value.coding[0].display + ":" + value.coding[0].code;
+						else if (typeof value.coding[0].display !== 'undefined' && typeof value.coding[0].code !== 'undefined') return value.coding[0].display + ":" + value.coding[0].code;
                     }
                     return value.text;
                     break;
