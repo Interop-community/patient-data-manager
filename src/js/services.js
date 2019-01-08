@@ -637,7 +637,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
             return deferred;
         };
 
-        fhirServices.queryResourceInstances = function(smart, resourceTypeList, resourceTypeConfig, notification, searchValue) {
+        fhirServices.queryResourceInstances = function(smart, resourceTypeList, resourceTypeConfig, notification, searchValue) { // , resourceTypeListStaysConstant=[]
             var deferred = $.Deferred();
 
             if (resourceTypeConfig.resource === "Patient") {
@@ -654,13 +654,16 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
                             if (resourceTypeList.length === resourceTypeConfig.index) {
                                 resourceTypeList.push(resourceType);
+                                // resourceTypeListStaysConstant.push(angular.copy(resourceType));
                             } else {
                                 resourceTypeList[resourceTypeConfig.index].count = 1;
+                                // resourceTypeListStaysConstant[resourceTypeConfig.index].count = 1;
                             }
                             resourceTypeList[resourceTypeConfig.index].pageData = angular.copy(resourceResults);
                             resourceTypeList[resourceTypeConfig.index].pageCount = 1;
                             resourceTypeList[resourceTypeConfig.index].searchObj = undefined;
                             deferred.resolve(resourceTypeList, resourceTypeConfig.index);
+                            // deferred.resolve(resourceTypeListStaysConstant, resourceTypeConfig.index);
                         } else {
 //                        notification({ type:"error", text:"No Results found for the Search"});
                         }
@@ -696,14 +699,23 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
                         if (resourceTypeList.length === resourceTypeConfig.index) {
                             resourceTypeList.push(resourceType);
+                            // resourceTypeListStaysConstant.push(angular.copy(resourceType));
+
+
                         } else {
                             resourceTypeList[resourceTypeConfig.index].count = resourceSearchResult.data.total;
+                            // resourceTypeListStaysConstant[resourceTypeConfig.index].count = resourceSearchResult.data.total;
                         }
                         resourceTypeList[resourceTypeConfig.index].pageData = angular.copy(resourceResults);
                         resourceTypeList[resourceTypeConfig.index].pageCount = calculatePages(resourceSearchResult);
                         resourceTypeList[resourceTypeConfig.index].searchObj = resourceSearchResult;
 
+                        // resourceTypeListStaysConstant[resourceTypeConfig.index].pageData = angular.copy(resourceResults);
+                        // resourceTypeListStaysConstant[resourceTypeConfig.index-1].pageCount = calculatePages(resourceSearchResult);
+                        // resourceTypeListStaysConstant[resourceTypeConfig.index-1].searchObj = resourceSearchResult;
+
                         deferred.resolve(resourceTypeList, resourceTypeConfig.index);
+                        // deferred.resolve(resourceTypeListStaysConstant, resourceTypeConfig.index);
                     });
             }
             return deferred;
