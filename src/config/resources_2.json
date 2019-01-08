@@ -100,6 +100,54 @@
         }
     },
     {
+        "resource" : "Condition",
+        "showInResourceList": "Patient",
+        "displayValues" : [
+            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Condition ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-code"},
+            {"type": "datetime", "name": "onsetDateTime", "label": "Onset Date Time" , "required": true, "path":"onsetDateTime", "default": "", "view": "master"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Category ", "path":"category"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Severity ", "path":"severity"},
+            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"},
+            {"type": "select", "name": "verificationStatus", "label": "Verification Status" ,
+                "options":["provisional", "differential", "confirmed", "refuted", "entered-in-error", "unknown"],
+                "path": "verificationStatus", "default": "confirmed", "view": "master"},
+            {"type": "select", "name": "clinicalStatus", "label": "Clinical Status" ,
+                "options":["active", "relapse", "remission", "resolved"],
+                "path": "clinicalStatus", "default": "active", "view": "detail"}
+        ],
+        "references" : [
+            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
+            {"resource": "Encounter", "label": "Context", "path": "context.reference"},
+            {"resource": "Practitioner", "label": "Asserter", "path": "asserter.reference"}
+        ],
+        "search" : {
+            "searchFilter":
+            {
+                "name": "patient",
+                "label": "Patient",
+                "path": "subject.reference",
+                "pathType": "Patient"
+            },
+            "sortFilters": [
+                {
+                    "search": [["code", "desc"]],
+                    "label": "Condition",
+                    "path" : "code",
+                    "pathType": "CodeableConcept",
+                    "filter": "fhirTypeFilter"
+                },
+                {
+                    "search": [["date", "asc"]],
+                    "label": "Onset Date Time",
+                    "path": "onsetDateTime",
+                    "pathType": "DateTime",
+                    "filter": "fhirTypeFilter"
+                }
+            ]
+        }
+    },
+    {
         "resource" : "Encounter",
         "showInResourceList": "Patient",
         "displayValues" : [
@@ -230,54 +278,6 @@
             {"resource": "Practitioner", "label": "Reporter", "path": "reporter.reference"},
             {"resource": "Practitioner", "label": "Recorder", "path": "recorder.reference"}
         ]
-    },
-    {
-        "resource" : "Condition",
-        "showInResourceList": "Patient",
-        "displayValues" : [
-            {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
-            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Condition ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/condition-code"},
-            {"type": "datetime", "name": "onsetDateTime", "label": "Onset Date Time" , "required": true, "path":"onsetDateTime", "default": "", "view": "master"},
-            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Category ", "path":"category"},
-            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Severity ", "path":"severity"},
-            {"type": "fhirDatatype", "name": "Annotation", "labelPrefix": "Note ", "path":"note.0"},
-            {"type": "select", "name": "verificationStatus", "label": "Verification Status" ,
-                "options":["provisional", "differential", "confirmed", "refuted", "entered-in-error", "unknown"],
-                "path": "verificationStatus", "default": "confirmed", "view": "master"},
-            {"type": "select", "name": "clinicalStatus", "label": "Clinical Status" ,
-                "options":["active", "relapse", "remission", "resolved"],
-                "path": "clinicalStatus", "default": "active", "view": "detail"}
-        ],
-        "references" : [
-            {"resource": "Patient", "label": "Patient", "path": "subject.reference"},
-            {"resource": "Encounter", "label": "Context", "path": "context.reference"},
-            {"resource": "Practitioner", "label": "Asserter", "path": "asserter.reference"}
-        ],
-        "search" : {
-            "searchFilter":
-            {
-                "name": "patient",
-                "label": "Patient",
-                "path": "subject.reference",
-                "pathType": "Patient"
-            },
-            "sortFilters": [
-                {
-                    "search": [["code", "desc"]],
-                    "label": "Condition",
-                    "path" : "code",
-                    "pathType": "CodeableConcept",
-                    "filter": "fhirTypeFilter"
-                },
-                {
-                    "search": [["date", "asc"]],
-                    "label": "Onset Date Time",
-                    "path": "onsetDateTime",
-                    "pathType": "DateTime",
-                    "filter": "fhirTypeFilter"
-                }
-            ]
-        }
     },
     {
         "resource": "Procedure",

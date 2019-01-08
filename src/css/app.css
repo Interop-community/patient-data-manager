@@ -829,10 +829,13 @@ fieldset[disabled] .btn-basic.active {
 /*}*/
 
 .modal-footer {
-    padding: 10px 24px 4px;
+    /*padding: 10px 24px 4px;*/
+    padding: 1px 35px 4px;
     margin-bottom: 10px;
     text-align: right;
     border-top: none;
+    margin-top: 0px;
+    margin-bottom: 20px;
 }
 
 .table-striped tbody tr.st-selected td,
@@ -1305,6 +1308,13 @@ a.zoombox-close:after {
     top: 0px;
 }
 
+.create-space-vertical {
+    position: relative;
+    display: block;
+    height: 50px;
+    width: 50px;
+}
+
 .pure-material-button-contained {
     position: relative;
     display: inline-block;
@@ -1330,6 +1340,8 @@ a.zoombox-close:after {
     cursor: pointer;
     transition: box-shadow 0.2s;
     float:left;
+    margin-right: 15px;
+    margin-left: 15px;
 }
 
 .pure-material-button-contained::-moz-focus-inner {
