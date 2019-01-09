@@ -622,6 +622,20 @@ fieldset[disabled] .btn-basic.active {
     font-weight: 600;
 }
 
+.dynamic-form-label-gray {
+    width: 100%;
+    float: left;
+    position: relative;
+    /*text-align: right;*/
+    min-height: 1px;
+    padding: 2px 1px 5px 2px;
+    display: inline-block;
+    margin-bottom: 0;
+    font-size: small;
+    color: grey;
+    font-weight: lighter;
+}
+
 .dynamic-form-label.short {
     width: 35%;
     padding: 10px 5px 5px 15px;
@@ -815,10 +829,13 @@ fieldset[disabled] .btn-basic.active {
 /*}*/
 
 .modal-footer {
-    padding: 10px 24px 4px;
+    /*padding: 10px 24px 4px;*/
+    padding: 1px 35px 4px;
     margin-bottom: 10px;
     text-align: right;
     border-top: none;
+    margin-top: 0px;
+    margin-bottom: 20px;
 }
 
 .table-striped tbody tr.st-selected td,
@@ -909,6 +926,7 @@ fieldset[disabled] .btn-basic.active {
 }
 .scrollArea table tbody tr td:last-child {
     border-right: none;
+    padding-right: 15px;
 }
 .scrollArea table tbody tr:first-child td {
     border-top: none;
@@ -1291,6 +1309,13 @@ a.zoombox-close:after {
     top: 0px;
 }
 
+.create-space-vertical {
+    position: relative;
+    display: block;
+    height: 50px;
+    width: 50px;
+}
+
 .pure-material-button-contained {
     position: relative;
     display: inline-block;
@@ -1316,6 +1341,8 @@ a.zoombox-close:after {
     cursor: pointer;
     transition: box-shadow 0.2s;
     float:left;
+    margin-right: 15px;
+    margin-left: 15px;
 }
 
 .pure-material-button-contained::-moz-focus-inner {

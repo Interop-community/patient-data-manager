@@ -14,6 +14,8 @@
     </div>
 </div>
 <div class="modal-footer">
-    <button tooltip="Saving a BackboneElement is final, you can't delete them." ng-show="!isReadOnly" class="form-btn btn btn-basic" type="button" ng-click="addBackboneElement(createdBackBoneElement)">Save</button>
-    <button class="form-btn btn btn-basic" type="button" ng-click="cancel()">Cancel</button>
+    <!--<button tooltip="Saving a BackboneElement is final, you can't delete them." ng-show="!isReadOnly" class="form-btn btn btn-basic" type="button" ng-click="addBackboneElement(createdBackBoneElement)">Save</button>-->
+    <!--<button class="form-btn btn btn-basic" type="button" ng-click="cancel()">Cancel</button>-->
+    <div class="pure-material-button-contained" tooltip="Saving a BackboneElement is final, you can't delete them." ng-show="!isReadOnly" ng-click="addBackboneElement(createdBackBoneElement)">Save</div>
+    <div class="pure-material-button-contained" ng-click="cancel()">Cancel</div>
 </div>

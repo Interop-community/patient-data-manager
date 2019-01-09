@@ -1,10 +1,17 @@
 <div class="resource_list" >
-    <div class="resource_list_item" ng-repeat="resource in resourceTypeList" ng-click="selectResourceType(resource)" ng-class="{selected: resource === selectedResourceType}">
-     {{resource.resourceType}} ({{resource.count}})
+    <div class="resource_list_item" ng-repeat-start="resource in resourceTypeList" ng-if="resource.resourceType == 'Patient'"
+         ng-click="selectResourceType(resource)" ng-class="{selected: resource === selectedResourceType}">
+             {{resource.resourceType}}
      <a href='#' class='float-right-btn' ng-if="writePermission" ng-show="resource.resourceType !== 'Patient'" ng-click="openModalDialog('create')"><i class='fa fa-plus-square-o fa-lg'></i></a>
+    </div>
+    <div class="resource_list_item" ng-repeat-end="resource in resourceTypeList" ng-if="resource.resourceType !== 'Patient'"
+         ng-click="selectResourceType(resource)" ng-class="{selected: resource === selectedResourceType}">
+        {{resource.resourceType}} ({{resource.count}})
+        <a href='#' class='float-right-btn' ng-if="writePermission" ng-show="resource.resourceType !== 'Patient'" ng-click="openModalDialog('create')"><i class='fa fa-plus-square-o fa-lg'></i></a>
     </div>
     <div class="resource_list_item"  ng-click="togglePatientView()" ng-show="showViewToggle">
         Toggle {{viewName}} View
         <i class='float-right-icon fa fa-random fa-lg'></i>
     </div>
 </div>
+

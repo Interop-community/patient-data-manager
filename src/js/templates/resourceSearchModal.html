@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h3 class="modal-title">Choose a {{resourceType}}</h3>
+    <h3 class="modal-title">Choose {{resourceType}}</h3>
 </div>
 <div class="modal-body">
     <div id="resource-results">
@@ -87,21 +87,21 @@
                                           ng-class="sortReverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes'"></span>
                                     </a>
                                 </td>
-                                <td ng-show="tableView[0] !== undefined">
+                                <td ng-show="tableView[0] !== undefined && tableView[0].label!=='Patient'">
                                     <a href="#" ng-click="toggleSort(tableView[0].label)">
                                         {{tableView[0].label}}
                                     <span ng-show="sortSelected === tableView[0].label" class="glyphicon"
                                           ng-class="sortReverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes'"></span>
                                     </a>
                                 </td>
-                                <td ng-show="tableView[1] !== undefined">
+                                <td ng-show="tableView[1] !== undefined && tableView[1].label!=='Patient'">
                                     <a href="#" ng-click="toggleSort(tableView[1].label)">
                                         {{tableView[1].label}}
                                     <span ng-show="sortSelected === tableView[1].label" class="glyphicon"
                                           ng-class="sortReverse ? 'glyphicon-sort-by-attributes-alt' : 'glyphicon-sort-by-attributes'"></span>
                                     </a>
                                 </td>
-                                <td ng-show="tableView[2] !== undefined">
+                                <td ng-show="tableView[2] !== undefined && tableView[2].label!=='Patient'">
                                     <a href="#" ng-click="toggleSort(tableView[2].label)">
                                         {{tableView[2].label}}
                                     <span ng-show="sortSelected === tableView[2].label" class="glyphicon"
@@ -114,7 +114,7 @@
                                 <td >
                                     {{resource.id}}
                                 </td>
-                                <td ng-show="tableView[0] !== undefined">
+                                <td ng-if="getColumn('searchField', resource).indexOf('Patient')===-1" ng-show="tableView[0] !== undefined">
                                     {{getColumn('searchField', resource)}}
                                 </td>
                                 <td ng-show="tableView[1] !== undefined">
@@ -127,15 +127,17 @@
                         </table>
 
                         <div ng-show="!showing.searchloading && (resources.length==0)">
-                            <p>No matches, try broadening your search.</p>
+                            <p style="margin-left:10px">No matches, try broadening your search.</p>
                         </div>
                     </div>
 
                 </div>
                 <div class="col-md-12 content-column">
                     <div ng-show="hasPrev() || hasNext()" style="text-align: center">Showing {{count.start}} to {{count.end}} of {{count.total}}</div>
-                    <div ng-show="hasPrev()" class="btn btn-basic btn-md" style="float: left" ng-click="loadMore('prevPage')"><i class="fa fa-chevron-left fa-lg"></i> Prev</div>
-                    <div ng-show="hasNext()" class="btn btn-basic btn-md" style="float: right" ng-click="loadMore('nextPage')">Next <i class="fa fa-chevron-right fa-lg"></i></div>
+                    <!--<div ng-show="hasPrev()" class="btn btn-basic btn-md" style="float: left" ng-click="loadMore('prevPage')"><i class="fa fa-chevron-left fa-lg"></i> Prev</div>-->
+                    <!--<div ng-show="hasNext()" class="btn btn-basic btn-md" style="float: right" ng-click="loadMore('nextPage')">Next <i class="fa fa-chevron-right fa-lg"></i></div>-->
+                    <div ng-show="hasPrev()" class="pure-material-button-contained" style="float: left" ng-click="loadMore('prevPage')"><i class="fa fa-chevron-left fa-lg"></i> Prev</div>
+                    <div ng-show="hasNext()" class="pure-material-button-contained" style="float: right" ng-click="loadMore('nextPage')">Next <i class="fa fa-chevron-right fa-lg"></i></div>
                 </div>
 
             </div>
@@ -144,8 +146,10 @@
         </div>
     </div>
 </div>
+<div class="create-space-vertical"></div>
 <div class="modal-footer">
-    <button class="form-btn btn btn-basic" type="button" ng-click="close()">Cancel</button>
+    <!--<button class="form-btn btn btn-basic" type="button" ng-click="close()">Cancel</button>-->
+    <div class="pure-material-button-contained" ng-click="close()">Cancel</div>
 
 </div>
 

@@ -15,7 +15,9 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         $scope.selectedBackBoneElement = {};
 
         $scope.resourceTypeList = [];
+        // $scope.resourceTypeListStaysConstant = [];
         $scope.selectedResourceType = {};
+        // $scope.selectedResourceTypeStaysConstant = {};
 
         $scope.resourceInstanceList = [];
         $scope.selectedResourceInstance = {};
@@ -74,7 +76,8 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 $scope.resourceSet = 'Full';
             }
             $scope.resourceTypeList = [];
-            getAllResources(0, $scope.resourceTypeList, $scope.resourceTypeConfigList);
+             getAllResources(0, $scope.resourceTypeList, $scope.resourceTypeConfigList);
+            // getAllResources(0, $scope.resourceTypeList, $scope.resourceTypeConfigList, $scope.resourceTypeListStaysConstant);
         };
 
         $scope.setTableOffset = function(){
@@ -701,7 +704,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
         };
 
         function setOrUpdateReference(reference, typeConfig, isParticipant) {
-
             if (typeConfig.listPath) {
                 var collection = $scope.dmh.getModelParent($scope.selectedResourceInstance, typeConfig.listPath)[ $scope.dmh.getModelLeaf(typeConfig.listPath)];
                 if (collection === undefined) {
@@ -711,10 +713,15 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 }
                 var item = {};
                 if (isParticipant) {
-                    collection.push(reference);
+                    if (collection.filter(function(e) { return e.member.reference === reference.member.reference; }).length === 0) {
+                        collection.push(reference);
+                    }
                 } else {
                     item[typeConfig.subPath] = reference.resourceType + "/" + reference.id;
-                    collection.push(item);
+                    if (collection.filter(function(e) { return e.reference === reference.resourceType + "/" + reference.id; }).length === 0) {
+                        collection.push(item);
+                    }
+
                 }
             } else {
                 $scope.dmh.getModelParent($scope.selectedResourceInstance, typeConfig.linkBack)[ $scope.dmh.getModelLeaf(typeConfig.linkBack) ] = reference.resourceType + "/" + reference.id;
@@ -740,28 +747,28 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             });
         }
 
-        function getAllResources(index, resourceTypeList, resourceTypeConfigList) {
-            $fhirApiServices.queryResourceInstances($scope.smart, resourceTypeList, resourceTypeConfigList[index], $scope.notification)
+        function getAllResources(index, resourceTypeList, resourceTypeConfigList) { // , resourceTypeListStaysConstant
+            $fhirApiServices.queryResourceInstances($scope.smart, resourceTypeList, resourceTypeConfigList[index], $scope.notification) //, resourceTypeListStaysConstant
                 .done(function(resourceList, index){
                     updateView(resourceTypeList[index]);
                     if(++index < resourceTypeConfigList.length && resourceTypeConfigList[index].showInResourceList === $scope.resourceSet) {
-                        getAllResources(index, resourceTypeList, resourceTypeConfigList);
+                        getAllResources(index, resourceTypeList, resourceTypeConfigList); //, resourceTypeListStaysConstant
                     }
                     $scope.$digest();
                 });
         }
 
-        function updateView(resourceType){
-            if (typeof $scope.selectedResourceType.index === 'undefined' ||
-                resourceType.index === $scope.selectedResourceType.index) {
-                $scope.selectedResourceType = $scope.resourceTypeList[resourceType.index];
-                rebuildResourceTable($scope.selectedResourceType.pageData);
-                $scope.resourcePages.pageCount = $scope.selectedResourceType.pageCount;
-                $scope.resourcePages.currentPage = 1;
-                $scope.showPageButtons();
-                $scope.showSearchBar();
-                $scope.$digest();
-            }
+            function updateView(resourceType){
+                if (typeof $scope.selectedResourceType.index === 'undefined' ||
+                    resourceType.index === $scope.selectedResourceType.index) {
+                    $scope.selectedResourceType = $scope.resourceTypeList[resourceType.index];
+                    rebuildResourceTable($scope.selectedResourceType.pageData);
+                    $scope.resourcePages.pageCount = $scope.selectedResourceType.pageCount;
+                    $scope.resourcePages.currentPage = 1;
+                    $scope.showPageButtons();
+                    $scope.showSearchBar();
+                    $scope.$digest();
+                }
         }
 
         /**
@@ -801,12 +808,12 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                     }
                     $resourceJson.getResources(schemaVersion).done(function(resources){
                         $scope.resourceTypeConfigList = resources;
-                        $fhirApiServices.queryResourceInstances(smart, $scope.resourceTypeList, $scope.resourceTypeConfigList[0], $scope.notification)
+                        $fhirApiServices.queryResourceInstances(smart, $scope.resourceTypeList, $scope.resourceTypeConfigList[0], $scope.notification) // , $scope.resourceTypeListStaysConstant
                             .done(function(resourceTypeList, resourceTypeConfigIndex){
                                 updateView(resourceTypeList[resourceTypeConfigIndex]);
                                 $scope.selectResourceType(resourceTypeList[resourceTypeConfigIndex]);
                                 if(1 < $scope.resourceTypeConfigList.length && $scope.resourceTypeConfigList[1].showInResourceList === $scope.resourceSet) {
-                                    getAllResources(1, $scope.resourceTypeList, $scope.resourceTypeConfigList);
+                                    getAllResources(1, $scope.resourceTypeList, $scope.resourceTypeConfigList); // , $scope.resourceTypeListStaysConstant
                                 } else {
                                     $scope.$digest();
                                 }
@@ -1072,7 +1079,6 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
 
         $scope.getColumn = function (index, resource) {
             var result;
-            
             if (index === 'searchField') {
                 var value;
                 if (getSettings.resourceTypeConfig.search.searchFilter.name === "patient") {
