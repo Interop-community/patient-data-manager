@@ -21,9 +21,9 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
     // Any function returning a promise object can be used to load values asynchronously
     terminologyService.getValueSetExpansion = function(val, min, url) {
-        if(expansionNotSupported.indexOf(url) !== -1) return;
+        if(expansionNotSupported.indexOf(url) !== -1 || !url) return;
         var deferred = $.Deferred();
-        var lookupUrl = url.substr(19)
+        var lookupUrl = url.substr(19);
         //Example call
         // https://api-v5-stu3.hspconsortium.org/stu3/open/ValueSet/observation-codes/$expand?filter=100
         var path = lookupUrl + '/$expand?filter=' + val;
