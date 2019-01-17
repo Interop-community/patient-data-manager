@@ -382,6 +382,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 animation: true,
                 templateUrl: 'js/templates/confirmModal.html',
                 controller: 'ConfirmModalInstanceCtrl',
+                backdrop: 'static',
                 resolve: {
                     getSettings: function () {
                         return settings;
@@ -402,6 +403,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 text:"Are you sure you want to delete?",
                 callback:function(result){ //setting callback
                     $scope.modalOpen = false;
+                    modalProgress.dismiss();
                     if (result == true) {
                         $fhirApiServices.deleteResource($scope.smart, $scope.selectedResourceInstance, $scope.resourceTypeList, $scope.selectedResourceTypeConfig, $scope.notification)
                             .done(function(resourceTypeList, resourceTypeConfigIndex){
