@@ -703,7 +703,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
 
 
                         } else {
-                            resourceTypeList[resourceTypeConfig.index].count = resourceSearchResult.data.total;
+                            // resourceTypeList[resourceTypeConfig.index].count = resourceSearchResult.data.total;
                             // resourceTypeListStaysConstant[resourceTypeConfig.index].count = resourceSearchResult.data.total;
                         }
                         resourceTypeList[resourceTypeConfig.index].pageData = angular.copy(resourceResults);
