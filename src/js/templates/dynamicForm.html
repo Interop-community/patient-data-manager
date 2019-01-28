@@ -1,7 +1,12 @@
 <div class="form-group">
     <div class="dynamic-form-header" ng-hide="isModal">
         <a href='#' class='float-right-dark-btn' ng-click="closeDetailView()"><i class='fa fa-remove fa-lg'></i></a>
-        <a href='#' tabindex="0" uib-popover-template="'js/templates/detailPopover.html'" popover-trigger="focus" popover-placement="bottom" class='float-left-dark-btn'><i class='fa fa-bars fa-lg'></i></a>
+        <span style="margin-left: 10px"><a href='#' class='popover-btn' ng-click="requestUpdateResource()" ng-if="writePermission"><i class='fa fa-save' title='Update'></i></a></span>
+        <span><a href='#' class='popover-btn' ng-click="openModalDialog('clone')" ng-if="writePermission && selectedResourceType.resourceType !== 'Patient'"><i title='Clone' class='fa fa-copy'></i></a></span>
+        <span><a href='#' class='popover-btn' ng-click="json()"><i class='fa fa-file-text-o' title='JSON'></i></a></span>
+        <span><a href='#' ng-show="showFRED" class='popover-btn' ng-click="fred()"><i class='fa fa-file-text-o' title='FRED'></i></a></span>
+        <span><a href='#' class='popover-btn' ng-click="export()"><i class='fa fa-download' title='Export'></i></a></span>
+        <span><a href='#' class='popover-btn font-red' ng-click="requestDeleteResource()" ng-if="writePermission"><i class='fa fa-times-circle-o fa-lg' title='Delete'></i></a></span>
     </div>
     <div class="details-form" ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)">
         <div ng-repeat="attribute in selectedResourceTypeConfig.displayValues" ng-class="{modalForm: isModal}">
