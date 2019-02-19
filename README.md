@@ -5,10 +5,13 @@
 The HSPC Patient Data Manager is hosted as a static web app.
 
 ## Hosting
+
+In the terminal run the following commands:
 ````
 npm install
 npm run serve
 ````
+The set up process is complete and your project is running now.  The service is available at http://localhost:8096/ 
 
 Learn about the features of the app at:
 
