@@ -25,6 +25,7 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
             $scope.selectedResourceReferencesList = [];
 
             $scope.enteredSearch = '';
+            $scope.changingPage = false;
             $scope.resourcePages = {};
             $scope.tableOffset = 10;
             $scope.tableOffsetWidth = 220;
@@ -697,10 +698,12 @@ angular.module('pdmApp.controllers', []).controller('pdmCtrl',
                 } else {
                     $scope.resourcePages.currentPage--
                 }
+                $scope.changingPage = true;
                 $fhirApiServices.getNextOrPrevPage($scope.smart, lastResult, direction, $scope.selectedResourceTypeConfig)
                     .done(function (resourceList, pageResult) {
                         $scope.selectedResourceType.pageData = resourceList;
                         $scope.selectedResourceType.searchObj = pageResult;
+                        $scope.changingPage = false;
                         rebuildResourceTable(resourceList);
                         $scope.$apply();
                     });
