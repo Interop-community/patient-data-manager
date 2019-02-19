@@ -27,11 +27,11 @@
                 <tr>
                     <td colspan="10">
                         <div id="pageButtons" height=28>
-                            <div class="pure-material-button-contained" ng-show="hasLink(selectedResourceType.searchObj, 'previous')"
-                                 ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'prevPage')">&lt; Prev</div>
+                            <div class="pure-material-button-contained" ng-show="hasLink(selectedResourceType.searchObj, 'previous')" ng-disabled="changingPage"
+                                 ng-click="!changingPage && pageResourceInstanceList(selectedResourceType.searchObj, 'prevPage')">&lt; Prev</div>
                             <div class="pager_text" ng-model=resourcePages> Page {{resourcePages.currentPage}} of {{resourcePages.pageCount}} </div>
-                            <div class="pure-material-button-contained" ng-show="hasLink(selectedResourceType.searchObj, 'next')"
-                                 ng-click="pageResourceInstanceList(selectedResourceType.searchObj, 'nextPage')">Next &gt;</div>
+                            <div class="pure-material-button-contained" ng-show="hasLink(selectedResourceType.searchObj, 'next')" ng-disabled="changingPage"
+                                 ng-click="!changingPage && pageResourceInstanceList(selectedResourceType.searchObj, 'nextPage')">Next &gt;</div>
                         </div>
                     </td>
                 </tr>

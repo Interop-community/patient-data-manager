@@ -1408,17 +1408,17 @@ a.zoombox-close:after {
 }
 
 /* Disabled */
-.pure-material-button-contained:disabled {
+.pure-material-button-contained[disabled] {
     color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.38);
     background-color: rgba(var(--pure-material-onsurface-rgb, 0, 0, 0), 0.12);
     box-shadow: none;
     cursor: initial;
 }
 
-.pure-material-button-contained:disabled::before {
+.pure-material-button-contained[disabled]::before {
     opacity: 0;
 }
 
-.pure-material-button-contained:disabled::after {
+.pure-material-button-contained[disabled]::after {
     opacity: 0;
 }
