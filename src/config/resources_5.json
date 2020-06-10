@@ -168,7 +168,7 @@
             {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
             {"type": "fhirDatatype", "name": "Coding", "labelPrefix": "Class ", "path":"class"},
             {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Period ", "path":"period"},
-            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Reason ", "path":"reason.0", "codedUri" : "http://hl7.org/fhir/ValueSet/encounter-reason"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Reason ", "path":"reasonCode.0", "codedUri" : "http://hl7.org/fhir/ValueSet/encounter-reason"},
             {"type": "select", "name": "status", "label": "Status" ,
                 "options":["planned", "arrived", "in-progress", "onleave", "finished", "cancelled", "entered-in-error"],
                 "path": "status", "default": "planned", "view": "master"}
