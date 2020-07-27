@@ -2,7 +2,7 @@
   "software_id": "org.hspconsortium.sandbox:hspc-patient-data-manager:1.0-SNAPSHOT",
   "client_name": "Patient Data Manager",
   "client_uri": "https://patient-data-manager-test.logicahealth.org/index.html",
-  "logo_uri": "https://patient-data-manager.hspconsortium.org/images/interface_example.png",
+  "logo_uri": "https://patient-data-manager.logicahealth.org/images/interface_example.png",
   "launch_url": "https://patient-data-manager-test.logicahealth.org/launch.html",
   "redirect_uris": [
     "https://patient-data-manager-test.logicahealth.org/app.html"

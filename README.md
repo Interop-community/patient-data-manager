@@ -25,4 +25,4 @@ The app is available for SMART Launch at:
 
 * launch_url: http://localhost:8096/launch.html
 * redirect_url: http://localhost:8096/app.html
-* image_url: https://content.hspconsortium.org/images/hspc-patient-data-manager/logo/pdm.png
+* image_url: https://content.logicahealth.org/images/hspc-patient-data-manager/logo/pdm.png
