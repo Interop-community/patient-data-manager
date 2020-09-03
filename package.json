@@ -1,6 +1,6 @@
 {
   "name": "hspc-patient-data-manager",
-  "version": "1.4.0",
+  "version": "1.4.1-SNAPSHOT",
   "license": "Apache-2.0",
   "repository": {
     "type": "git",
