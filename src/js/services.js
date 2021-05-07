@@ -9,7 +9,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
     var terminologyService = {};
 
     terminologyService.setUrlBase = function(smart) {
-        urlBase = "https://api-v5-stu3.logicahealth.org/stu3/open";
+        urlBase = "https://api-v5-stu3.interop.community/stu3/open";
     };
 
     //This list holds value sets that HAPI currently won't allow multiple filtering for the typeahead
@@ -25,7 +25,7 @@ angular.module('pdmApp.services', []).factory('$terminology', function ($http) {
         var deferred = $.Deferred();
         var lookupUrl = url.substr(19);
         //Example call
-        // https://api-v5-stu3.logicahealth.org/stu3/open/ValueSet/observation-codes/$expand?filter=100
+        // https://api-v5-stu3.interop.community/stu3/open/ValueSet/observation-codes/$expand?filter=100
         var path = lookupUrl + '/$expand?filter=' + val;
         deferred.resolve($http.get(urlBase + path, {
             params: {}
