@@ -41,14 +41,14 @@
         "showInResourceList": "Patient",
         "displayValues" : [
             {"type": "id", "name": "id", "label": "FHIR ID" , "required": true, "path": "id", "default": "", "view": "detail"},
-            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Observation ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-codes" },
-            {"type": "variable", "name": "variable", "namePrefix": "effective", "label": "Effective Date(s)", "path":"", "choiceLabel": "Effective Date(s)", "view": "master",
+            {"type": "fhirDatatype", "name": "CodeableConcept", "required": true, "labelPrefix": "Observation ", "path":"code", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-codes" },
+            {"type": "variable", "name": "variable", "required": false, "namePrefix": "effective", "label": "Effective Date(s)", "path":"", "choiceLabel": "Effective Date(s)", "view": "master",
                 "dataTypes" : [
                     {"type": "datetime", "name": "DateTime", "labelPrefix": "Effective Date "},
                     {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Effective Date "}
                 ]
             },
-            {"type": "variable", "name": "variable", "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type", "view": "master",
+            {"type": "variable", "name": "variable", "required": false, "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type", "view": "master",
                 "dataTypes" : [
                     {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Value "},
                     {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Value "},
@@ -59,9 +59,9 @@
                     {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Value "},
                     {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Value "}
                 ]},
-            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Category ", "path":"category.0", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-category" },
-            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Interpretation ", "path":"interpretation", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-interpretation" },
-            {"type": "select", "name": "status", "label": "Status" ,
+            {"type": "fhirDatatype", "name": "CodeableConcept", "required": false, "labelPrefix": "Category ", "path":"category.0", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-category" },
+            {"type": "fhirDatatype", "name": "CodeableConcept", "required": false, "labelPrefix": "Interpretation ", "path":"interpretation", "codedUri" : "http://hl7.org/fhir/ValueSet/observation-interpretation" },
+            {"type": "select", "name": "status", "required": true, "label": "Status" ,
                 "options":["final", "registered", "preliminary", "amended","cancelled", "entered-in-error", "unknown"],
                 "path": "status", "default": "final", "view": "detail"}
         ],

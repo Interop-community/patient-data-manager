@@ -20,10 +20,10 @@
     {
         "dataType" : "CodeableConcept",
         "displayValues" : [
-            {"type": "coded-display-typeahead", "name": "display", "label": "Code Display" , "required": true, "path": "coding.0.display", "default": "", "view": "master"},
+            {"type": "coded-display-typeahead", "name": "display", "label": "Code Display" , "required": false, "path": "coding.0.display", "default": "", "view": "master"},
             {"type": "coded-code-typeahead", "name": "code", "label": "Code" , "required": true, "path": "coding.0.code", "default": "", "view": "detail"},
-            {"type": "text", "name": "system", "label": "Code System" , "required": true, "path": "coding.0.system", "default": "", "view": "detail"},
-            {"type": "text", "name": "text", "label": "Text" , "required": true, "path": "text", "default": "", "view": "detail"}
+            {"type": "text", "name": "system", "label": "Code System" , "required": false, "path": "coding.0.system", "default": "", "view": "detail"},
+            {"type": "text", "name": "text", "label": "Text" , "required": false, "path": "text", "default": "", "view": "detail"}
         ]
 
     },
@@ -151,8 +151,8 @@
     {
         "dataType": "BackboneElementComponentStu3_R4",
         "displayValues" : [
-            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Code ", "path":"code"},
-            {"type": "variable", "name": "variable", "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type",
+            {"type": "fhirDatatype", "name": "CodeableConcept", "required": true, "labelPrefix": "Code ", "path":"code"},
+            {"type": "variable", "name": "variable", "required": false, "namePrefix": "value", "label": "Value", "path":"", "choiceLabel": "Value Type",
                 "dataTypes" : [
                     {"type": "fhirDatatype", "name": "Quantity", "labelPrefix": "Value "},
                     {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Value "},
@@ -163,8 +163,8 @@
                     {"type": "fhirDatatype", "name": "DateTime", "labelPrefix": "Value "},
                     {"type": "fhirDatatype", "name": "Period", "labelPrefix": "Value "}
                 ]},
-            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Date Absent Reason ", "path":"dateAbsentReason"},
-            {"type": "fhirDatatype", "name": "CodeableConcept", "labelPrefix": "Interpretation ", "path":"interpretation"}
+            {"type": "fhirDatatype", "name": "CodeableConcept", "required": false, "labelPrefix": "Date Absent Reason ", "path":"dateAbsentReason"},
+            {"type": "fhirDatatype", "name": "CodeableConcept", "required": false, "labelPrefix": "Interpretation ", "path":"interpretation"}
         ]
     },
     {
