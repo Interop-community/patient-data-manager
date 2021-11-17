@@ -12,12 +12,9 @@
 
 <div ng-if="attribute.type=='id'" class="form-group" ng-hide="isModal">
     <label class="dynamic-form-label">{{attribute.label}}</label>
-    <div class="dynamic-form-label-input" ng-form name="idForm">
-        <input type="text" disabled dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" id="{{attribute.name}}" class="form-control" ng-required="{{attribute.required}}"/>
+    <div class="dynamic-form-label-input">
+        <input type="text" disabled dynamic-name="attribute.name" ng-model="dmh.getModelParent(selectedResourceInstance, attribute.path)[ dmh.getModelLeaf(attribute.path) ]" id="{{attribute.name}}" class="form-control"/>
         <!--<span ng-show="{{'form.'+attribute.name+'.$dirty && form.'+attribute.name+'.$error.required'}}">Required!</span>-->
-        <span ng-show="idForm.{{attribute.name}}.$error.required" style="color:red">
-            This field is required. 
-        </span>
     </div>
 </div>
 
