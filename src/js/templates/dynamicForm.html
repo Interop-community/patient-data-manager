@@ -8,9 +8,9 @@
         <span><a href='#' class='popover-btn' ng-click="export()"><i class='fa fa-download' title='Export'></i></a></span>
         <span><a href='#' class='popover-btn font-red' ng-click="requestDeleteResource()" ng-if="writePermission"><i class='fa fa-times-circle-o fa-lg' title='Delete'></i></a></span>
     </div>
-    <div class="details-form" ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)">
+    <div class="details-form" ng-form name="resourceForm" ng-style="resizeWithOffset(detailOffset)" resize notifier="notifyServiceOnChange(params)">
         <div ng-repeat="attribute in selectedResourceTypeConfig.displayValues" ng-class="{modalForm: isModal}">
-            <div ng-include src="dynamicFormTemplate"></div>
+                <div ng-include src="dynamicFormTemplate"></div>
         </div>
         <div ng-if="!isModal">
             <div ng-if="selectedResourceReferences.length > 0" ng-repeat="reference in selectedResourceReferences">
@@ -51,5 +51,7 @@
             </div>
         </div>
     </div>
+    <div class="pure-material-button-contained" ng-disabled="resourceForm.$invalid" ng-show="!isReadOnly" ng-click="create(selectedResourceInstance)">Create</div>
+    <div class="pure-material-button-contained" ng-click="cancel()">Cancel</div>
 </div>
 

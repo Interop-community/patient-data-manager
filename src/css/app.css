@@ -176,9 +176,10 @@ span.title,
 }
 
 .navbar img {
-    height: 70px;
-    padding: 10px 10px 0 18px;
+    height: 80px;
+    padding: 0px 10px 0 18px;
     float: left;
+    margin-top: 0px;
 }
 
 .container-fluid {

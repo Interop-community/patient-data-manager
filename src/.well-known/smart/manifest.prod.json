@@ -1,11 +1,11 @@
 {
   "software_id": "org.hspconsortium.sandbox:hspc-patient-data-manager:1.0-SNAPSHOT",
   "client_name": "Patient Data Manager",
-  "client_uri": "https://iol2patient-data-manager.interop.community/index.html",
+  "client_uri": "https://patient-data-manager.interop.community/index.html",
   "logo_uri": "https://patient-data-manager.logicahealth.org/images/interface_example.png",
-  "launch_url": "https://iol2patient-data-manager.interop.community/launch.html",
+  "launch_url": "https://patient-data-manager.interop.community/launch.html",
   "redirect_uris": [
-    "https://iol2patient-data-manager.interop.community/app.html"
+    "https://patient-data-manager.interop.community/app.html"
   ],
   "scope": "launch online_access patient/*.read patient/*.write",
   "token_endpoint_auth_method": "none",
