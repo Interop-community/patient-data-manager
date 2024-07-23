@@ -1,5 +1,5 @@
-FROM node:alpine
-
+FROM public.ecr.aws/amazonlinux/amazonlinux:2023
+RUN dnf install npm -y
 COPY . .
 ARG TARGET_ENV
 ENV TARGET_ENV=$TARGET_ENV
